@@ -6,6 +6,7 @@ import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import RSVPButtons from '@/components/rsvp/RSVPButtons'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function RSVPPage({ params }: { params: { token: string } }) {
   if (!isValidToken(params.token)) notFound()
