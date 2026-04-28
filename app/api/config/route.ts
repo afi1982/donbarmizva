@@ -26,18 +26,37 @@ export async function PUT(request: NextRequest) {
     'custom_message', 'whatsapp_message', 'reminder_message',
   ]
   const update = Object.fromEntries(
-    Object.entries(body).filter(([k, v]) => allowed.includes(k) && v !== undefined)
+    Object.entries(body).filter(([k, v]) =>
+      allowed.includes(k) && v !== undefined && v !== null && v !== ''
+    )
   )
 
-  const { data, error } = await supabaseAdmin
+  // Try update first (row with id=1 should always exist)
+  const { data: updated, error: updateError } = await supabaseAdmin
     .from('invitation_config')
-    .upsert({ id: 1, ...update }, { onConflict: 'id' })
+    .update(update)
+    .eq('id', 1)
     .select()
-    .single()
+    .maybeSingle()
 
-  if (error) {
-    console.error('Config save error:', JSON.stringify(error))
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (updateError) {
+    console.error('Config update error:', JSON.stringify(updateError))
+    return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
-  return NextResponse.json(data)
+
+  // Row didn't exist yet — insert it
+  if (!updated) {
+    const { data: inserted, error: insertError } = await supabaseAdmin
+      .from('invitation_config')
+      .insert({ id: 1, ...update })
+      .select()
+      .single()
+    if (insertError) {
+      console.error('Config insert error:', JSON.stringify(insertError))
+      return NextResponse.json({ error: insertError.message }, { status: 500 })
+    }
+    return NextResponse.json(inserted)
+  }
+
+  return NextResponse.json(updated)
 }

@@ -46,6 +46,7 @@ export default function InvitationPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`)
+      setConfig(data)
       setSaved(true)
     } catch (err: unknown) {
       setSaveError((err as Error).message)
