@@ -19,7 +19,7 @@ export default function GuestForm({ guest, onSave, onCancel }: Props) {
     if (!name.trim() || !phone.trim()) { setError('נא למלא שם וטלפון'); return }
     setLoading(true); setError('')
     try { await onSave(name.trim(), phone.trim()) }
-    catch { setError('שגיאה בשמירה. נסה שוב.') }
+    catch (e) { setError(e instanceof Error ? e.message : 'שגיאה בשמירה. נסה שוב.') }
     finally { setLoading(false) }
   }
 

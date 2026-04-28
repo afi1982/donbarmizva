@@ -20,7 +20,10 @@ export default function GuestsPage() {
     const url = editGuest ? `/api/guests/${editGuest.id}` : '/api/guests'
     const method = editGuest ? 'PUT' : 'POST'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, phone }) })
-    if (!res.ok) throw new Error('Save failed')
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `שגיאה ${res.status}`)
+    }
     await load(); setShowForm(false); setEditGuest(undefined)
   }
 
