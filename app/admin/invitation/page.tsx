@@ -58,7 +58,11 @@ export default function InvitationPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-stone-800">עריכת ההזמנה</h1>
         <div className="flex items-center gap-3">
-          {saveError && <span className="text-red-500 text-xs">{saveError}</span>}
+          {saveError && (
+            <span className="text-red-600 text-xs font-bold bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">
+              ❌ {saveError}
+            </span>
+          )}
           <button onClick={handleSave} disabled={saving}
             className="bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-5 py-2 rounded-xl font-bold text-sm transition-colors">
             {saving ? 'שומר...' : saved ? '✓ נשמר' : 'שמור'}

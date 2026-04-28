@@ -66,7 +66,15 @@ async function captureInvitation(token, shortUrl) {
 function initWhatsApp() {
   client = new Client({
     authStrategy: new LocalAuth({ clientId: 'barmizva' }),
-    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
+    puppeteer: {
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-features=IsolateOrigins,site-per-process',
+        '--disable-site-isolation-trials',
+      ]
+    }
   })
 
   client.on('qr', qr => {
