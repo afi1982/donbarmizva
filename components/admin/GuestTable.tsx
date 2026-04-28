@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import { Guest, GuestStatus, InvitationConfig } from '@/lib/types'
 
 const STATUS_BADGE: Record<GuestStatus, string> = {
@@ -14,21 +15,8 @@ const STATUS_LABEL: Record<GuestStatus, string> = {
   pending:    'ממתין',
 }
 
-const BASE_URL = 'https://donbarmizva.vercel.app'
-
-function normalizePhone(phone: string) {
-  const d = phone.replace(/\D/g, '')
-  return d.startsWith('972') ? d : d.startsWith('0') ? '972' + d.slice(1) : d
-}
-
-function buildWaUrl(guest: Guest, template: string) {
-  const msg = template
-    .replace(/\\n/g, '\n')
-    .replace(/{name}/g, guest.name)
-    .replace(/{link}/g, `${BASE_URL}/rsvp/${guest.token}`)
-    .replace(/{custom_message}/g, '')
-  return `https://wa.me/${normalizePhone(guest.phone)}?text=${encodeURIComponent(msg)}`
-}
+const LOCAL_SERVER = 'http://localhost:3333'
+type SendStatus = 'idle' | 'loading' | 'sent' | 'error'
 
 interface Props {
   guests: Guest[]
@@ -38,6 +26,37 @@ interface Props {
 }
 
 export default function GuestTable({ guests, config, onEdit, onDelete }: Props) {
+  const [statusMap, setStatusMap] = useState<Record<string, SendStatus>>({})
+  const [errorMap, setErrorMap] = useState<Record<string, string>>({})
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
+
+  async function send(guestId: string, mode: 'invite' | 'reminder') {
+    setStatusMap(prev => ({ ...prev, [guestId]: 'loading' }))
+    setErrorMap(prev => { const e = { ...prev }; delete e[guestId]; return e })
+    try {
+      const res = await fetch(`${LOCAL_SERVER}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId, mode }),
+        signal: AbortSignal.timeout(15000),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'שגיאה')
+      setStatusMap(prev => ({ ...prev, [guestId]: 'sent' }))
+    } catch (err: unknown) {
+      setStatusMap(prev => ({ ...prev, [guestId]: 'error' }))
+      setErrorMap(prev => ({ ...prev, [guestId]: (err as Error).message }))
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setDeleting(id)
+    await onDelete?.(id)
+    setDeleting(null)
+    setConfirmDelete(null)
+  }
+
   if (guests.length === 0) {
     return (
       <div className="text-center py-12 text-stone-400">
@@ -50,37 +69,75 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
   return (
     <div className="space-y-2">
       {guests.map(guest => {
-        const inviteTemplate = config?.whatsapp_message
-        const reminderTemplate = config?.reminder_message
-        const showInvite = guest.status === 'pending' && inviteTemplate
-        const showReminder = guest.status === 'maybe' && reminderTemplate
+        const s = statusMap[guest.id] ?? 'idle'
+        const showInvite = guest.status === 'pending' && !!config?.whatsapp_message
+        const showReminder = guest.status === 'maybe' && !!config?.reminder_message
+        const isConfirming = confirmDelete === guest.id
+        const isDeleting = deleting === guest.id
 
         return (
-          <div key={guest.id} className="flex items-center gap-2 p-3 bg-white border border-stone-100 rounded-xl hover:border-stone-200 transition-colors">
+          <div key={guest.id} className={`flex items-start gap-2 p-3 border rounded-xl transition-colors ${isConfirming ? 'bg-red-50 border-red-200' : 'bg-white border-stone-100 hover:border-stone-200'}`}>
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-stone-800 truncate text-sm">{guest.name}</div>
               <div className="text-xs text-stone-400" dir="ltr">{guest.phone}</div>
+              {s === 'error' && <div className="text-red-400 text-xs mt-0.5 truncate">{errorMap[guest.id]}</div>}
+              {isConfirming && (
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-red-600 text-xs font-medium">למחוק את {guest.name}?</span>
+                  <button
+                    onClick={() => handleDelete(guest.id)}
+                    disabled={isDeleting}
+                    className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {isDeleting ? '...' : 'מחק'}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="text-stone-500 hover:text-stone-700 text-xs px-2 py-1"
+                  >
+                    ביטול
+                  </button>
+                </div>
+              )}
             </div>
-            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap ${STATUS_BADGE[guest.status]}`}>
+
+            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${STATUS_BADGE[guest.status]}`}>
               {STATUS_LABEL[guest.status]}
             </span>
-            {showInvite && (
-              <a href={buildWaUrl(guest, inviteTemplate!)} target="_blank" rel="noreferrer"
-                className="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
-                📱 שלח
-              </a>
+
+            {(showInvite || showReminder) && !isConfirming && (
+              s === 'sent' ? (
+                <span className="text-xs text-emerald-600 font-bold px-2 py-1.5 flex-shrink-0">✓ נשלח</span>
+              ) : (
+                <button
+                  onClick={() => send(guest.id, showInvite ? 'invite' : 'reminder')}
+                  disabled={s === 'loading'}
+                  className={`text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap flex-shrink-0 disabled:opacity-60 ${
+                    s === 'error' ? 'bg-red-400 hover:bg-red-500' :
+                    showInvite ? 'bg-green-500 hover:bg-green-600' : 'bg-amber-500 hover:bg-amber-600'
+                  }`}
+                >
+                  {s === 'loading' ? '⏳' : s === 'error' ? '↻' : showInvite ? '📱 שלח' : '🔔 תזכורת'}
+                </button>
+              )
             )}
-            {showReminder && (
-              <a href={buildWaUrl(guest, reminderTemplate!)} target="_blank" rel="noreferrer"
-                className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
-                🔔 תזכורת
-              </a>
+
+            {onEdit && !isConfirming && (
+              <button
+                onClick={() => onEdit(guest)}
+                className="text-stone-400 hover:text-stone-600 transition-colors text-sm p-1 flex-shrink-0"
+              >
+                ✏️
+              </button>
             )}
-            {onEdit && (
-              <button onClick={() => onEdit(guest)} className="text-stone-400 hover:text-stone-600 transition-colors text-sm p-1">✏️</button>
-            )}
-            {onDelete && (
-              <button onClick={() => onDelete(guest.id)} className="text-stone-300 hover:text-red-400 transition-colors text-sm p-1">🗑️</button>
+
+            {onDelete && !isConfirming && (
+              <button
+                onClick={() => setConfirmDelete(guest.id)}
+                className="text-stone-300 hover:text-red-400 transition-colors text-sm p-1 flex-shrink-0"
+              >
+                🗑️
+              </button>
             )}
           </div>
         )

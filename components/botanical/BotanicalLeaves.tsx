@@ -1,31 +1,42 @@
 export default function BotanicalLeaves() {
   return (
     <>
-      <div className="absolute top-0 left-0 pointer-events-none" aria-hidden>
-        <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-          <ellipse cx="22" cy="22" rx="24" ry="13" fill="#8aad7a" opacity="0.35" transform="rotate(-30 22 22)" />
-          <ellipse cx="50" cy="11" rx="20" ry="10" fill="#7a9a6a" opacity="0.28" transform="rotate(-55 50 11)" />
-          <ellipse cx="11" cy="52" rx="22" ry="11" fill="#6d8f5e" opacity="0.25" transform="rotate(-10 11 52)" />
-          <ellipse cx="72" cy="20" rx="15" ry="8" fill="#9ab88a" opacity="0.22" transform="rotate(-70 72 20)" />
-          <ellipse cx="33" cy="65" rx="17" ry="9" fill="#7a9a6a" opacity="0.20" transform="rotate(20 33 65)" />
-          <circle cx="42" cy="35" r="5.5" fill="#c8a97a" opacity="0.40" />
-          <circle cx="24" cy="60" r="4" fill="#c8a97a" opacity="0.30" />
-          <circle cx="66" cy="44" r="3.5" fill="#c8a97a" opacity="0.25" />
-          <line x1="42" y1="35" x2="22" y2="22" stroke="#8aad7a" strokeWidth="1" opacity="0.40" />
-          <line x1="42" y1="35" x2="50" y2="11" stroke="#8aad7a" strokeWidth="1" opacity="0.35" />
-          <line x1="24" y1="60" x2="11" y2="52" stroke="#7a9a6a" strokeWidth="1" opacity="0.30" />
-          <line x1="66" y1="44" x2="72" y2="20" stroke="#9ab88a" strokeWidth="0.8" opacity="0.25" />
+      {/* Top-left cluster */}
+      <div className="absolute top-0 left-0 pointer-events-none select-none" aria-hidden>
+        <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Large leaf 1 */}
+          <path d="M10 180 Q-10 80 80 10 Q60 100 10 180Z" fill="#5a8a4a" opacity="0.55" />
+          <path d="M10 180 Q40 120 80 10" stroke="#4a7a3a" strokeWidth="1.2" opacity="0.4" fill="none"/>
+          {/* Large leaf 2 */}
+          <path d="M5 140 Q-20 60 100 20 Q70 90 5 140Z" fill="#6fa058" opacity="0.45" />
+          <path d="M5 140 Q50 90 100 20" stroke="#4a7a3a" strokeWidth="1" opacity="0.35" fill="none"/>
+          {/* Medium leaf 3 */}
+          <path d="M30 200 Q-5 130 90 60 Q75 130 30 200Z" fill="#4d7a3d" opacity="0.50" />
+          {/* Thin accent leaf */}
+          <path d="M60 210 Q20 160 110 80 Q95 145 60 210Z" fill="#7ab86a" opacity="0.38" />
+          {/* Small top leaf */}
+          <path d="M90 15 Q130 -10 160 30 Q120 40 90 15Z" fill="#5a8a4a" opacity="0.42" />
+          {/* Berries */}
+          <circle cx="78" cy="62" r="5" fill="#c8a060" opacity="0.75" />
+          <circle cx="92" cy="52" r="3.5" fill="#d4ac72" opacity="0.65" />
+          <circle cx="68" cy="78" r="4" fill="#b89050" opacity="0.60" />
+          {/* Stem lines */}
+          <path d="M40 195 Q60 140 78 62" stroke="#4a7a3a" strokeWidth="1.2" opacity="0.35" fill="none" strokeLinecap="round"/>
+          <path d="M78 62 Q110 30 155 28" stroke="#4a7a3a" strokeWidth="0.9" opacity="0.30" fill="none" strokeLinecap="round"/>
         </svg>
       </div>
-      <div className="absolute bottom-0 right-0 pointer-events-none rotate-180" aria-hidden>
-        <svg width="120" height="120" viewBox="0 0 140 140" fill="none">
-          <ellipse cx="22" cy="22" rx="24" ry="13" fill="#8aad7a" opacity="0.30" transform="rotate(-30 22 22)" />
-          <ellipse cx="50" cy="11" rx="20" ry="10" fill="#7a9a6a" opacity="0.25" transform="rotate(-55 50 11)" />
-          <ellipse cx="11" cy="52" rx="22" ry="11" fill="#6d8f5e" opacity="0.20" transform="rotate(-10 11 52)" />
-          <circle cx="42" cy="35" r="5.5" fill="#c8a97a" opacity="0.35" />
-          <circle cx="24" cy="60" r="4" fill="#c8a97a" opacity="0.25" />
-          <line x1="42" y1="35" x2="22" y2="22" stroke="#8aad7a" strokeWidth="1" opacity="0.35" />
-          <line x1="42" y1="35" x2="50" y2="11" stroke="#8aad7a" strokeWidth="1" opacity="0.30" />
+
+      {/* Bottom-right cluster */}
+      <div className="absolute bottom-0 right-0 pointer-events-none select-none" aria-hidden>
+        <svg width="200" height="200" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: 'rotate(180deg)' }}>
+          <path d="M10 180 Q-10 80 80 10 Q60 100 10 180Z" fill="#5a8a4a" opacity="0.48" />
+          <path d="M5 140 Q-20 60 100 20 Q70 90 5 140Z" fill="#6fa058" opacity="0.40" />
+          <path d="M30 200 Q-5 130 90 60 Q75 130 30 200Z" fill="#4d7a3d" opacity="0.44" />
+          <path d="M60 210 Q20 160 110 80 Q95 145 60 210Z" fill="#7ab86a" opacity="0.33" />
+          <circle cx="78" cy="62" r="5" fill="#c8a060" opacity="0.65" />
+          <circle cx="92" cy="52" r="3.5" fill="#d4ac72" opacity="0.55" />
+          <circle cx="68" cy="78" r="4" fill="#b89050" opacity="0.50" />
+          <path d="M40 195 Q60 140 78 62" stroke="#4a7a3a" strokeWidth="1.2" opacity="0.30" fill="none" strokeLinecap="round"/>
         </svg>
       </div>
     </>

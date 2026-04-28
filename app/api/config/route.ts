@@ -53,10 +53,13 @@ export async function PUT(request: NextRequest) {
 
   const { data, error } = await supabaseAdmin
     .from('invitation_config')
-    .upsert({ id: 1, ...update })
+    .upsert({ id: 1, ...update }, { onConflict: 'id' })
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('Config upsert error:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
   return NextResponse.json(data)
 }

@@ -3,6 +3,7 @@ import { Guest, InvitationConfig } from '@/lib/types'
 import CountdownTimer from '@/components/admin/CountdownTimer'
 import StatusDonut from '@/components/admin/StatusDonut'
 import GuestTable from '@/components/admin/GuestTable'
+import AutoRefresh from '@/components/admin/AutoRefresh'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,6 +48,7 @@ export default async function AdminDashboard() {
 
   return (
     <div dir="rtl" className="space-y-5">
+      <AutoRefresh intervalMs={20000} />
 
       {/* Countdown */}
       {config?.event_date && (
