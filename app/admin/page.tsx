@@ -9,7 +9,6 @@ export default async function AdminDashboard() {
   const missingVars = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
-    'ADMIN_PASSWORD',
   ].filter(k => !process.env[k])
 
   if (missingVars.length > 0) {
