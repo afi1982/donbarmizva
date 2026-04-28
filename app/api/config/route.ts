@@ -6,19 +6,8 @@ export const dynamic = 'force-dynamic'
 const DEFAULTS = {
   id: 1,
   child_name: 'דון',
-  whatsapp_message: `שלום {name} 🎟️
-
-אנחנו שמחים להזמין אותך לבר המצווה של דון בר אל!
-
-לפרטי האירוע ולאישור הגעה לחץ כאן:
-{link}
-
-נשמח לראותך 🙏`,
-  reminder_message: `שלום {name} 🙏
-
-טרם קיבלנו אישור הגעה לבר המצווה של דון.
-נשמח לדעת — לחץ לאישור:
-{link}`,
+  whatsapp_message: '',
+  reminder_message: '',
 }
 
 export async function GET() {
@@ -32,11 +21,7 @@ export async function GET() {
     // Return defaults if no row exists yet
     return NextResponse.json(DEFAULTS)
   }
-  // Merge defaults for any empty fields
-  const merged = { ...DEFAULTS, ...data }
-  if (!merged.whatsapp_message) merged.whatsapp_message = DEFAULTS.whatsapp_message
-  if (!merged.reminder_message) merged.reminder_message = DEFAULTS.reminder_message
-  return NextResponse.json(merged)
+  return NextResponse.json({ ...DEFAULTS, ...data })
 }
 
 export async function PUT(request: NextRequest) {

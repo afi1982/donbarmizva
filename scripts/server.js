@@ -47,17 +47,16 @@ function buildMessage(template, guest) {
     .replace(/{custom_message}/g, '')
 }
 
-async function captureInvitation(token) {
+async function captureInvitation(token, shortUrl) {
   const { MessageMedia } = require('whatsapp-web.js')
-  const url = `${BASE_URL}/invite-preview/${token}`
+  const url = `${BASE_URL}/invite-preview/${token}?url=${encodeURIComponent(shortUrl)}`
   const browser = client.pupBrowser
   const page = await browser.newPage()
   try {
     await page.setViewport({ width: 430, height: 900, deviceScaleFactor: 2 })
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 })
     await new Promise(r => setTimeout(r, 1200))
-    // Capture only the visible card, not the full scrollable page
-    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: false })
+    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: true })
     return new MessageMedia('image/jpeg', screenshot, 'invitation.jpg')
   } finally {
     await page.close()
@@ -123,8 +122,8 @@ app.post('/send', async (req, res) => {
     const chatId = await resolveChat(guest.phone)
 
     try {
-      const media = await captureInvitation(guest.token)
-      const caption = `שלום ${guest.name} 🎉\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+      const media = await captureInvitation(guest.token, shortUrl)
+      const caption = `שלום ${guest.name} 🎉`
       await client.sendMessage(chatId, media, { caption })
     } catch (screenshotErr) {
       console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)

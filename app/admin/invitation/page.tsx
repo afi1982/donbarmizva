@@ -3,21 +3,8 @@ import { useEffect, useState } from 'react'
 import { InvitationConfig } from '@/lib/types'
 import InvitationPreview from '@/components/admin/InvitationPreview'
 
-const DEFAULT_WHATSAPP = `שלום {name} 🎉
-
-דון בר אל חוגג בר מצווה!
-אנחנו שמחים להזמין אותך לשמוח איתנו.
-
-לאישור הגעה לחץ כאן:
-{link}
-
-נשמח לראותך 🙏`
-
-const DEFAULT_REMINDER = `שלום {name} 🙏
-
-טרם קיבלנו אישור הגעה לבר המצווה של דון.
-נשמח לדעת אם תוכל להגיע:
-{link}`
+const DEFAULT_WHATSAPP = ``
+const DEFAULT_REMINDER = ``
 
 const BASIC_FIELDS: { key: keyof InvitationConfig; label: string; type?: string }[] = [
   { key: 'child_name',      label: 'שם הבר מצווה' },

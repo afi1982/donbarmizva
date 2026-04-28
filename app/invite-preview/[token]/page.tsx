@@ -6,7 +6,13 @@ import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 
 export const dynamic = 'force-dynamic'
 
-export default async function InvitePreviewPage({ params }: { params: { token: string } }) {
+export default async function InvitePreviewPage({
+  params,
+  searchParams,
+}: {
+  params: { token: string }
+  searchParams: { url?: string }
+}) {
   if (!isValidToken(params.token)) notFound()
 
   const [{ data: guest }, { data: config }] = await Promise.all([
@@ -19,6 +25,8 @@ export default async function InvitePreviewPage({ params }: { params: { token: s
   const eventDateStr = config?.event_date
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
+
+  const rsvpUrl = searchParams.url || ''
 
   return (
     <BotanicalLayout>
@@ -43,9 +51,14 @@ export default async function InvitePreviewPage({ params }: { params: { token: s
         {config?.parents_names && (
           <p className="text-stone-500 text-xs mt-2">{config.parents_names}</p>
         )}
-        <div className="mt-8 border-t border-stone-100 pt-6">
-          <p className="text-stone-400 text-xs">לאישור הגעה לחץ על הקישור שנשלח אליך</p>
-        </div>
+        {rsvpUrl && (
+          <div className="mt-6 pt-5 border-t border-stone-100">
+            <p className="text-stone-500 text-xs mb-3">לאישור הגעה לחץ כאן:</p>
+            <div className="inline-block bg-emerald-500 text-white font-bold text-sm px-6 py-3 rounded-2xl">
+              {rsvpUrl}
+            </div>
+          </div>
+        )}
       </div>
     </BotanicalLayout>
   )
