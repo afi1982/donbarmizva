@@ -1,15 +1,19 @@
 @echo off
-chcp 65001 >nul
-title WhatsApp Server - Bar Mitzvah
+title WhatsApp Server
 cd /d "%~dp0"
 echo.
 echo ========================================
-echo    שרת WhatsApp - בר מצווה
+echo    WhatsApp Server - Bar Mitzvah
 echo ========================================
 echo.
-echo מתקין חבילות...
+echo Installing dependencies...
 npm install
+if %errorlevel% neq 0 (
+    echo ERROR: npm install failed
+    pause
+    exit /b 1
+)
 echo.
-echo מפעיל שרת...
+echo Starting server...
 node server.js
 pause
