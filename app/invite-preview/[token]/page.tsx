@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isValidToken } from '@/lib/tokens'
-import BotanicalLayout from '@/components/botanical/BotanicalLayout'
+import BotanicalLeaves from '@/components/botanical/BotanicalLeaves'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 
 export const dynamic = 'force-dynamic'
@@ -26,42 +26,47 @@ export default async function InvitePreviewPage({
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
 
-  const rsvpUrl = searchParams.url || ''
+  const rsvpUrl = searchParams.url && searchParams.url !== 'undefined' ? searchParams.url : ''
 
   return (
-    <BotanicalLayout>
-      <div className="text-center" dir="rtl">
-        <p className="text-stone-400 text-xs tracking-widest mb-4">שלום, {guest.name} ❤</p>
-        <h1 className="font-serif text-5xl font-black text-stone-800 mb-2">
+    <div
+      className="relative overflow-hidden w-full"
+      style={{ background: 'linear-gradient(160deg, #faf8f5 0%, #f5f0e8 100%)' }}
+      dir="rtl"
+    >
+      <BotanicalLeaves />
+      <div className="relative z-10 text-center px-8 pt-8 pb-8">
+        <p className="text-stone-400 text-xs tracking-widest mb-3">שלום, {guest.name} ❤</p>
+        <h1 className="font-serif text-5xl font-black text-stone-800 mb-1">
           {config?.child_name || 'בר מצווה'}
         </h1>
         <p className="text-stone-500 text-sm mb-1">חוגג בר מצווה</p>
         <BotanicalDivider />
         {config && (
-          <div className="text-stone-600 text-sm leading-8 mb-6">
+          <div className="text-stone-600 text-sm leading-7 mb-4">
             {config.parasha && <p className="font-bold text-stone-800">{config.parasha}</p>}
             {config.hebrew_date && <p>{config.hebrew_date}</p>}
             {config.event_time && <p>שעה {config.event_time}</p>}
             {eventDateStr && <p>{eventDateStr}</p>}
             {config.synagogue_name && <p className="font-bold text-stone-800 mt-1">{config.synagogue_name}</p>}
             {(config.address || config.city) && <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>}
-            {config.custom_message && <p className="mt-2 text-stone-500 italic">{config.custom_message}</p>}
+            {config.custom_message && <p className="mt-2 text-stone-500 italic text-xs">{config.custom_message}</p>}
           </div>
         )}
         {config?.parents_names && (
-          <p className="text-stone-500 text-xs mt-2">{config.parents_names}</p>
+          <p className="text-stone-400 text-xs mb-4">{config.parents_names}</p>
         )}
-        {rsvpUrl && rsvpUrl !== 'undefined' && (
-          <div className="mt-6 pt-5 border-t border-stone-100">
+        {rsvpUrl && (
+          <div className="pt-4 border-t border-stone-200">
             <a
               href={rsvpUrl}
-              className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-md"
+              className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold text-sm px-7 py-3 rounded-2xl shadow"
             >
               ✉️ לאישור הגעה לחץ כאן
             </a>
           </div>
         )}
       </div>
-    </BotanicalLayout>
+    </div>
   )
 }

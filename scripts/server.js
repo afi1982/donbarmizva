@@ -53,10 +53,13 @@ async function captureInvitation(token, shortUrl) {
   const browser = client.pupBrowser
   const page = await browser.newPage()
   try {
-    await page.setViewport({ width: 430, height: 1200, deviceScaleFactor: 2 })
+    await page.setViewport({ width: 380, height: 780, deviceScaleFactor: 2 })
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 })
     await new Promise(r => setTimeout(r, 1200))
-    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: true })
+    // Crop to actual content height, max 780px
+    const bodyHeight = await page.evaluate(() => Math.min(document.body.scrollHeight, 780))
+    await page.setViewport({ width: 380, height: bodyHeight, deviceScaleFactor: 2 })
+    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: false })
     return new MessageMedia('image/jpeg', screenshot, 'invitation.jpg')
   } finally {
     await page.close()
