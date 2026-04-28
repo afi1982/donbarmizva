@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic'
 
 export default async function InvitePreviewPage({
   params,
-  searchParams,
 }: {
   params: { token: string }
   searchParams: { url?: string }
@@ -20,126 +19,87 @@ export default async function InvitePreviewPage({
 
   if (!guest) notFound()
 
-  const rsvpUrl = searchParams.url && searchParams.url !== 'undefined' ? searchParams.url : ''
-
   const eventDateStr = config?.event_date
-    ? new Date(config.event_date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
 
-  const location = [config?.synagogue_name, config?.address, config?.city].filter(Boolean).join(' • ')
-
   return (
-    <div
-      dir="rtl"
-      style={{
-        background: 'linear-gradient(160deg, #faf8f5 0%, #f0ebe0 100%)',
-        fontFamily: "'Segoe UI', Arial, sans-serif",
-        width: '100%',
-        padding: '0',
-        margin: '0',
-      }}
-    >
-      {/* Gold top bar */}
-      <div style={{ height: '6px', background: 'linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c)' }} />
+    <div dir="rtl" className="min-h-screen flex items-center justify-center bg-stone-50 p-0 m-0">
+      <div className="w-full bg-white" style={{ maxWidth: 380 }}>
 
-      <div style={{ padding: '28px 28px 24px', textAlign: 'center' }}>
+        {/* Gold stripe */}
+        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#b8963e,#e8c97a,#b8963e)' }} />
 
-        {/* Greeting */}
-        <p style={{ color: '#9c8060', fontSize: '13px', letterSpacing: '2px', marginBottom: '16px', marginTop: '0' }}>
-          ♥ שלום, {guest.name}
-        </p>
+        <div className="px-8 py-8 text-center">
 
-        {/* Child name */}
-        <h1 style={{
-          fontSize: '52px',
-          fontWeight: '900',
-          color: '#2c2416',
-          margin: '0 0 4px 0',
-          lineHeight: '1.1',
-          fontFamily: 'Georgia, serif',
-        }}>
-          {config?.child_name || 'בר מצווה'}
-        </h1>
+          {/* Guest greeting */}
+          <p className="text-xs text-stone-400 tracking-widest mb-5">שלום, {guest.name} ♥</p>
 
-        <p style={{ color: '#7a6a50', fontSize: '14px', margin: '0 0 20px 0' }}>
-          חוגג בר מצווה
-        </p>
+          {/* Child name */}
+          <h1 className="font-serif font-black text-stone-900 mb-1" style={{ fontSize: 52, lineHeight: 1.1 }}>
+            {config?.child_name || 'בר מצווה'}
+          </h1>
+          <p className="text-stone-500 text-sm mb-5">חוגג בר מצווה</p>
 
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(90deg, transparent, #c9a84c)' }} />
-          <span style={{ color: '#c9a84c', fontSize: '16px' }}>✦</span>
-          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(90deg, #c9a84c, transparent)' }} />
-        </div>
+          {/* Divider */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-amber-200" />
+            <span className="text-amber-400 text-sm">✦</span>
+            <div className="flex-1 h-px bg-amber-200" />
+          </div>
 
-        {/* Event details */}
-        <div style={{ background: 'rgba(255,255,255,0.6)', borderRadius: '16px', padding: '16px 20px', marginBottom: '16px', textAlign: 'right' }}>
-          {config?.parasha && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '18px' }}>📖</span>
-              <span style={{ color: '#2c2416', fontWeight: '700', fontSize: '14px' }}>{config.parasha}</span>
-            </div>
-          )}
-          {(config?.hebrew_date || eventDateStr) && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '18px' }}>📅</span>
-              <div>
-                {config?.hebrew_date && <div style={{ color: '#2c2416', fontWeight: '600', fontSize: '13px' }}>{config.hebrew_date}</div>}
-                {eventDateStr && <div style={{ color: '#6b5a3e', fontSize: '12px' }}>{eventDateStr}</div>}
+          {/* Details */}
+          <div className="space-y-2.5 text-sm text-right mb-6">
+            {config?.parasha && (
+              <div className="flex items-center gap-3">
+                <span>📖</span>
+                <span className="font-bold text-stone-800">{config.parasha}</span>
               </div>
-            </div>
+            )}
+            {config?.hebrew_date && (
+              <div className="flex items-center gap-3">
+                <span>🗓</span>
+                <span className="text-stone-700">{config.hebrew_date}</span>
+              </div>
+            )}
+            {eventDateStr && (
+              <div className="flex items-center gap-3">
+                <span>📅</span>
+                <span className="text-stone-600">{eventDateStr}</span>
+              </div>
+            )}
+            {config?.event_time && (
+              <div className="flex items-center gap-3">
+                <span>🕐</span>
+                <span className="text-stone-700">שעה <strong>{config.event_time}</strong></span>
+              </div>
+            )}
+            {config?.synagogue_name && (
+              <div className="flex items-center gap-3">
+                <span>🕍</span>
+                <span className="font-bold text-stone-800">{config.synagogue_name}</span>
+              </div>
+            )}
+            {(config?.address || config?.city) && (
+              <div className="flex items-center gap-3">
+                <span>📍</span>
+                <span className="text-stone-600">{[config?.address, config?.city].filter(Boolean).join(', ')}</span>
+              </div>
+            )}
+          </div>
+
+          {config?.custom_message && (
+            <p className="text-stone-400 text-xs italic leading-relaxed mb-4">{config.custom_message}</p>
           )}
-          {config?.event_time && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '18px' }}>🕐</span>
-              <span style={{ color: '#2c2416', fontSize: '13px' }}>שעה <strong>{config.event_time}</strong></span>
-            </div>
-          )}
-          {location && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: config?.parents_names ? '10px' : '0' }}>
-              <span style={{ fontSize: '18px' }}>📍</span>
-              <span style={{ color: '#2c2416', fontSize: '13px', lineHeight: '1.5' }}>{location}</span>
-            </div>
-          )}
+
           {config?.parents_names && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(201,168,76,0.2)' }}>
-              <span style={{ fontSize: '18px' }}>👨‍👩‍👦</span>
-              <span style={{ color: '#6b5a3e', fontSize: '12px' }}>{config.parents_names}</span>
-            </div>
+            <p className="text-stone-400 text-xs">{config.parents_names}</p>
           )}
         </div>
 
-        {/* Custom message */}
-        {config?.custom_message && (
-          <p style={{ color: '#7a6a50', fontSize: '12px', fontStyle: 'italic', margin: '0 0 16px 0', lineHeight: '1.6' }}>
-            {config.custom_message}
-          </p>
-        )}
-
-        {/* RSVP Button */}
-        {rsvpUrl && (
-          <a
-            href={rsvpUrl}
-            style={{
-              display: 'inline-block',
-              background: 'linear-gradient(135deg, #2e7d52, #3da86e)',
-              color: '#ffffff',
-              fontWeight: '700',
-              fontSize: '15px',
-              padding: '14px 32px',
-              borderRadius: '50px',
-              textDecoration: 'none',
-              boxShadow: '0 4px 15px rgba(46,125,82,0.3)',
-              marginBottom: '4px',
-            }}
-          >
-            ✉️ לאישור הגעה לחץ כאן
-          </a>
-        )}
+        {/* Gold stripe */}
+        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#b8963e,#e8c97a,#b8963e)' }} />
       </div>
-
-      {/* Gold bottom bar */}
-      <div style={{ height: '6px', background: 'linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c)' }} />
     </div>
   )
 }

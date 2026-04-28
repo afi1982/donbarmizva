@@ -39,11 +39,10 @@ async function resolveChat(phone) {
 }
 
 function buildMessage(template, guest) {
-  const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
   return template
     .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
-    .replace(/{link}/g, shortUrl)
+    .replace(/\n?{link}\n?/g, '')
     .replace(/{custom_message}/g, '')
     .trim()
 }
@@ -133,12 +132,16 @@ app.post('/send', async (req, res) => {
     const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
     const chatId = await resolveChat(guest.phone)
 
+    const caption = message
+      ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+      : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+
     try {
       const media = await captureInvitation(guest.token, shortUrl)
-      await client.sendMessage(chatId, media, { caption: message })
+      await client.sendMessage(chatId, media, { caption })
     } catch (screenshotErr) {
       console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
-      await client.sendMessage(chatId, message)
+      await client.sendMessage(chatId, caption)
     }
 
     if (mode === 'reminder') {
@@ -192,7 +195,10 @@ app.post('/send-all', async (req, res) => {
         const chatId = await resolveChat(guest.phone)
         try {
           const media = await captureInvitation(guest.token, shortUrl)
-          await client.sendMessage(chatId, media, { caption: message })
+          const cap = message
+            ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+            : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+          await client.sendMessage(chatId, media, { caption: cap })
         } catch {
           await client.sendMessage(chatId, message)
         }
