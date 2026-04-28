@@ -17,7 +17,12 @@ export default function LoginPage() {
     if (res.ok) {
       router.push('/admin')
     } else {
-      setError('סיסמה שגויה')
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 500) {
+        setError('שגיאת הגדרה: ADMIN_PASSWORD חסר ב-Vercel')
+      } else {
+        setError('סיסמה שגויה')
+      }
     }
   }
 
