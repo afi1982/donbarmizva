@@ -56,7 +56,8 @@
       "Bash(mkdir -p \"C:/Users/TempAdmin/Desktop/BARMIZVA/app/confirmed/[token]\")",
       "Bash(mkdir -p \"C:/Users/TempAdmin/Desktop/BARMIZVA/app/maybe/[token]\")",
       "Bash(mkdir -p \"C:/Users/TempAdmin/Desktop/BARMIZVA/app/declined/[token]\")",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git restore *)"
     ]
   }
 }

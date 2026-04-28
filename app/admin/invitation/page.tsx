@@ -15,8 +15,8 @@ const FIELDS: { key: keyof InvitationConfig; label: string; type?: string; rows?
   { key: 'parents_names',   label: 'שמות ההורים' },
   { key: 'siblings_names',  label: 'שמות האחים' },
   { key: 'custom_message',  label: 'נוסח חופשי להזמנה', rows: 3 },
-  { key: 'whatsapp_message', label: 'תבנית הודעת WhatsApp ({name}, {link}, {custom_message})', rows: 4 },
-  { key: 'reminder_message', label: 'תבנית הודעת תזכורת ({name}, {link})', rows: 3 },
+  { key: 'whatsapp_message', label: 'הודעת WhatsApp — {name} = שם, {link} = הלינק המלא לאישור הגעה', rows: 5 },
+  { key: 'reminder_message', label: 'הודעת תזכורת — {name} = שם, {link} = הלינק המלא', rows: 4 },
 ]
 
 export default function InvitationPage() {
