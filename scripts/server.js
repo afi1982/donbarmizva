@@ -39,12 +39,12 @@ async function resolveChat(phone) {
 }
 
 function buildMessage(template, guest) {
-  const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
   return template
     .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
-    .replace(/{link}/g, shortUrl)
+    .replace(/\n?{link}\n?/g, '')
     .replace(/{custom_message}/g, '')
+    .trim()
 }
 
 async function captureInvitation(token, shortUrl) {
@@ -134,8 +134,7 @@ app.post('/send', async (req, res) => {
 
     try {
       const media = await captureInvitation(guest.token, shortUrl)
-      const caption = `שלום ${guest.name} 🎉`
-      await client.sendMessage(chatId, media, { caption })
+      await client.sendMessage(chatId, media, { caption: message })
     } catch (screenshotErr) {
       console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
       await client.sendMessage(chatId, message)
@@ -192,8 +191,7 @@ app.post('/send-all', async (req, res) => {
         const chatId = await resolveChat(guest.phone)
         try {
           const media = await captureInvitation(guest.token, shortUrl)
-          const caption = mode === 'reminder' ? message : `שלום ${guest.name} 🎉`
-          await client.sendMessage(chatId, media, { caption })
+          await client.sendMessage(chatId, media, { caption: message })
         } catch {
           await client.sendMessage(chatId, message)
         }
