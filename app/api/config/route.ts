@@ -32,12 +32,17 @@ export async function PUT(request: NextRequest) {
   )
 
   // Try update first (row with id=1 should always exist)
+  console.log('PUT update fields:', JSON.stringify(update))
+
   const { data: updated, error: updateError } = await supabaseAdmin
     .from('invitation_config')
     .update(update)
     .eq('id', 1)
     .select()
     .maybeSingle()
+
+  console.log('PUT updated row:', JSON.stringify(updated))
+  console.log('PUT updateError:', JSON.stringify(updateError))
 
   if (updateError) {
     console.error('Config update error:', JSON.stringify(updateError))
@@ -46,6 +51,7 @@ export async function PUT(request: NextRequest) {
 
   // Row didn't exist yet — insert it
   if (!updated) {
+    console.log('No row found, inserting...')
     const { data: inserted, error: insertError } = await supabaseAdmin
       .from('invitation_config')
       .insert({ id: 1, ...update })
@@ -55,6 +61,7 @@ export async function PUT(request: NextRequest) {
       console.error('Config insert error:', JSON.stringify(insertError))
       return NextResponse.json({ error: insertError.message }, { status: 500 })
     }
+    console.log('Inserted:', JSON.stringify(inserted))
     return NextResponse.json(inserted)
   }
 
