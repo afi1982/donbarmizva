@@ -130,6 +130,8 @@ app.post('/send', async (req, res) => {
 
     if (mode === 'reminder') {
       await supabase.from('guests').update({ reminder_sent: true }).eq('id', guestId)
+    } else {
+      await supabase.from('guests').update({ invited_at: new Date().toISOString() }).eq('id', guestId)
     }
 
     console.log(`✓ נשלח ל-${guest.name} (${guest.phone})`)
@@ -152,7 +154,7 @@ app.post('/send-all', async (req, res) => {
     if (mode === 'reminder') {
       query = query.eq('status', 'maybe').eq('reminder_sent', false)
     } else {
-      query = query.eq('status', 'pending')
+      query = query.eq('status', 'pending').is('invited_at', null)
     }
 
     const [{ data: guests, error: gErr }, { data: config }] = await Promise.all([
@@ -182,6 +184,8 @@ app.post('/send-all', async (req, res) => {
         }
         if (mode === 'reminder') {
           await supabase.from('guests').update({ reminder_sent: true }).eq('id', guest.id)
+        } else {
+          await supabase.from('guests').update({ invited_at: new Date().toISOString() }).eq('id', guest.id)
         }
         sent++
         results.push({ name: guest.name, success: true })

@@ -30,6 +30,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
   const [errorMap, setErrorMap] = useState<Record<string, string>>({})
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [confirmResend, setConfirmResend] = useState<string | null>(null)
 
   async function send(guestId: string, mode: 'invite' | 'reminder') {
     setStatusMap(prev => ({ ...prev, [guestId]: 'loading' }))
@@ -78,6 +79,8 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
         const showReminder = guest.status === 'maybe' && !!config?.reminder_message
         const isConfirming = confirmDelete === guest.id
         const isDeleting = deleting === guest.id
+        const isConfirmingResend = confirmResend === guest.id
+        const alreadyInvited = !!guest.invited_at
 
         return (
           <div key={guest.id} className={`flex items-start gap-2 p-3 border rounded-xl transition-colors ${isConfirming ? 'bg-red-50 border-red-200' : 'bg-white border-stone-100 hover:border-stone-200'}`}>
@@ -117,9 +120,27 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
             {(showInvite || showReminder) && !isConfirming && (
               s === 'sent' ? (
                 <span className="text-xs text-emerald-600 font-bold px-2 py-1.5 flex-shrink-0">✓ נשלח</span>
+              ) : isConfirmingResend ? (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <span className="text-amber-600 text-xs font-medium whitespace-nowrap">נשלח כבר — שלח שוב?</span>
+                  <button
+                    onClick={() => { setConfirmResend(null); send(guest.id, 'invite') }}
+                    className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-lg"
+                  >כן</button>
+                  <button
+                    onClick={() => setConfirmResend(null)}
+                    className="text-stone-400 hover:text-stone-600 text-xs px-1.5 py-1"
+                  >ביטול</button>
+                </div>
               ) : (
                 <button
-                  onClick={() => send(guest.id, showInvite ? 'invite' : 'reminder')}
+                  onClick={() => {
+                    if (showInvite && alreadyInvited && s === 'idle') {
+                      setConfirmResend(guest.id)
+                    } else {
+                      send(guest.id, showInvite ? 'invite' : 'reminder')
+                    }
+                  }}
                   disabled={s === 'loading'}
                   className={`text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap flex-shrink-0 disabled:opacity-60 ${
                     s === 'error' ? 'bg-red-400 hover:bg-red-500' :

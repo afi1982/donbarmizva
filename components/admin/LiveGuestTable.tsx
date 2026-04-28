@@ -21,7 +21,9 @@ export default function LiveGuestTable({ config }: { config?: Partial<Invitation
     return () => clearInterval(id)
   }, [load])
 
-  const pending = guests.filter(g => g.status === 'pending').length
+  const pendingGuests = guests.filter(g => g.status === 'pending')
+  const notYetInvited = pendingGuests.filter(g => !g.invited_at).length
+  const alreadyInvited = pendingGuests.filter(g => !!g.invited_at).length
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 p-4">
@@ -30,7 +32,7 @@ export default function LiveGuestTable({ config }: { config?: Partial<Invitation
           <h2 className="font-bold text-stone-700 text-sm">כל המוזמנים ({guests.length})</h2>
           <AutoRefresh intervalMs={10000} onRefresh={load} />
         </div>
-        <SendAllButton mode="invite" count={pending} />
+        <SendAllButton mode="invite" count={notYetInvited} alreadyInvited={alreadyInvited} />
       </div>
       <GuestTable guests={guests} config={config} />
     </div>

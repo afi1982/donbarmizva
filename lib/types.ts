@@ -7,6 +7,7 @@ export interface Guest {
   token: string
   status: GuestStatus
   responded_at: string | null
+  invited_at: string | null
   reminder_sent: boolean
   created_at: string
 }
