@@ -14,10 +14,12 @@ const MODE = process.argv.includes('--mode')
 
 async function getGuests() {
   if (MODE === 'reminder') {
-    const { data } = await supabase.from('guests').select('*').eq('status', 'maybe').eq('reminder_sent', false)
+    const { data, error } = await supabase.from('guests').select('*').eq('status', 'maybe').eq('reminder_sent', false)
+    if (error) { console.error('❌ Supabase error:', error.message); process.exit(1) }
     return data || []
   }
-  const { data } = await supabase.from('guests').select('*').eq('status', 'pending')
+  const { data, error } = await supabase.from('guests').select('*').eq('status', 'pending')
+  if (error) { console.error('❌ Supabase error:', error.message); process.exit(1) }
   return data || []
 }
 
@@ -69,7 +71,19 @@ async function main() {
 
   client.on('ready', async () => {
     console.log('✅ WhatsApp מחובר!\n')
+
+    if (!config) {
+      console.error('❌ לא נמצאה הגדרת הזמנה. מלא את פרטי ההזמנה בפאנל הניהול → הזמנה.')
+      await client.destroy(); process.exit(1)
+    }
+
     const template = MODE === 'reminder' ? config.reminder_message : config.whatsapp_message
+
+    if (!template) {
+      console.error('❌ נוסח ההודעה ריק. מלא אותו בפאנל הניהול → הזמנה → נוסח הודעת WhatsApp.')
+      await client.destroy(); process.exit(1)
+    }
+
     let sent = 0, failed = 0
 
     for (const guest of guests) {

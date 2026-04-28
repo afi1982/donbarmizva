@@ -1,0 +1,16 @@
+2026/04/28-16:22:24.925 2a30 Reusing MANIFEST C:\Users\TempAdmin\Desktop\BARMIZVA\scripts\.wwebjs_auth\session-barmizva\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/28-16:22:24.925 2a30 Recovering log #101
+2026/04/28-16:22:24.950 2a30 Reusing old log C:\Users\TempAdmin\Desktop\BARMIZVA\scripts\.wwebjs_auth\session-barmizva\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000101.log 
+2026/04/28-16:22:28.862 2a30 Level-0 table #108: started
+2026/04/28-16:22:28.883 2a30 Level-0 table #108: 1103615 bytes OK
+2026/04/28-16:22:28.884 2a30 Delete type=0 #101
+2026/04/28-16:22:28.891 2a30 Compacting 1@1 + 3@2 files
+2026/04/28-16:22:28.934 2a30 Generated table #109@1: 74557 keys, 2227772 bytes
+2026/04/28-16:22:28.982 2a30 Generated table #110@1: 31466 keys, 2202405 bytes
+2026/04/28-16:22:28.998 2a30 Generated table #111@1: 11346 keys, 861502 bytes
+2026/04/28-16:22:28.998 2a30 Compacted 1@1 + 3@2 files => 5291679 bytes
+2026/04/28-16:22:28.998 2a30 compacted to: files[ 0 0 3 0 0 0 0 ]
+2026/04/28-16:22:28.999 2a30 Delete type=2 #103
+2026/04/28-16:22:28.999 2a30 Delete type=2 #104
+2026/04/28-16:22:28.999 2a30 Delete type=2 #105
+2026/04/28-16:22:28.999 2a30 Delete type=2 #108
