@@ -3,7 +3,23 @@ import { useEffect, useState } from 'react'
 import { InvitationConfig } from '@/lib/types'
 import InvitationPreview from '@/components/admin/InvitationPreview'
 
-const FIELDS: { key: keyof InvitationConfig; label: string; type?: string; rows?: number }[] = [
+const DEFAULT_WHATSAPP = `שלום {name} 🎉
+
+דון בר אל חוגג בר מצווה!
+אנחנו שמחים להזמין אותך לשמוח איתנו.
+
+לאישור הגעה לחץ כאן:
+{link}
+
+נשמח לראותך 🙏`
+
+const DEFAULT_REMINDER = `שלום {name} 🙏
+
+טרם קיבלנו אישור הגעה לבר המצווה של דון.
+נשמח לדעת אם תוכל להגיע:
+{link}`
+
+const BASIC_FIELDS: { key: keyof InvitationConfig; label: string; type?: string }[] = [
   { key: 'child_name',      label: 'שם הבר מצווה' },
   { key: 'event_date',      label: 'תאריך האירוע', type: 'date' },
   { key: 'event_time',      label: 'שעת האירוע' },
@@ -14,9 +30,6 @@ const FIELDS: { key: keyof InvitationConfig; label: string; type?: string; rows?
   { key: 'city',            label: 'עיר' },
   { key: 'parents_names',   label: 'שמות ההורים' },
   { key: 'siblings_names',  label: 'שמות האחים' },
-  { key: 'custom_message',  label: 'נוסח חופשי להזמנה', rows: 3 },
-  { key: 'whatsapp_message', label: 'הודעת WhatsApp — {name} = שם, {link} = הלינק המלא לאישור הגעה', rows: 5 },
-  { key: 'reminder_message', label: 'הודעת תזכורת — {name} = שם, {link} = הלינק המלא', rows: 4 },
 ]
 
 export default function InvitationPage() {
@@ -65,23 +78,81 @@ export default function InvitationPage() {
           </button>
         </div>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-4">
-          {FIELDS.map(({ key, label, type, rows }) => (
+          {/* Basic fields */}
+          {BASIC_FIELDS.map(({ key, label, type }) => (
             <div key={key}>
               <label className="text-sm font-medium text-stone-700 block mb-1">{label}</label>
-              {rows ? (
-                <textarea value={(config[key] as string) ?? ''} onChange={e => handleChange(key, e.target.value)}
-                  rows={rows} dir="rtl"
-                  className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" />
-              ) : (
-                <input type={type ?? 'text'} value={(config[key] as string) ?? ''} onChange={e => handleChange(key, e.target.value)}
-                  dir={type === 'date' ? 'ltr' : 'rtl'}
-                  className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-              )}
+              <input
+                type={type ?? 'text'}
+                value={(config[key] as string) ?? ''}
+                onChange={e => handleChange(key, e.target.value)}
+                dir={type === 'date' ? 'ltr' : 'rtl'}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
             </div>
           ))}
+
+          {/* Custom message */}
+          <div>
+            <label className="text-sm font-medium text-stone-700 block mb-1">נוסח חופשי להזמנה</label>
+            <textarea
+              value={(config.custom_message as string) ?? ''}
+              onChange={e => handleChange('custom_message', e.target.value)}
+              rows={3} dir="rtl"
+              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+            />
+          </div>
+
+          {/* WhatsApp message */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-stone-700">הודעת WhatsApp</label>
+              <button
+                onClick={() => handleChange('whatsapp_message', DEFAULT_WHATSAPP)}
+                className="text-xs text-amber-600 hover:text-amber-800 underline"
+              >
+                אפס לברירת מחדל
+              </button>
+            </div>
+            <div className="text-xs text-stone-400 mb-1">
+              <code className="bg-stone-100 px-1 rounded">{'{name}'}</code> = שם המוזמן &nbsp;|&nbsp;
+              <code className="bg-stone-100 px-1 rounded">{'{link}'}</code> = הלינק המלא לאישור (אל תכתוב URL ידנית!)
+            </div>
+            <textarea
+              value={(config.whatsapp_message as string) ?? ''}
+              onChange={e => handleChange('whatsapp_message', e.target.value)}
+              rows={6} dir="rtl"
+              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none font-mono"
+            />
+          </div>
+
+          {/* Reminder message */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-stone-700">הודעת תזכורת</label>
+              <button
+                onClick={() => handleChange('reminder_message', DEFAULT_REMINDER)}
+                className="text-xs text-amber-600 hover:text-amber-800 underline"
+              >
+                אפס לברירת מחדל
+              </button>
+            </div>
+            <div className="text-xs text-stone-400 mb-1">
+              <code className="bg-stone-100 px-1 rounded">{'{name}'}</code> = שם המוזמן &nbsp;|&nbsp;
+              <code className="bg-stone-100 px-1 rounded">{'{link}'}</code> = הלינק המלא
+            </div>
+            <textarea
+              value={(config.reminder_message as string) ?? ''}
+              onChange={e => handleChange('reminder_message', e.target.value)}
+              rows={5} dir="rtl"
+              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none font-mono"
+            />
+          </div>
         </div>
+
         <div className="sticky top-24 self-start">
           <p className="text-sm font-medium text-stone-600 mb-3">תצוגה מקדימה</p>
           <InvitationPreview config={config} />
