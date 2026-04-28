@@ -8,7 +8,7 @@ import AutoRefresh from '@/components/admin/AutoRefresh'
 export const dynamic = 'force-dynamic'
 
 const STATUS_LABEL: Record<string, string> = {
-  coming: 'מגיע ✓', not_coming: 'לא מגיע', maybe: 'לא בטוח', pending: 'ממתין',
+  coming: 'מגיע בשמחה ✓', not_coming: 'לא אוכל להגיע', maybe: 'עדיין לא בטוח', pending: 'ממתין',
 }
 const STATUS_BADGE: Record<string, string> = {
   coming: 'bg-emerald-100 text-emerald-700',
@@ -59,19 +59,19 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
           <div className="text-4xl font-black text-emerald-600">{coming}</div>
-          <div className="text-xs font-semibold text-emerald-500 mt-1">מגיעים</div>
-        </div>
-        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-          <div className="text-4xl font-black text-red-500">{notComing}</div>
-          <div className="text-xs font-semibold text-red-400 mt-1">לא מגיעים</div>
+          <div className="text-xs font-semibold text-emerald-500 mt-1">מגיע בשמחה</div>
         </div>
         <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-center">
           <div className="text-4xl font-black text-amber-500">{maybe}</div>
-          <div className="text-xs font-semibold text-amber-400 mt-1">לא בטוח</div>
+          <div className="text-xs font-semibold text-amber-400 mt-1">עדיין לא בטוח</div>
+        </div>
+        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
+          <div className="text-4xl font-black text-red-500">{notComing}</div>
+          <div className="text-xs font-semibold text-red-400 mt-1">לא אוכל להגיע</div>
         </div>
         <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
           <div className="text-4xl font-black text-stone-400">{pending}</div>
-          <div className="text-xs font-semibold text-stone-400 mt-1">ממתינים</div>
+          <div className="text-xs font-semibold text-stone-400 mt-1">ממתין</div>
         </div>
       </div>
 

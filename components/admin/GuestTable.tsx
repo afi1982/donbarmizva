@@ -10,7 +10,7 @@ const STATUS_BADGE: Record<GuestStatus, string> = {
 }
 const STATUS_LABEL: Record<GuestStatus, string> = {
   coming:     'מגיע ✓',
-  not_coming: 'לא מגיע',
+  not_coming: 'לא אוכל',
   maybe:      'לא בטוח',
   pending:    'ממתין',
 }
