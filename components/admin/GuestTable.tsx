@@ -23,6 +23,7 @@ function normalizePhone(phone: string) {
 
 function buildWaUrl(guest: Guest, template: string) {
   const msg = template
+    .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
     .replace(/{link}/g, `${BASE_URL}/rsvp/${guest.token}`)
     .replace(/{custom_message}/g, '')
