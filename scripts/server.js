@@ -39,10 +39,11 @@ async function resolveChat(phone) {
 }
 
 function buildMessage(template, guest) {
+  const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
   return template
     .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
-    .replace(/\n?{link}\n?/g, '')
+    .replace(/{link}/g, shortUrl)
     .replace(/{custom_message}/g, '')
     .trim()
 }
