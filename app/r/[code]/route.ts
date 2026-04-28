@@ -12,10 +12,10 @@ export async function GET(
     .select('token')
     .ilike('token', `${code}%`)
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (!data?.token) {
-    return NextResponse.redirect(new URL('/', _req.url))
+    return NextResponse.redirect(new URL('/rsvp/not-found', _req.url))
   }
 
   return NextResponse.redirect(new URL(`/rsvp/${data.token}`, _req.url))
