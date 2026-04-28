@@ -46,7 +46,11 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
       setStatusMap(prev => ({ ...prev, [guestId]: 'sent' }))
     } catch (err: unknown) {
       setStatusMap(prev => ({ ...prev, [guestId]: 'error' }))
-      setErrorMap(prev => ({ ...prev, [guestId]: (err as Error).message }))
+      const msg = (err as Error).message
+      setErrorMap(prev => ({
+        ...prev,
+        [guestId]: msg.includes('fetch') ? 'השרת לא פועל — הפעל שרת-ווצאפ.bat' : msg,
+      }))
     }
   }
 
