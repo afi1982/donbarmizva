@@ -26,17 +26,41 @@ let client
 
 function normalizePhone(phone) {
   const digits = phone.replace(/\D/g, '')
-  if (digits.startsWith('972')) return digits + '@c.us'
-  if (digits.startsWith('0')) return '972' + digits.slice(1) + '@c.us'
-  return digits + '@c.us'
+  if (digits.startsWith('972')) return digits
+  if (digits.startsWith('0')) return '972' + digits.slice(1)
+  return digits
+}
+
+async function resolveChat(phone) {
+  const number = normalizePhone(phone)
+  const numberId = await client.getNumberId(number)
+  if (!numberId) throw new Error(`המספר ${phone} אינו רשום ב-WhatsApp`)
+  return numberId._serialized
 }
 
 function buildMessage(template, guest) {
+  const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
   return template
     .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
-    .replace(/{link}/g, `${BASE_URL}/rsvp/${guest.token}`)
+    .replace(/{link}/g, shortUrl)
     .replace(/{custom_message}/g, '')
+}
+
+async function captureInvitation(token) {
+  const { MessageMedia } = require('whatsapp-web.js')
+  const url = `${BASE_URL}/rsvp/${token}`
+  const browser = client.pupBrowser
+  const page = await browser.newPage()
+  try {
+    await page.setViewport({ width: 430, height: 900, deviceScaleFactor: 2 })
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 })
+    await new Promise(r => setTimeout(r, 1200))
+    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 90, fullPage: true })
+    return new MessageMedia('image/jpeg', screenshot, 'invitation.jpg')
+  } finally {
+    await page.close()
+  }
 }
 
 function initWhatsApp() {
@@ -94,8 +118,15 @@ app.post('/send', async (req, res) => {
     if (!template) return res.status(400).json({ error: 'נוסח ההודעה ריק' })
 
     const message = buildMessage(template, guest)
-    const chatId = normalizePhone(guest.phone)
-    await client.sendMessage(chatId, message)
+    const chatId = await resolveChat(guest.phone)
+
+    try {
+      const media = await captureInvitation(guest.token)
+      await client.sendMessage(chatId, media, { caption: message })
+    } catch (screenshotErr) {
+      console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
+      await client.sendMessage(chatId, message)
+    }
 
     if (mode === 'reminder') {
       await supabase.from('guests').update({ reminder_sent: true }).eq('id', guestId)
@@ -142,7 +173,13 @@ app.post('/send-all', async (req, res) => {
     for (const guest of guests) {
       try {
         const message = buildMessage(template, guest)
-        await client.sendMessage(normalizePhone(guest.phone), message)
+        const chatId = await resolveChat(guest.phone)
+        try {
+          const media = await captureInvitation(guest.token)
+          await client.sendMessage(chatId, media, { caption: message })
+        } catch {
+          await client.sendMessage(chatId, message)
+        }
         if (mode === 'reminder') {
           await supabase.from('guests').update({ reminder_sent: true }).eq('id', guest.id)
         }

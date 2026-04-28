@@ -39,7 +39,7 @@ export default function InvitationPage() {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/config').then(r => r.json()).then(setConfig)
+    fetch('/api/config', { cache: 'no-store' }).then(r => r.json()).then(setConfig)
   }, [])
 
   function handleChange(key: keyof InvitationConfig, value: string) {

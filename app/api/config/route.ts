@@ -51,15 +51,34 @@ export async function PUT(request: NextRequest) {
     Object.entries(body).filter(([k]) => allowed.includes(k))
   )
 
-  const { data, error } = await supabaseAdmin
+  // Check if row exists
+  const { data: existing } = await supabaseAdmin
     .from('invitation_config')
-    .upsert({ id: 1, ...update }, { onConflict: 'id' })
-    .select()
-    .single()
+    .select('id')
+    .eq('id', 1)
+    .maybeSingle()
+
+  let data, error
+  if (existing) {
+    // Row exists → update
+    ;({ data, error } = await supabaseAdmin
+      .from('invitation_config')
+      .update(update)
+      .eq('id', 1)
+      .select()
+      .single())
+  } else {
+    // Row doesn't exist → insert
+    ;({ data, error } = await supabaseAdmin
+      .from('invitation_config')
+      .insert({ id: 1, ...update })
+      .select()
+      .single())
+  }
 
   if (error) {
-    console.error('Config upsert error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('Config save error:', JSON.stringify(error))
+    return NextResponse.json({ error: error.message, details: error }, { status: 500 })
   }
   return NextResponse.json(data)
 }
