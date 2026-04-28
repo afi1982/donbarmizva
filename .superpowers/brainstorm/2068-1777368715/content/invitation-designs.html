@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עיצובי הזמנה</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+    direction: rtl;
+  }
+  h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 8px;
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    margin-bottom: 40px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .invitation-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .invitation-wrapper:hover { transform: translateY(-4px); }
+  .invitation-wrapper.selected .invite-card {
+    outline: 3px solid #FFD700;
+    outline-offset: 6px;
+  }
+  .invite-card {
+    width: 280px;
+    min-height: 420px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transition: box-shadow 0.2s;
+  }
+  .invite-card:hover { box-shadow: 0 28px 70px rgba(0,0,0,0.6); }
+  .design-label {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .design-desc {
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .select-btn {
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: #FFD700;
+    padding: 8px 24px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .select-btn:hover { background: rgba(255,215,0,0.25); }
+  .invitation-wrapper.selected .select-btn {
+    background: #FFD700;
+    color: #000;
+    border-color: #FFD700;
+  }
+
+  /* ===== DESIGN 1: Blue Watercolor + Gold ===== */
+  .design1 {
+    background: linear-gradient(180deg, #ddeeff 0%, #c8e0f8 30%, #b8d4f0 60%, #1a3a7a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 20px;
+    position: relative;
+  }
+  .design1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 200px;
+    background: radial-gradient(ellipse at 20% 0%, rgba(255,215,0,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 10%, rgba(255,215,0,0.2) 0%, transparent 50%);
+  }
+  .d1-confetti {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 120px;
+    overflow: hidden;
+  }
+  .d1-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: #D4AF37;
+  }
+  .d1-oval {
+    border: 2px solid #D4AF37;
+    border-radius: 50%;
+    width: 210px;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(4px);
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 0 0 0 5px rgba(212,175,55,0.15);
+    text-align: center;
+  }
+  .d1-name {
+    font-size: 34px;
+    font-weight: 900;
+    color: #D4AF37;
+    font-family: 'Times New Roman', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .d1-title {
+    font-size: 16px;
+    color: #1a3a7a;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .d1-divider { width: 60px; height: 1px; background: #D4AF37; margin: 8px auto; }
+  .d1-text { font-size: 11px; color: #444; line-height: 1.7; }
+  .d1-date {
+    font-size: 22px;
+    font-weight: 900;
+    color: #1a3a7a;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+  .d1-bottom {
+    text-align: center;
+    margin-top: 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .d1-venue { font-size: 13px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  .d1-addr { font-size: 11px; color: rgba(255,255,255,0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-top: 3px; }
+
+  /* ===== DESIGN 2: Black Cream Gold ===== */
+  .design2 {
+    background: linear-gradient(160deg, #1a1409 0%, #2a2010 50%, #1a1409 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    min-height: 420px;
+  }
+  .d2-top-stripe {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #8B6914, #D4AF37, #F5E17A, #D4AF37, #8B6914);
+  }
+  .d2-inner {
+    padding: 24px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+  }
+  .d2-star { color: #D4AF37; font-size: 24px; margin-bottom: 10px; }
+  .d2-hebrew { color: #D4AF37; font-size: 11px; letter-spacing: 4px; margin-bottom: 14px; opacity: 0.8; }
+  .d2-name {
+    font-size: 36px;
+    font-weight: 900;
+    color: #F5E17A;
+    font-family: 'Times New Roman', serif;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(212,175,55,0.4);
+    margin-bottom: 6px;
+  }
+  .d2-subtitle { font-size: 13px; color: #D4AF37; letter-spacing: 2px; margin-bottom: 18px; }
+  .d2-line { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); margin: 12px 0; }
+  .d2-text-block { color: rgba(255,255,255,0.75); font-size: 11px; line-height: 1.9; }
+  .d2-date-box {
+    border: 1px solid #D4AF37;
+    padding: 10px 20px;
+    margin: 14px 0;
+    color: #F5E17A;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  .d2-venue { color: #D4AF37; font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .d2-addr { color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 3px; }
+  .d2-bottom-stripe {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #8B6914, #D4AF37, #F5E17A, #D4AF37, #8B6914);
+    margin-top: auto;
+  }
+  .d2-badge {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #D4AF37, #F5E17A);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: #1a1409;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px rgba(212,175,55,0.5);
+  }
+
+  /* ===== DESIGN 3: Navy Gold Elegant ===== */
+  .design3 {
+    background: linear-gradient(180deg, #0d1b3e 0%, #162855 50%, #0d1b3e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .d3-border {
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+  .d3-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: #D4AF37;
+    border-style: solid;
+  }
+  .d3-tl { top: 10px; right: 10px; border-width: 2px 0 0 2px; border-radius: 0; }
+  .d3-tr { top: 10px; left: 10px; border-width: 2px 2px 0 0; border-radius: 0; }
+  .d3-bl { bottom: 10px; right: 10px; border-width: 0 0 2px 2px; }
+  .d3-br { bottom: 10px; left: 10px; border-width: 0 2px 2px 0; }
+  .d3-invite-text { color: rgba(255,255,255,0.65); font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; }
+  .d3-name {
+    font-size: 38px;
+    font-weight: 900;
+    color: #fff;
+    font-family: 'Times New Roman', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .d3-subtitle { color: #D4AF37; font-size: 14px; letter-spacing: 3px; margin-bottom: 20px; }
+  .d3-divider { display: flex; align-items: center; gap: 8px; margin: 8px 0 16px; width: 100%; }
+  .d3-divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #D4AF37); }
+  .d3-divider-line.rev { background: linear-gradient(90deg, #D4AF37, transparent); }
+  .d3-divider-star { color: #D4AF37; font-size: 12px; }
+  .d3-info { color: rgba(255,255,255,0.75); font-size: 11.5px; line-height: 2; }
+  .d3-info strong { color: #D4AF37; }
+  .d3-date {
+    font-size: 28px;
+    font-weight: 900;
+    color: #FFD700;
+    letter-spacing: 2px;
+    margin: 10px 0;
+  }
+  .d3-badge13 {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #D4AF37, #F5E17A, #D4AF37);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: #0d1b3e;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 16px rgba(212,175,55,0.4);
+  }
+  .d3-parents { color: rgba(255,255,255,0.4); font-size: 10px; margin-top: 16px; line-height: 1.7; }
+
+  /* ===== DESIGN 4: Floral White ===== */
+  .design4 {
+    background: linear-gradient(160deg, #f8f4ef 0%, #f2ece3 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    min-height: 420px;
+  }
+  .d4-floral-tl {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle at top right,
+      rgba(148,193,158,0.4) 0%,
+      rgba(106,168,120,0.2) 30%,
+      transparent 70%);
+    border-radius: 0 12px 0 100%;
+  }
+  .d4-floral-br {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 90px; height: 90px;
+    background: radial-gradient(circle at bottom left,
+      rgba(148,193,158,0.35) 0%,
+      rgba(106,168,120,0.15) 30%,
+      transparent 70%);
+    border-radius: 90px 0 12px 0;
+  }
+  .d4-leaf1 { position: absolute; top: 8px; right: 8px; font-size: 28px; opacity: 0.6; transform: rotate(-20deg); }
+  .d4-leaf2 { position: absolute; top: 20px; right: 28px; font-size: 20px; opacity: 0.4; transform: rotate(10deg); }
+  .d4-leaf3 { position: absolute; bottom: 12px; left: 8px; font-size: 24px; opacity: 0.5; transform: rotate(30deg); }
+  .d4-leaf4 { position: absolute; bottom: 24px; left: 26px; font-size: 18px; opacity: 0.35; transform: rotate(-15deg); }
+  .d4-invite-text { color: #8b7355; font-size: 11px; letter-spacing: 2px; margin-bottom: 14px; position: relative; z-index: 2; }
+  .d4-name {
+    font-size: 38px;
+    font-weight: 900;
+    color: #4a3728;
+    font-family: 'Times New Roman', serif;
+    margin-bottom: 6px;
+    position: relative; z-index: 2;
+  }
+  .d4-subtitle { color: #7a6048; font-size: 13px; margin-bottom: 16px; position: relative; z-index: 2; }
+  .d4-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, #b09070, transparent); margin: 8px auto 14px; }
+  .d4-info { color: #5a4535; font-size: 11.5px; line-height: 2; position: relative; z-index: 2; }
+  .d4-info strong { color: #4a3728; font-size: 13px; }
+  .d4-date {
+    font-size: 22px;
+    font-weight: 900;
+    color: #4a3728;
+    letter-spacing: 1px;
+    margin: 10px 0 6px;
+    position: relative; z-index: 2;
+  }
+  .d4-parents { color: #8b7355; font-size: 10px; margin-top: 16px; line-height: 1.7; position: relative; z-index: 2; }
+  .d4-flower-divider { font-size: 14px; letter-spacing: 4px; color: #9aab8a; margin: 8px 0; position: relative; z-index: 2; }
+
+  .selected-label {
+    display: none;
+    background: #FFD700;
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+  }
+  .invitation-wrapper.selected .selected-label { display: block; }
+</style>
+</head>
+<body>
+
+<h1>בחר עיצוב הזמנה לבר המצווה של דון</h1>
+<p class="subtitle">לחץ על העיצוב שאתה אוהב — ניתן לשנות הכל אחר כך</p>
+
+<div class="grid">
+
+  <!-- DESIGN 1: Blue Watercolor -->
+  <div class="invitation-wrapper" onclick="selectDesign(this, 'watercolor-blue')" id="d1">
+    <div class="invite-card design1">
+      <div class="d1-confetti">
+        <div class="d1-dot" style="width:12px;height:12px;top:15px;right:30px;opacity:0.9;"></div>
+        <div class="d1-dot" style="width:8px;height:8px;top:8px;right:60px;opacity:0.7;"></div>
+        <div class="d1-dot" style="width:16px;height:16px;top:25px;right:90px;opacity:0.6;"></div>
+        <div class="d1-dot" style="width:6px;height:6px;top:10px;left:40px;opacity:0.8;"></div>
+        <div class="d1-dot" style="width:10px;height:10px;top:30px;left:70px;opacity:0.7;"></div>
+        <div class="d1-dot" style="width:14px;height:14px;top:5px;left:110px;opacity:0.5;"></div>
+        <div class="d1-dot" style="width:7px;height:7px;top:45px;right:45px;opacity:0.6;"></div>
+        <div class="d1-dot" style="width:9px;height:9px;top:20px;right:130px;opacity:0.8;"></div>
+      </div>
+      <div class="d1-oval">
+        <div class="d1-name">דון</div>
+        <div class="d1-title">חוגג בר מצווה</div>
+        <div class="d1-divider"></div>
+        <div class="d1-text">
+          נשמח לחגוג יחד איתכם<br>
+          את שמחת בר המצווה<br>
+          של בננו היקר
+        </div>
+        <div class="d1-divider" style="margin-top:10px;"></div>
+        <div class="d1-text">שבת פרשת ___<br>יום ו׳ | שעה 19:30</div>
+        <div class="d1-date">00.00.2025</div>
+      </div>
+      <div class="d1-bottom">
+        <div class="d1-venue">בית הכנסת ___</div>
+        <div class="d1-addr">רחוב ___, עיר</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:10px;margin-top:8px;">נשמח לראותכם ❤</div>
+      </div>
+    </div>
+    <div class="design-label">כחול-ים + זהב</div>
+    <div class="design-desc">ציאן ים עם קונפטי זהב — חגיגי ומוכר</div>
+    <button class="select-btn">בחר עיצוב זה</button>
+    <div class="selected-label">✓ נבחר</div>
+  </div>
+
+  <!-- DESIGN 2: Black Gold Luxury -->
+  <div class="invitation-wrapper" onclick="selectDesign(this, 'black-gold')" id="d2">
+    <div class="invite-card design2">
+      <div class="d2-top-stripe"></div>
+      <div class="d2-inner">
+        <div class="d2-badge">13</div>
+        <div class="d2-hebrew">בר מצווה</div>
+        <div class="d2-name">דון</div>
+        <div class="d2-subtitle">בר אל</div>
+        <div class="d2-line"></div>
+        <div class="d2-text-block">
+          נשמח לחגוג יחד אתכם<br>
+          את שמחת בר המצווה<br>
+          של בננו היקר
+        </div>
+        <div class="d2-line"></div>
+        <div class="d2-text-block" style="margin-bottom:8px;">
+          שבת פרשת ___<br>
+          יום ו׳ | בשעה 19:30
+        </div>
+        <div class="d2-date-box">00.00.2025</div>
+        <div class="d2-venue">בית הכנסת ___</div>
+        <div class="d2-addr">רחוב ___, עיר</div>
+        <div class="d2-line" style="margin-top:14px;"></div>
+        <div class="d2-text-block" style="font-size:10px;opacity:0.6;">ההורים: ___ ו-___</div>
+      </div>
+      <div class="d2-bottom-stripe"></div>
+    </div>
+    <div class="design-label">שחור + זהב</div>
+    <div class="design-desc">יוקרתי ומרשים — כמו הזמנה לאירוע VIP</div>
+    <button class="select-btn">בחר עיצוב זה</button>
+    <div class="selected-label">✓ נבחר</div>
+  </div>
+
+  <!-- DESIGN 3: Navy Gold Formal -->
+  <div class="invitation-wrapper" onclick="selectDesign(this, 'navy-gold')" id="d3">
+    <div class="invite-card design3">
+      <div class="d3-border"></div>
+      <div class="d3-corner d3-tl"></div>
+      <div class="d3-corner d3-tr"></div>
+      <div class="d3-corner d3-bl"></div>
+      <div class="d3-corner d3-br"></div>
+      <div class="d3-badge13">13</div>
+      <div class="d3-invite-text">אנו שמחים להזמינכם</div>
+      <div class="d3-name">דון</div>
+      <div class="d3-subtitle">חוגג בר מצווה</div>
+      <div class="d3-divider">
+        <div class="d3-divider-line rev"></div>
+        <div class="d3-divider-star">✦</div>
+        <div class="d3-divider-line"></div>
+      </div>
+      <div class="d3-info">
+        <strong>שבת פרשת ___</strong><br>
+        יום ו׳ | כ"ה אייר תשפ"ה<br>
+        קבלת שבת בשעה 19:00<br>
+        <strong>בית הכנסת ___</strong><br>
+        רחוב ___, עיר
+      </div>
+      <div class="d3-date">00.00.2025</div>
+      <div class="d3-divider">
+        <div class="d3-divider-line rev"></div>
+        <div class="d3-divider-star">✦</div>
+        <div class="d3-divider-line"></div>
+      </div>
+      <div class="d3-parents">ההורים: ___ ו-___<br>האחים: ___</div>
+    </div>
+    <div class="design-label">נייבי + זהב</div>
+    <div class="design-desc">כחול כהה עם פרטים מוזהבים — מסורתי-מכובד</div>
+    <button class="select-btn">בחר עיצוב זה</button>
+    <div class="selected-label">✓ נבחר</div>
+  </div>
+
+  <!-- DESIGN 4: Botanical White -->
+  <div class="invitation-wrapper" onclick="selectDesign(this, 'botanical')" id="d4">
+    <div class="invite-card design4">
+      <div class="d4-floral-tl"></div>
+      <div class="d4-floral-br"></div>
+      <div class="d4-leaf1">🌿</div>
+      <div class="d4-leaf2">🍃</div>
+      <div class="d4-leaf3">🌿</div>
+      <div class="d4-leaf4">🍃</div>
+      <div class="d4-invite-text">נשמח לחגוג עמכם</div>
+      <div class="d4-name">דון</div>
+      <div class="d4-subtitle">חוגג בר מצווה</div>
+      <div class="d4-flower-divider">✦ ✿ ✦</div>
+      <div class="d4-line"></div>
+      <div class="d4-info">
+        <strong>שבת פרשת ___</strong><br>
+        יום ו׳ | כ"ה אייר תשפ"ה<br>
+        קבלת שבת 19:00
+      </div>
+      <div class="d4-date">00.00.2025</div>
+      <div class="d4-info">
+        <strong>בית הכנסת ___</strong><br>
+        רחוב ___, עיר
+      </div>
+      <div class="d4-line" style="margin-top:12px;"></div>
+      <div class="d4-parents">ההורים: ___ ו-___<br>האחים: ___</div>
+    </div>
+    <div class="design-label">בוטני-לבן</div>
+    <div class="design-desc">עדין ואלגנטי עם עיטורי עלים — נקי ורענן</div>
+    <button class="select-btn">בחר עיצוב זה</button>
+    <div class="selected-label">✓ נבחר</div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin-top:40px;">כל עיצוב ניתן לשינוי מלא — צבעים, טקסט, תמונה, רקע</p>
+
+<script>
+function selectDesign(el, id) {
+  document.querySelectorAll('.invitation-wrapper').forEach(w => w.classList.remove('selected'));
+  el.classList.add('selected');
+  if (window.__sp_record) window.__sp_record(id, el.querySelector('.design-label').textContent);
+}
+</script>
+</body>
+</html>

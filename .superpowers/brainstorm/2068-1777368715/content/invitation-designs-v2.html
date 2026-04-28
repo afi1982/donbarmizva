@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עיצובי הזמנה</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111;
+    font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    padding: 50px 20px 60px;
+    min-height: 100vh;
+    direction: rtl;
+  }
+  h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 6px;
+    font-weight: 300;
+    letter-spacing: 3px;
+  }
+  .sub {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    margin-bottom: 50px;
+    letter-spacing: 1px;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .card-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.25s;
+  }
+  .card-wrap:hover { transform: translateY(-6px); }
+  .card-wrap.selected .card-outer {
+    outline: 3px solid #FFD700;
+    outline-offset: 8px;
+    border-radius: 16px;
+  }
+  .card-outer {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    width: 300px;
+  }
+  .lbl { color: #fff; font-size: 15px; font-weight: 600; text-align: center; }
+  .desc { color: rgba(255,255,255,0.4); font-size: 12px; text-align: center; }
+  .btn {
+    background: transparent;
+    border: 1px solid rgba(255,215,0,0.5);
+    color: #FFD700;
+    padding: 8px 28px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .btn:hover { background: rgba(255,215,0,0.15); }
+  .card-wrap.selected .btn { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 700; }
+
+  /* ══════════════════════════════════════
+     DESIGN 1 — Blue Watercolor Gold (כמו "דניאל")
+     ══════════════════════════════════════ */
+  .d1 {
+    width: 300px;
+    min-height: 480px;
+    background: #c8e4f8;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 24px;
+    overflow: hidden;
+  }
+  /* watercolor background blobs */
+  .d1::before {
+    content:'';
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 160px 120px at 15% 15%, rgba(180,220,255,0.9) 0%, transparent 70%),
+      radial-gradient(ellipse 200px 160px at 85% 10%, rgba(160,210,250,0.8) 0%, transparent 70%),
+      radial-gradient(ellipse 240px 180px at 50% 5%, rgba(200,232,255,1) 0%, transparent 80%),
+      linear-gradient(180deg, #d6eeff 0%, #b8d8f5 40%, #8fb8e8 65%, #1e4899 100%);
+  }
+  /* dark blue watercolor blob at bottom */
+  .d1::after {
+    content:'';
+    position:absolute;
+    bottom:-20px; left:-10px; right:-10px; height:160px;
+    background:
+      radial-gradient(ellipse 180px 140px at 30% 80%, #1a3a8a 0%, transparent 70%),
+      radial-gradient(ellipse 200px 160px at 75% 90%, #162f7a 0%, transparent 70%),
+      radial-gradient(ellipse 240px 120px at 50% 100%, #1e4090 0%, transparent 60%);
+    border-radius: 60% 60% 0 0 / 40px;
+  }
+  .d1-confetti { position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:2; }
+  .dot { position:absolute; background:#D4AF37; border-radius:50%; }
+  .dia { position:absolute; color:#D4AF37; font-size:10px; line-height:1; transform:rotate(45deg); }
+  .d1-oval-wrap { position:relative; z-index:3; margin-top:16px; }
+  .d1-oval {
+    width:224px; min-height:310px;
+    border-radius:50%;
+    border:2px solid #D4AF37;
+    background:rgba(255,255,255,0.92);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 20px;
+    text-align:center;
+    box-shadow: 0 0 0 6px rgba(212,175,55,0.12), inset 0 0 0 4px rgba(212,175,55,0.08);
+    position:relative;
+  }
+  .d1-name {
+    font-family:'Frank Ruhl Libre','Times New Roman',serif;
+    font-size:44px; font-weight:900;
+    color:#C8922A;
+    line-height:1; margin-bottom:4px;
+  }
+  .d1-title { font-size:16px; font-weight:700; color:#1e3a7a; margin-bottom:10px; }
+  .d1-hr { width:70%; height:1px; background:linear-gradient(90deg,transparent,#D4AF37,transparent); margin:8px auto; }
+  .d1-body { font-size:11px; color:#444; line-height:1.85; }
+  .d1-hr2 { width:50%; height:1px; background:linear-gradient(90deg,transparent,#D4AF37,transparent); margin:10px auto; }
+  .d1-parsha { font-size:11px; color:#333; }
+  .d1-date { font-size:26px; font-weight:900; color:#1e3a7a; letter-spacing:1px; margin:8px 0 4px; }
+  .d1-diamonds { color:#C8922A; font-size:14px; letter-spacing:6px; }
+  .d1-bottom { position:relative; z-index:3; text-align:center; margin-top:14px; }
+  .d1-venue { font-size:14px; font-weight:700; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.6); }
+  .d1-addr { font-size:11px; color:rgba(255,255,255,0.85); text-shadow:0 1px 3px rgba(0,0,0,0.5); margin-top:3px; }
+  .d1-parents { font-size:10px; color:rgba(255,255,255,0.7); margin-top:8px; line-height:1.6; text-shadow:0 1px 3px rgba(0,0,0,0.5); }
+
+  /* ══════════════════════════════════════
+     DESIGN 2 — Black Gold Art Nouveau (כמו "יהונתן")
+     ══════════════════════════════════════ */
+  .d2 {
+    width:300px; min-height:480px;
+    background:linear-gradient(160deg,#0e0c08 0%,#1c1810 40%,#0e0c08 100%);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .d2-top-bar { width:100%; height:8px; background:linear-gradient(90deg,#6b4f10,#c9a84c,#f0d080,#f5e49a,#f0d080,#c9a84c,#6b4f10); }
+  .d2-arc-top {
+    width:100%; height:60px; position:relative; overflow:hidden;
+    flex-shrink:0;
+  }
+  .d2-arc-top svg { position:absolute; top:0; left:0; width:100%; height:100%; }
+  .d2-photo-ring {
+    width:88px; height:88px;
+    border-radius:50%;
+    border:3px solid #D4AF37;
+    background:linear-gradient(135deg,#2a2010,#3a3020);
+    display:flex; align-items:center; justify-content:center;
+    margin:8px auto 0;
+    box-shadow:0 0 0 5px rgba(212,175,55,0.15);
+    position:relative; z-index:4;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .d2-photo-icon { font-size:36px; opacity:0.4; }
+  .d2-photo-label { position:absolute; bottom:4px; font-size:8px; color:rgba(255,215,0,0.5); letter-spacing:1px; }
+  .d2-inner { padding:0 22px 0; flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; z-index:3; position:relative; }
+  .d2-supertitle { color:#c9a84c; font-size:10px; letter-spacing:5px; margin:14px 0 6px; }
+  .d2-name { font-family:'Frank Ruhl Libre','Times New Roman',serif; font-size:46px; font-weight:900; color:#F5E17A; line-height:1; text-shadow:0 2px 20px rgba(212,175,55,0.3); }
+  .d2-divline { display:flex; align-items:center; gap:8px; width:100%; margin:10px 0; }
+  .d2-divline-l { flex:1; height:1px; background:linear-gradient(90deg,transparent,#D4AF37); }
+  .d2-divline-r { flex:1; height:1px; background:linear-gradient(90deg,#D4AF37,transparent); }
+  .d2-star-c { color:#D4AF37; font-size:12px; }
+  .d2-body { color:rgba(255,255,255,0.72); font-size:11px; line-height:1.9; }
+  .d2-date-frame { border:1px solid #D4AF37; padding:9px 22px; margin:12px 0; color:#F5E17A; font-size:24px; font-weight:900; letter-spacing:2px; position:relative; }
+  .d2-date-frame::before,.d2-date-frame::after { content:'◆'; position:absolute; top:50%; transform:translateY(-50%); color:#D4AF37; font-size:10px; }
+  .d2-date-frame::before { right:-12px; }
+  .d2-date-frame::after { left:-12px; }
+  .d2-venue-name { color:#D4AF37; font-size:13px; font-weight:700; margin-top:4px; }
+  .d2-venue-addr { color:rgba(255,255,255,0.45); font-size:10px; margin-top:2px; }
+  .d2-parents-line { color:rgba(255,255,255,0.35); font-size:10px; margin-top:10px; line-height:1.7; }
+  .d2-arc-bot { width:100%; flex-shrink:0; }
+  .d2-arc-bot svg { display:block; }
+  .d2-bot-bar { width:100%; height:8px; background:linear-gradient(90deg,#6b4f10,#c9a84c,#f0d080,#f5e49a,#f0d080,#c9a84c,#6b4f10); }
+
+  /* ══════════════════════════════════════
+     DESIGN 3 — Navy Deep Gold "13" (כמו "ינאי")
+     ══════════════════════════════════════ */
+  .d3 {
+    width:300px; min-height:480px;
+    background:linear-gradient(180deg,#0c1933 0%,#162448 50%,#0c1933 100%);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    padding:22px 20px 20px;
+  }
+  .d3-border-outer { position:absolute; inset:8px; border:1px solid rgba(212,175,55,0.25); border-radius:4px; pointer-events:none; z-index:1; }
+  .d3-corner { position:absolute; width:16px; height:16px; border-color:#D4AF37; border-style:solid; z-index:2; }
+  .d3-tl { top:8px; right:8px; border-width:2px 0 0 2px; }
+  .d3-tr { top:8px; left:8px; border-width:2px 2px 0 0; }
+  .d3-bl { bottom:8px; right:8px; border-width:0 0 2px 2px; }
+  .d3-br { bottom:8px; left:8px; border-width:0 2px 2px 0; }
+  .d3-badge {
+    width:62px; height:62px; border-radius:50%;
+    background:linear-gradient(135deg,#b8860b,#D4AF37,#f5e17a,#D4AF37);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; font-weight:900; color:#0c1933;
+    box-shadow:0 0 24px rgba(212,175,55,0.5), 0 4px 12px rgba(0,0,0,0.4);
+    position:relative; z-index:3; flex-shrink:0; margin-bottom:10px;
+  }
+  .d3-invite { color:rgba(255,255,255,0.55); font-size:11px; letter-spacing:2px; position:relative; z-index:3; margin-bottom:12px; }
+  .d3-name { font-family:'Frank Ruhl Libre','Times New Roman',serif; font-size:48px; font-weight:900; color:#fff; line-height:1; position:relative; z-index:3; margin-bottom:4px; }
+  .d3-subtitle { color:#D4AF37; font-size:13px; letter-spacing:3px; position:relative; z-index:3; margin-bottom:16px; }
+  .d3-div { display:flex; align-items:center; gap:8px; width:100%; position:relative; z-index:3; margin-bottom:14px; }
+  .d3-line { flex:1; height:1px; }
+  .d3-line-r { background:linear-gradient(90deg,transparent,#D4AF37); }
+  .d3-line-l { background:linear-gradient(90deg,#D4AF37,transparent); }
+  .d3-gem { color:#D4AF37; font-size:11px; }
+  .d3-info { color:rgba(255,255,255,0.78); font-size:12px; line-height:2.0; text-align:center; position:relative; z-index:3; }
+  .d3-info strong { color:#D4AF37; display:block; }
+  .d3-date { font-size:30px; font-weight:900; color:#FFD700; letter-spacing:2px; position:relative; z-index:3; margin:10px 0 6px; text-shadow:0 0 20px rgba(255,215,0,0.3); }
+  .d3-parents { color:rgba(255,255,255,0.35); font-size:10px; margin-top:14px; line-height:1.7; position:relative; z-index:3; text-align:center; }
+  .d3-shine { position:absolute; top:0; left:0; right:0; height:200px; background:radial-gradient(ellipse 200px 100px at 50% 0%,rgba(212,175,55,0.06),transparent); pointer-events:none; }
+
+  /* ══════════════════════════════════════
+     DESIGN 4 — Botanical White (כמו "איל")
+     ══════════════════════════════════════ */
+  .d4 {
+    width:300px; min-height:480px;
+    background:linear-gradient(160deg,#faf8f5 0%,#f5f0e8 100%);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    padding:36px 28px 28px; text-align:center;
+  }
+  /* botanical SVG corners */
+  .d4-flora-tr,.d4-flora-bl { position:absolute; z-index:1; }
+  .d4-flora-tr { top:0; left:0; }
+  .d4-flora-bl { bottom:0; right:0; transform:rotate(180deg); }
+  .d4-content { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; }
+  .d4-invite { color:#8b7355; font-size:11px; letter-spacing:3px; margin-bottom:14px; }
+  .d4-name { font-family:'Frank Ruhl Libre','Times New Roman',serif; font-size:48px; font-weight:900; color:#3d2b1f; line-height:1; margin-bottom:6px; }
+  .d4-subtitle { color:#7a6048; font-size:13px; margin-bottom:18px; letter-spacing:1px; }
+  .d4-flowers { color:#7a9a6a; font-size:16px; letter-spacing:8px; margin-bottom:8px; opacity:0.7; }
+  .d4-hr { width:60%; height:1px; background:linear-gradient(90deg,transparent,#c5a87a,transparent); margin:0 auto 18px; }
+  .d4-info { color:#5a4535; font-size:12px; line-height:2; }
+  .d4-info strong { color:#3d2b1f; font-size:14px; }
+  .d4-date { font-size:24px; font-weight:900; color:#3d2b1f; letter-spacing:1px; margin:10px 0; }
+  .d4-hr2 { width:40%; height:1px; background:linear-gradient(90deg,transparent,#c5a87a,transparent); margin:10px auto; }
+  .d4-parents { color:#8b7355; font-size:10px; line-height:1.8; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>בחר עיצוב הזמנה לבר המצווה של דון</h1>
+<p class="sub">4 עיצובים ברמת הדפסה — לחץ לבחירה | הכל ניתן לעריכה</p>
+
+<div class="grid">
+
+  <!-- ═══ DESIGN 1: Blue Watercolor ═══ -->
+  <div class="card-wrap" onclick="pick(this,'d1')" id="w1">
+    <div class="card-outer">
+      <div class="d1">
+        <!-- confetti dots + diamonds -->
+        <div class="d1-confetti">
+          <div class="dot" style="width:14px;height:14px;top:12px;right:18px;opacity:.9;"></div>
+          <div class="dot" style="width:9px;height:9px;top:6px;right:50px;opacity:.7;"></div>
+          <div class="dot" style="width:18px;height:18px;top:22px;right:80px;opacity:.65;"></div>
+          <div class="dot" style="width:7px;height:7px;top:40px;right:35px;opacity:.8;"></div>
+          <div class="dot" style="width:11px;height:11px;top:8px;right:120px;opacity:.55;"></div>
+          <div class="dot" style="width:5px;height:5px;top:50px;right:100px;opacity:.6;"></div>
+          <div class="dot" style="width:13px;height:13px;top:15px;left:18px;opacity:.85;"></div>
+          <div class="dot" style="width:8px;height:8px;top:5px;left:55px;opacity:.7;"></div>
+          <div class="dot" style="width:16px;height:16px;top:28px;left:85px;opacity:.6;"></div>
+          <div class="dot" style="width:6px;height:6px;top:45px;left:40px;opacity:.75;"></div>
+          <div class="dot" style="width:10px;height:10px;top:10px;left:120px;opacity:.5;"></div>
+          <span class="dia" style="top:30px;right:145px;font-size:12px;opacity:.9;">◆</span>
+          <span class="dia" style="top:18px;left:145px;font-size:10px;opacity:.8;">◆</span>
+          <span class="dia" style="top:55px;right:65px;font-size:8px;opacity:.7;">◆</span>
+          <span class="dia" style="top:48px;left:68px;font-size:11px;opacity:.6;">◆</span>
+          <span class="dia" style="top:35px;right:200px;font-size:9px;opacity:.5;">◆</span>
+        </div>
+        <!-- oval frame -->
+        <div class="d1-oval-wrap">
+          <div class="d1-oval">
+            <div class="d1-name">דון</div>
+            <div class="d1-title">חוגג בר מצווה</div>
+            <div class="d1-hr"></div>
+            <div class="d1-body">
+              נשמח לחגוג יחד אתכם<br>
+              את שמחת בר המצווה<br>
+              של בננו היקר
+            </div>
+            <div class="d1-hr2"></div>
+            <div class="d1-parsha">שבת פרשת ___</div>
+            <div class="d1-parsha">יום ו׳ | שעה 19:30</div>
+            <div class="d1-diamonds">◆ ◆ ◆</div>
+            <div class="d1-date">00.00.2025</div>
+            <div class="d1-diamonds">◆ ◆ ◆</div>
+          </div>
+        </div>
+        <!-- bottom venue -->
+        <div class="d1-bottom">
+          <div class="d1-venue">בית הכנסת ___</div>
+          <div class="d1-addr">רחוב ___, עיר</div>
+          <div class="d1-parents">ההורים: ___ ו-___<br>האחים: ___</div>
+        </div>
+      </div>
+    </div>
+    <div class="lbl">כחול ים + זהב</div>
+    <div class="desc">קונפטי זהב, מסגרת אובל, רקע ציאן</div>
+    <button class="btn">בחר עיצוב זה</button>
+  </div>
+
+  <!-- ═══ DESIGN 2: Black Art Nouveau ═══ -->
+  <div class="card-wrap" onclick="pick(this,'d2')" id="w2">
+    <div class="card-outer">
+      <div class="d2">
+        <div class="d2-top-bar"></div>
+        <!-- decorative gold arcs top -->
+        <div class="d2-arc-top">
+          <svg viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,60 Q75,0 150,30 Q225,60 300,10 L300,0 L0,0 Z" fill="#1c1810"/>
+            <path d="M0,60 Q75,5 150,32 Q225,58 300,12" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.7"/>
+            <path d="M0,50 Q75,10 150,38 Q225,65 300,20" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="150" cy="32" r="4" fill="#D4AF37" opacity="0.8"/>
+            <circle cx="75" cy="20" r="2.5" fill="#D4AF37" opacity="0.6"/>
+            <circle cx="225" cy="18" r="2.5" fill="#D4AF37" opacity="0.6"/>
+          </svg>
+        </div>
+        <!-- photo circle -->
+        <div class="d2-photo-ring">
+          <span class="d2-photo-icon">👤</span>
+          <span class="d2-photo-label">תמונה</span>
+        </div>
+        <div class="d2-inner">
+          <div class="d2-supertitle">— חוגג בר מצווה —</div>
+          <div class="d2-name">דון</div>
+          <div class="d2-divline">
+            <div class="d2-divline-r"></div>
+            <div class="d2-star-c">✦</div>
+            <div class="d2-divline-l"></div>
+          </div>
+          <div class="d2-body">
+            נשמח לחגוג יחד אתכם<br>
+            את שמחת בר המצווה<br>
+            של בננו היקר
+          </div>
+          <div class="d2-divline" style="margin:10px 0 8px;">
+            <div class="d2-divline-r"></div>
+            <div class="d2-star-c">✦</div>
+            <div class="d2-divline-l"></div>
+          </div>
+          <div class="d2-body">יום ו׳ | שבת פרשת ___<br>קבלת שבת בשעה 19:00</div>
+          <div class="d2-date-frame">00.00.2025</div>
+          <div class="d2-venue-name">בית הכנסת ___</div>
+          <div class="d2-venue-addr">רחוב ___, עיר</div>
+          <div class="d2-divline" style="margin:12px 0 6px;">
+            <div class="d2-divline-r"></div>
+            <div class="d2-star-c">✦</div>
+            <div class="d2-divline-l"></div>
+          </div>
+          <div class="d2-parents-line">ההורים: ___ ו-___<br>האחים: ___</div>
+        </div>
+        <!-- decorative gold arcs bottom -->
+        <div class="d2-arc-bot">
+          <svg viewBox="0 0 300 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 Q75,40 150,15 Q225,0 300,35 L300,40 L0,40 Z" fill="#1c1810"/>
+            <path d="M0,0 Q75,38 150,14 Q225,2 300,33" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="d2-bot-bar"></div>
+      </div>
+    </div>
+    <div class="lbl">שחור + זהב עם תמונה</div>
+    <div class="desc">קשתות זהב, עיגול תמונה, רקע שחור יוקרתי</div>
+    <button class="btn">בחר עיצוב זה</button>
+  </div>
+
+  <!-- ═══ DESIGN 3: Navy Deep "13" ═══ -->
+  <div class="card-wrap" onclick="pick(this,'d3')" id="w3">
+    <div class="card-outer">
+      <div class="d3">
+        <div class="d3-shine"></div>
+        <div class="d3-border-outer"></div>
+        <div class="d3-corner d3-tl"></div>
+        <div class="d3-corner d3-tr"></div>
+        <div class="d3-corner d3-bl"></div>
+        <div class="d3-corner d3-br"></div>
+        <div class="d3-badge">13</div>
+        <div class="d3-invite">אנו שמחים להזמינכם</div>
+        <div class="d3-name">דון</div>
+        <div class="d3-subtitle">חוגג בר מצווה</div>
+        <div class="d3-div">
+          <div class="d3-line d3-line-r"></div>
+          <div class="d3-gem">✦</div>
+          <div class="d3-line d3-line-l"></div>
+        </div>
+        <div class="d3-info">
+          <strong>שבת פרשת ___</strong>
+          יום ו׳ | כ"ה אייר תשפ"ה<br>
+          קבלת שבת בשעה 19:00<br>
+          <strong>בית הכנסת ___</strong>
+          רחוב ___, עיר
+        </div>
+        <div class="d3-date">00.00.2025</div>
+        <div class="d3-div">
+          <div class="d3-line d3-line-r"></div>
+          <div class="d3-gem">✦</div>
+          <div class="d3-line d3-line-l"></div>
+        </div>
+        <div class="d3-parents">ההורים: ___ ו-___<br>האחים: ___</div>
+      </div>
+    </div>
+    <div class="lbl">נייבי כהה + זהב + 13</div>
+    <div class="desc">תג זהב 13, מסגרת, כחול-לילה עמוק</div>
+    <button class="btn">בחר עיצוב זה</button>
+  </div>
+
+  <!-- ═══ DESIGN 4: Botanical White ═══ -->
+  <div class="card-wrap" onclick="pick(this,'d4')" id="w4">
+    <div class="card-outer">
+      <div class="d4">
+        <!-- botanical corner top-left -->
+        <div class="d4-flora-tr">
+          <svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="20" cy="20" rx="22" ry="12" fill="#8aad7a" opacity="0.35" transform="rotate(-30 20 20)"/>
+            <ellipse cx="45" cy="10" rx="18" ry="9" fill="#7a9a6a" opacity="0.28" transform="rotate(-55 45 10)"/>
+            <ellipse cx="10" cy="48" rx="20" ry="10" fill="#6d8f5e" opacity="0.25" transform="rotate(-10 10 48)"/>
+            <ellipse cx="65" cy="18" rx="14" ry="7" fill="#9ab88a" opacity="0.22" transform="rotate(-70 65 18)"/>
+            <ellipse cx="30" cy="60" rx="16" ry="8" fill="#7a9a6a" opacity="0.2" transform="rotate(20 30 60)"/>
+            <circle cx="38" cy="32" r="5" fill="#c8a97a" opacity="0.4"/>
+            <circle cx="22" cy="55" r="4" fill="#c8a97a" opacity="0.3"/>
+            <circle cx="60" cy="40" r="3.5" fill="#c8a97a" opacity="0.25"/>
+            <line x1="38" y1="32" x2="20" y2="20" stroke="#8aad7a" stroke-width="1" opacity="0.4"/>
+            <line x1="38" y1="32" x2="45" y2="10" stroke="#8aad7a" stroke-width="1" opacity="0.35"/>
+            <line x1="22" y1="55" x2="10" y2="48" stroke="#7a9a6a" stroke-width="1" opacity="0.3"/>
+            <line x1="60" y1="40" x2="65" y2="18" stroke="#9ab88a" stroke-width="0.8" opacity="0.25"/>
+          </svg>
+        </div>
+        <div class="d4-flora-bl">
+          <svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="20" cy="20" rx="22" ry="12" fill="#8aad7a" opacity="0.35" transform="rotate(-30 20 20)"/>
+            <ellipse cx="45" cy="10" rx="18" ry="9" fill="#7a9a6a" opacity="0.28" transform="rotate(-55 45 10)"/>
+            <ellipse cx="10" cy="48" rx="20" ry="10" fill="#6d8f5e" opacity="0.25" transform="rotate(-10 10 48)"/>
+            <ellipse cx="65" cy="18" rx="14" ry="7" fill="#9ab88a" opacity="0.22" transform="rotate(-70 65 18)"/>
+            <circle cx="38" cy="32" r="5" fill="#c8a97a" opacity="0.4"/>
+            <circle cx="22" cy="55" r="4" fill="#c8a97a" opacity="0.3"/>
+            <line x1="38" y1="32" x2="20" y2="20" stroke="#8aad7a" stroke-width="1" opacity="0.4"/>
+            <line x1="38" y1="32" x2="45" y2="10" stroke="#8aad7a" stroke-width="1" opacity="0.35"/>
+          </svg>
+        </div>
+        <div class="d4-content">
+          <div class="d4-invite">נשמח לחגוג עמכם</div>
+          <div class="d4-name">דון</div>
+          <div class="d4-subtitle">חוגג בר מצווה</div>
+          <div class="d4-flowers">✿ ✦ ✿</div>
+          <div class="d4-hr"></div>
+          <div class="d4-info">
+            <strong>שבת פרשת ___</strong>
+            יום ו׳ | כ"ה אייר תשפ"ה<br>
+            קבלת שבת בשעה 19:00
+          </div>
+          <div class="d4-date">00.00.2025</div>
+          <div class="d4-info">
+            <strong>בית הכנסת ___</strong>
+            רחוב ___, עיר
+          </div>
+          <div class="d4-hr2"></div>
+          <div class="d4-parents">ההורים: ___ ו-___<br>האחים: ___</div>
+        </div>
+      </div>
+    </div>
+    <div class="lbl">בוטני — לבן + עלים</div>
+    <div class="desc">עיטורי עלים כחול-ירוק, נקי ואלגנטי</div>
+    <button class="btn">בחר עיצוב זה</button>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:rgba(255,255,255,0.2);font-size:11px;margin-top:50px;letter-spacing:2px;">כל צבע, טקסט, פונט ואלמנט ניתנים לשינוי מלא</p>
+
+<script>
+function pick(el, id) {
+  document.querySelectorAll('.card-wrap').forEach(w => w.classList.remove('selected'));
+  el.classList.add('selected');
+  if (window.__sp_record) window.__sp_record(id, el.querySelector('.lbl').textContent.trim());
+}
+</script>
+</body>
+</html>

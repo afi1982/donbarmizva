@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תכנון המערכת</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f1117;
+    font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    color: #e8e8e8;
+    direction: rtl;
+    padding: 48px 24px 80px;
+  }
+  h1 { text-align:center; font-size:24px; font-weight:300; color:#fff; letter-spacing:3px; margin-bottom:6px; }
+  .page-sub { text-align:center; color:rgba(255,255,255,0.35); font-size:12px; margin-bottom:56px; letter-spacing:1px; }
+
+  /* ── Section ── */
+  .section { max-width:960px; margin:0 auto 56px; }
+  .section-title {
+    display:flex; align-items:center; gap:12px;
+    color:#D4AF37; font-size:13px; letter-spacing:4px; text-transform:uppercase;
+    margin-bottom:24px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(212,175,55,0.4),transparent); }
+
+  /* ── Architecture flow ── */
+  .arch {
+    display:flex; align-items:center; justify-content:center;
+    gap:0; flex-wrap:wrap; row-gap:16px;
+  }
+  .arch-box {
+    background:#1a1d27; border:1px solid rgba(255,255,255,0.08);
+    border-radius:12px; padding:18px 20px; text-align:center; min-width:130px;
+    position:relative;
+  }
+  .arch-box .icon { font-size:28px; margin-bottom:8px; display:block; }
+  .arch-box .name { font-size:13px; font-weight:700; color:#fff; }
+  .arch-box .tag { font-size:10px; color:rgba(255,255,255,0.35); margin-top:3px; letter-spacing:1px; }
+  .arch-box.green { border-color:rgba(74,222,128,0.3); }
+  .arch-box.gold { border-color:rgba(212,175,55,0.4); }
+  .arch-box.blue { border-color:rgba(96,165,250,0.3); }
+  .arch-box.purple { border-color:rgba(167,139,250,0.3); }
+  .arch-arrow {
+    font-size:22px; color:rgba(255,255,255,0.2); padding:0 6px; user-select:none;
+  }
+
+  /* ── Flow steps ── */
+  .flow { display:flex; flex-direction:column; gap:0; }
+  .flow-step {
+    display:flex; align-items:flex-start; gap:20px;
+    padding:20px 24px; background:#1a1d27;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:0; position:relative;
+  }
+  .flow-step:first-child { border-radius:12px 12px 0 0; }
+  .flow-step:last-child { border-radius:0 0 12px 12px; }
+  .flow-step + .flow-step { border-top:none; }
+  .step-num {
+    width:32px; height:32px; border-radius:50%;
+    background:linear-gradient(135deg,#b8860b,#D4AF37);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:900; color:#0f1117;
+    flex-shrink:0; margin-top:2px;
+  }
+  .step-body { flex:1; }
+  .step-title { font-size:15px; font-weight:700; color:#fff; margin-bottom:4px; }
+  .step-desc { font-size:12px; color:rgba(255,255,255,0.5); line-height:1.7; }
+  .step-tag {
+    display:inline-block; font-size:10px; letter-spacing:1px;
+    padding:2px 8px; border-radius:10px; margin-top:6px;
+    background:rgba(212,175,55,0.1); color:#D4AF37; border:1px solid rgba(212,175,55,0.25);
+  }
+
+  /* ── Screen previews ── */
+  .screens { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
+  .screen-wrap { display:flex; flex-direction:column; gap:10px; }
+  .screen-label { font-size:12px; color:rgba(255,255,255,0.5); text-align:center; letter-spacing:1px; }
+  .screen-frame {
+    border-radius:10px; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  }
+  .screen-topbar {
+    background:#1e2130; padding:8px 12px;
+    display:flex; align-items:center; gap:6px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .dot-r,.dot-y,.dot-g { width:8px; height:8px; border-radius:50%; }
+  .dot-r { background:#ff5f57; } .dot-y { background:#febc2e; } .dot-g { background:#28c840; }
+  .screen-url { font-size:9px; color:rgba(255,255,255,0.25); margin-right:8px; direction:ltr; }
+
+  /* Admin panel mockup */
+  .admin-screen { background:#141820; padding:0; }
+  .admin-sidebar { background:#0d1018; width:100%; padding:12px; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .admin-logo { font-size:11px; font-weight:700; color:#D4AF37; letter-spacing:2px; margin-bottom:10px; }
+  .admin-nav { display:flex; gap:6px; flex-wrap:wrap; }
+  .admin-nav-item {
+    font-size:9px; color:rgba(255,255,255,0.4); padding:4px 8px;
+    border-radius:6px; background:rgba(255,255,255,0.03);
+    cursor:pointer; border:1px solid transparent;
+  }
+  .admin-nav-item.active { color:#D4AF37; background:rgba(212,175,55,0.1); border-color:rgba(212,175,55,0.2); }
+  .admin-content { padding:14px; }
+  .admin-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+  .stat-card { background:#1a1d27; border-radius:6px; padding:8px; text-align:center; border:1px solid rgba(255,255,255,0.05); }
+  .stat-num { font-size:18px; font-weight:900; }
+  .stat-lbl { font-size:8px; color:rgba(255,255,255,0.4); margin-top:2px; }
+  .stat-card.green .stat-num { color:#4ade80; }
+  .stat-card.red .stat-num { color:#f87171; }
+  .stat-card.yellow .stat-num { color:#fbbf24; }
+  .stat-card.gray .stat-num { color:#94a3b8; }
+  .guest-row {
+    display:flex; align-items:center; gap:8px;
+    padding:7px 8px; border-radius:6px; margin-bottom:4px;
+    background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);
+    font-size:9px;
+  }
+  .guest-name { flex:1; color:#fff; font-weight:600; }
+  .guest-phone { color:rgba(255,255,255,0.3); direction:ltr; }
+  .guest-status { padding:2px 6px; border-radius:8px; font-size:8px; font-weight:700; }
+  .s-yes { background:rgba(74,222,128,0.15); color:#4ade80; }
+  .s-no { background:rgba(248,113,113,0.15); color:#f87171; }
+  .s-maybe { background:rgba(251,191,36,0.15); color:#fbbf24; }
+  .s-pending { background:rgba(148,163,184,0.1); color:#94a3b8; }
+  .send-btn {
+    width:100%; margin-top:10px; padding:8px;
+    background:linear-gradient(135deg,#D4AF37,#f5e17a);
+    border:none; border-radius:6px; font-size:10px; font-weight:700;
+    color:#0f1117; cursor:pointer; font-family:inherit;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+
+  /* RSVP page mockup */
+  .rsvp-screen {
+    background:linear-gradient(160deg,#faf8f5 0%,#f5f0e8 100%);
+    padding:24px 18px; display:flex; flex-direction:column; align-items:center;
+    text-align:center; min-height:340px; position:relative; overflow:hidden;
+  }
+  .rsvp-flora-tr { position:absolute; top:0; left:0; }
+  .rsvp-flora-bl { position:absolute; bottom:0; right:0; transform:rotate(180deg); }
+  .rsvp-guest-name { font-size:11px; color:#8b7355; letter-spacing:2px; margin-bottom:10px; position:relative; z-index:2; }
+  .rsvp-inv-name { font-size:32px; font-weight:900; color:#3d2b1f; font-family:Georgia,serif; margin-bottom:4px; position:relative; z-index:2; }
+  .rsvp-subtitle { font-size:11px; color:#7a6048; margin-bottom:14px; position:relative; z-index:2; }
+  .rsvp-divider { width:60px; height:1px; background:linear-gradient(90deg,transparent,#c5a87a,transparent); margin:0 auto 12px; }
+  .rsvp-details { font-size:10px; color:#5a4535; line-height:1.9; margin-bottom:18px; position:relative; z-index:2; }
+  .rsvp-details strong { color:#3d2b1f; font-size:11px; }
+  .rsvp-q { font-size:11px; color:#3d2b1f; font-weight:700; margin-bottom:10px; position:relative; z-index:2; }
+  .rsvp-btns { display:flex; flex-direction:column; gap:7px; width:100%; max-width:220px; position:relative; z-index:2; }
+  .rsvp-btn {
+    padding:9px 16px; border-radius:24px; font-size:11px; font-weight:700;
+    border:none; cursor:pointer; font-family:inherit;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .rsvp-yes { background:linear-gradient(135deg,#4ade80,#22c55e); color:#fff; }
+  .rsvp-no { background:transparent; border:1.5px solid #c5a87a; color:#7a6048; }
+  .rsvp-maybe { background:rgba(196,168,122,0.12); color:#8b7355; border:1.5px dashed #c5a87a; }
+
+  /* Maybe page mockup */
+  .maybe-screen {
+    background:linear-gradient(160deg,#faf8f5 0%,#f5f0e8 100%);
+    padding:28px 18px; display:flex; flex-direction:column; align-items:center;
+    text-align:center; min-height:280px; position:relative; overflow:hidden;
+  }
+  .maybe-icon { font-size:36px; margin-bottom:12px; }
+  .maybe-title { font-size:15px; font-weight:700; color:#3d2b1f; margin-bottom:8px; }
+  .maybe-text { font-size:11px; color:#7a6048; line-height:1.7; margin-bottom:20px; max-width:200px; }
+  .maybe-reminder-btn {
+    padding:10px 24px; border-radius:20px; font-size:11px; font-weight:700;
+    background:linear-gradient(135deg,#D4AF37,#f5e17a);
+    border:none; color:#3d2b1f; cursor:pointer; font-family:inherit;
+  }
+
+  /* Tech stack pills */
+  .tech-stack { display:flex; flex-wrap:wrap; gap:10px; }
+  .tech-pill {
+    display:flex; align-items:center; gap:8px;
+    background:#1a1d27; border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px; padding:10px 16px;
+  }
+  .tech-icon { font-size:20px; }
+  .tech-name { font-size:13px; font-weight:600; color:#fff; }
+  .tech-note { font-size:10px; color:rgba(255,255,255,0.4); }
+  .tech-free { font-size:9px; color:#4ade80; background:rgba(74,222,128,0.1); padding:2px 6px; border-radius:8px; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<h1>מערכת בר המצווה — דון בר אל</h1>
+<p class="page-sub">תכנון מלא · Next.js · Supabase · whatsapp-web.js · Vercel</p>
+
+<!-- ARCHITECTURE -->
+<div class="section">
+  <div class="section-title">ארכיטקטורת המערכת</div>
+  <div class="arch">
+    <div class="arch-box gold">
+      <span class="icon">🖥️</span>
+      <div class="name">פאנל ניהול</div>
+      <div class="tag">VERCEL · /admin</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box purple">
+      <span class="icon">📱</span>
+      <div class="name">whatsapp-web.js</div>
+      <div class="tag">מחשב מקומי</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box" style="background:#1a1d27;">
+      <span class="icon">💬</span>
+      <div class="name">וואטסאפ מוזמן</div>
+      <div class="tag">קישור RSVP</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box blue">
+      <span class="icon">🌿</span>
+      <div class="name">דף RSVP</div>
+      <div class="tag">VERCEL · /rsvp</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box green">
+      <span class="icon">🗄️</span>
+      <div class="name">Supabase</div>
+      <div class="tag">POSTGRESQL · FREE</div>
+    </div>
+  </div>
+</div>
+
+<!-- USER FLOW -->
+<div class="section">
+  <div class="section-title">מסלול המשתמש</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">מוסיף מוזמנים בפאנל</div>
+        <div class="step-desc">שם + מספר טלפון. ייבוא מרשימה אפשרי. עריכה ומחיקה קלה.</div>
+        <span class="step-tag">פאנל ניהול</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">מעצב את ההזמנה בפאנל</div>
+        <div class="step-desc">עורך תאריך, שעה, שם בית כנסת, כתובת, נוסח ההודעה, תמונה, רקע. תצוגה מקדימה בזמן אמת.</div>
+        <span class="step-tag">עורך הזמנה</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">לוחץ "שלח הזמנות" → מריץ סקריפט מהמחשב</div>
+        <div class="step-desc">הפאנל מציג הוראות ברורות. הסקריפט מתחבר לוואטסאפ (QR פעם אחת), קורא את רשימת המוזמנים מ-Supabase ושולח לכולם הודעה אישית עם קישור RSVP ייחודי.</div>
+        <span class="step-tag">whatsapp-web.js · מקומי</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">מוזמן פותח קישור → דף RSVP בוטני</div>
+        <div class="step-desc">דף נחיתה יפה עם ההזמנה המלאה. שם המוזמן מופיע אישית. 3 כפתורים: מגיע / לא מגיע / לא בטוח.</div>
+        <span class="step-tag">דף RSVP · /rsvp/[token]</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">"לא בטוח" → דף ממתין מיוחד</div>
+        <div class="step-desc">דף יפה שמאשר קבלת התשובה ומסביר שנחזור אליהם. בפאנל הניהול מסומנים כ"לא בטוח".</div>
+        <span class="step-tag">דף "לא בטוח" · /maybe/[token]</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">שולח תזכורת ל"לא בטוח" מהפאנל</div>
+        <div class="step-desc">בלחיצה אחת — הסקריפט שולח וואטסאפ שני: "שלום [שם], טרם קיבלנו את אישורך להגעה לבר המצווה של דון. נשמח לדעת 🙏"</div>
+        <span class="step-tag">הודעת תזכורת · whatsapp-web.js</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN PREVIEWS -->
+<div class="section">
+  <div class="section-title">תצוגה מקדימה של המסכים</div>
+  <div class="screens">
+
+    <!-- Admin Panel -->
+    <div class="screen-wrap">
+      <div class="screen-frame">
+        <div class="screen-topbar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <div class="screen-url">barmitzva-don.vercel.app/admin</div>
+        </div>
+        <div class="admin-screen">
+          <div class="admin-sidebar">
+            <div class="admin-logo">✡ BAR MITZVAH ADMIN</div>
+            <div class="admin-nav">
+              <div class="admin-nav-item active">📊 דשבורד</div>
+              <div class="admin-nav-item">👥 מוזמנים</div>
+              <div class="admin-nav-item">🎨 הזמנה</div>
+              <div class="admin-nav-item">📤 שליחה</div>
+            </div>
+          </div>
+          <div class="admin-content">
+            <div class="admin-stats">
+              <div class="stat-card green"><div class="stat-num">42</div><div class="stat-lbl">מגיעים</div></div>
+              <div class="stat-card red"><div class="stat-num">8</div><div class="stat-lbl">לא מגיעים</div></div>
+              <div class="stat-card yellow"><div class="stat-num">11</div><div class="stat-lbl">לא בטוח</div></div>
+              <div class="stat-card gray"><div class="stat-num">29</div><div class="stat-lbl">ממתינים</div></div>
+            </div>
+            <div class="guest-row"><span class="guest-name">משפחת כהן</span><span class="guest-phone">050-1234567</span><span class="guest-status s-yes">מגיע</span></div>
+            <div class="guest-row"><span class="guest-name">דוד לוי</span><span class="guest-phone">052-9876543</span><span class="guest-status s-maybe">לא בטוח</span></div>
+            <div class="guest-row"><span class="guest-name">רחל ישראלי</span><span class="guest-phone">054-1112233</span><span class="guest-status s-pending">טרם ענה</span></div>
+            <div class="guest-row"><span class="guest-name">יוסף אברהם</span><span class="guest-phone">058-4445566</span><span class="guest-status s-no">לא מגיע</span></div>
+            <button class="send-btn">📤 שלח הזמנות · whatsapp-web.js</button>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">פאנל ניהול — דשבורד</div>
+    </div>
+
+    <!-- RSVP Page -->
+    <div class="screen-wrap">
+      <div class="screen-frame">
+        <div class="screen-topbar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <div class="screen-url">barmitzva-don.vercel.app/rsvp/abc123</div>
+        </div>
+        <div class="rsvp-screen">
+          <div class="rsvp-flora-tr">
+            <svg width="90" height="90" viewBox="0 0 130 130" fill="none"><ellipse cx="20" cy="20" rx="22" ry="12" fill="#8aad7a" opacity="0.35" transform="rotate(-30 20 20)"/><ellipse cx="45" cy="10" rx="18" ry="9" fill="#7a9a6a" opacity="0.28" transform="rotate(-55 45 10)"/><ellipse cx="10" cy="48" rx="20" ry="10" fill="#6d8f5e" opacity="0.25" transform="rotate(-10 10 48)"/><circle cx="38" cy="32" r="5" fill="#c8a97a" opacity="0.4"/></svg>
+          </div>
+          <div class="rsvp-flora-bl">
+            <svg width="80" height="80" viewBox="0 0 130 130" fill="none"><ellipse cx="20" cy="20" rx="22" ry="12" fill="#8aad7a" opacity="0.3" transform="rotate(-30 20 20)"/><ellipse cx="45" cy="10" rx="18" ry="9" fill="#7a9a6a" opacity="0.25" transform="rotate(-55 45 10)"/><circle cx="38" cy="32" r="5" fill="#c8a97a" opacity="0.35"/></svg>
+          </div>
+          <div class="rsvp-guest-name">שלום, משפחת כהן ❤</div>
+          <div class="rsvp-inv-name">דון</div>
+          <div class="rsvp-subtitle">חוגג בר מצווה</div>
+          <div class="rsvp-divider"></div>
+          <div class="rsvp-details">
+            <strong>שבת פרשת ___</strong><br>
+            יום ו׳ | שעה 19:30<br>
+            00.00.2025<br>
+            <strong>בית הכנסת ___</strong>
+          </div>
+          <div class="rsvp-q">האם תוכלו להגיע?</div>
+          <div class="rsvp-btns">
+            <button class="rsvp-btn rsvp-yes">✓ &nbsp;מגיע בשמחה!</button>
+            <button class="rsvp-btn rsvp-maybe">🤔 &nbsp;לא בטוח עדיין</button>
+            <button class="rsvp-btn rsvp-no">✕ &nbsp;לא אוכל להגיע</button>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">דף RSVP — המוזמן</div>
+    </div>
+
+    <!-- Maybe Page -->
+    <div class="screen-wrap">
+      <div class="screen-frame">
+        <div class="screen-topbar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <div class="screen-url">barmitzva-don.vercel.app/maybe/abc123</div>
+        </div>
+        <div class="maybe-screen">
+          <div class="rsvp-flora-tr" style="position:absolute;top:0;left:0;">
+            <svg width="70" height="70" viewBox="0 0 130 130" fill="none"><ellipse cx="20" cy="20" rx="22" ry="12" fill="#8aad7a" opacity="0.3" transform="rotate(-30 20 20)"/><circle cx="38" cy="32" r="5" fill="#c8a97a" opacity="0.35"/></svg>
+          </div>
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
+            <div class="maybe-icon">🌿</div>
+            <div class="maybe-title">קיבלנו את תשובתך</div>
+            <div class="maybe-text">
+              תודה, משפחת כהן!<br>
+              הבנו שאתם עדיין לא בטוחים.<br>
+              ניצור קשר בקרוב לאישור סופי 💛
+            </div>
+            <div style="font-size:9px;color:#c5a87a;letter-spacing:2px;margin-bottom:14px;">✿ ✦ ✿</div>
+            <div style="font-size:10px;color:#8b7355;margin-bottom:4px;">תזכורת תישלח אליכם בוואטסאפ</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">דף "לא בטוח"</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div class="section">
+  <div class="section-title">מחסנית טכנולוגית — הכל חינם</div>
+  <div class="tech-stack">
+    <div class="tech-pill">
+      <div class="tech-icon">⚡</div>
+      <div>
+        <div class="tech-name">Next.js 14</div>
+        <div class="tech-note">פרונטאנד + API routes</div>
+        <div class="tech-free">FREE</div>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-icon">▲</div>
+      <div>
+        <div class="tech-name">Vercel</div>
+        <div class="tech-note">הוסטינג + דפלוי אוטומטי</div>
+        <div class="tech-free">FREE</div>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-icon">🗄️</div>
+      <div>
+        <div class="tech-name">Supabase</div>
+        <div class="tech-note">PostgreSQL · מוזמנים + RSVPs</div>
+        <div class="tech-free">FREE</div>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-icon">💬</div>
+      <div>
+        <div class="tech-name">whatsapp-web.js</div>
+        <div class="tech-note">שליחה אוטומטית מהמחשב</div>
+        <div class="tech-free">FREE · Open Source</div>
+      </div>
+    </div>
+    <div class="tech-pill">
+      <div class="tech-icon">🎨</div>
+      <div>
+        <div class="tech-name">Tailwind CSS</div>
+        <div class="tech-note">עיצוב בוטני מלא</div>
+        <div class="tech-free">FREE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;color:rgba(255,255,255,0.15);font-size:11px;letter-spacing:2px;">האם התכנון נראה טוב? אשמח לשמוע הערות לפני שנמשיך</p>
+
+</body>
+</html>

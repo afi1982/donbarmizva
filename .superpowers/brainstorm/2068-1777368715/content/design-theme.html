@@ -1,0 +1,54 @@
+<h2>איזה סגנון עיצוב מתאים לבר מצווה של דון?</h2>
+<p class="subtitle">בחר את הכיוון שמרגיש הכי נכון — נוכל לכוונן אחר כך</p>
+
+<div class="cards" style="direction:rtl; gap:24px; margin-top:24px;">
+
+  <div class="card" data-choice="traditional" onclick="toggleSelect(this)" style="border:2px solid transparent; cursor:pointer;">
+    <div class="card-image" style="background: linear-gradient(135deg, #1a1a3e 0%, #2d2d6b 50%, #1a1a3e 100%); height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; right:0; bottom:0; background-image: radial-gradient(circle at 20% 50%, rgba(212,175,55,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 40%);"></div>
+      <div style="color:#D4AF37; font-size:28px; font-family:'Times New Roman',serif; text-align:center; line-height:1.4; position:relative; z-index:1;">✡</div>
+      <div style="color:#D4AF37; font-size:22px; font-family:'Times New Roman',serif; text-align:center; margin-top:8px; position:relative; z-index:1;">בר מצווה</div>
+      <div style="color:#f0e6c8; font-size:13px; font-family:'Times New Roman',serif; text-align:center; margin-top:6px; position:relative; z-index:1;">דון בר אל</div>
+      <div style="width:80px; height:1px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); margin-top:12px; position:relative; z-index:1;"></div>
+      <div style="color:#D4AF37; font-size:11px; letter-spacing:3px; margin-top:10px; position:relative; z-index:1;">כ״ה אייר תשפ״ה</div>
+    </div>
+    <div class="card-body" style="padding:16px; background:#fafafa;">
+      <h3 style="margin:0 0 6px; font-size:16px; color:#1a1a3e;">מסורתי-מלכותי</h3>
+      <p style="margin:0; font-size:13px; color:#666; line-height:1.5;">כחול נייבי + זהב, כתב סריף, קישוטים יהודיים. תחושה של חגיגה עמוקה ומכובדת.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="modern" onclick="toggleSelect(this)" style="border:2px solid transparent; cursor:pointer;">
+    <div class="card-image" style="background: linear-gradient(160deg, #0f0f0f 0%, #1a1a1a 100%); height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:-40px; right:-40px; width:160px; height:160px; border-radius:50%; background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02));"></div>
+      <div style="position:absolute; bottom:-20px; left:-20px; width:100px; height:100px; border-radius:50%; border:1px solid rgba(255,215,0,0.15);"></div>
+      <div style="color:#FFD700; font-size:11px; letter-spacing:6px; text-transform:uppercase; margin-bottom:16px;">BAR MITZVAH</div>
+      <div style="color:#ffffff; font-size:28px; font-weight:200; letter-spacing:2px; font-family:Arial,sans-serif;">דון בר אל</div>
+      <div style="width:40px; height:2px; background:#FFD700; margin:14px auto;"></div>
+      <div style="color:rgba(255,255,255,0.5); font-size:12px; letter-spacing:2px;">2025</div>
+    </div>
+    <div class="card-body" style="padding:16px; background:#fafafa;">
+      <h3 style="margin:0 0 6px; font-size:16px; color:#0f0f0f;">מודרני-יוקרתי</h3>
+      <p style="margin:0; font-size:13px; color:#666; line-height:1.5;">שחור + זהב, פונטים מינימליסטיים, קווים נקיים. מרגיש כמו הזמנה לאירוע VIP.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="warm" onclick="toggleSelect(this)" style="border:2px solid transparent; cursor:pointer;">
+    <div class="card-image" style="background: linear-gradient(135deg, #f5e6d3 0%, #eedcc4 50%, #e8d0b0 100%); height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:10px; right:10px; color:rgba(139,90,43,0.2); font-size:60px;">🌿</div>
+      <div style="position:absolute; bottom:10px; left:10px; color:rgba(139,90,43,0.15); font-size:50px;">✿</div>
+      <div style="color:#6b3a2a; font-size:11px; letter-spacing:4px; margin-bottom:12px;">אנו שמחים להזמינכם</div>
+      <div style="color:#4a2510; font-size:26px; font-family:'Georgia',serif; font-weight:bold;">דון בר אל</div>
+      <div style="color:#8b5a2b; font-size:13px; font-family:'Georgia',serif; margin-top:8px;">לבר מצווה</div>
+      <div style="width:60px; height:1px; background: linear-gradient(90deg, transparent, #8b5a2b, transparent); margin:12px auto;"></div>
+      <div style="color:#6b3a2a; font-size:11px;">בחודש אייר תשפ״ה</div>
+    </div>
+    <div class="card-body" style="padding:16px; background:#fafafa;">
+      <h3 style="margin:0 0 6px; font-size:16px; color:#4a2510;">חם-משפחתי</h3>
+      <p style="margin:0; font-size:13px; color:#666; line-height:1.5;">גוונים חמים, קרם וחום, עיטורי עלים. תחושת חמימות, ביתיות ושמחת משפחה.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center; margin-top:24px; color:#888; font-size:13px; direction:rtl;">לחץ על הסגנון המועדף עליך</p>
