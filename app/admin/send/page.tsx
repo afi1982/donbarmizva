@@ -13,8 +13,10 @@ function normalizePhone(phone: string) {
 
 function buildMessage(template: string, guest: Guest, baseUrl: string) {
   return template
+    .replace(/\\n/g, '\n')
     .replace(/{name}/g, guest.name)
     .replace(/{link}/g, `${baseUrl}/rsvp/${guest.token}`)
+    .replace(/{custom_message}/g, '')
 }
 
 export default function SendPage() {
