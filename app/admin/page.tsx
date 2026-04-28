@@ -2,7 +2,6 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { Guest, InvitationConfig } from '@/lib/types'
 import CountdownTimer from '@/components/admin/CountdownTimer'
 import StatusDonut from '@/components/admin/StatusDonut'
-import GuestTable from '@/components/admin/GuestTable'
 import LiveStats from '@/components/admin/LiveStats'
 import LiveGuestTable from '@/components/admin/LiveGuestTable'
 
@@ -41,7 +40,6 @@ export default async function AdminDashboard() {
   const coming = guests.filter(g => g.status === 'coming').length
   const notComing = guests.filter(g => g.status === 'not_coming').length
   const maybe = guests.filter(g => g.status === 'maybe').length
-  const pending = guests.filter(g => g.status === 'pending').length
   const total = guests.length
   const responded = guests.filter(g => g.responded_at).sort(
     (a, b) => new Date(b.responded_at!).getTime() - new Date(a.responded_at!).getTime()
