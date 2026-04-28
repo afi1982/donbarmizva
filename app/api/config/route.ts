@@ -1,20 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const { data, error } = await supabaseAdmin
-    .from('invitation_config')
-    .select('*')
-    .eq('id', 1)
-    .maybeSingle()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (error) {
-    console.error('Config GET error:', error)
+  if (!supabaseUrl || !serviceKey) {
     return NextResponse.json({ id: 1 })
   }
-  return NextResponse.json(data ?? { id: 1 })
+
+  const res = await fetch(
+    `${supabaseUrl}/rest/v1/invitation_config?id=eq.1&select=*`,
+    {
+      headers: {
+        'Authorization': `Bearer ${serviceKey}`,
+        'apikey': serviceKey,
+      },
+      cache: 'no-store',
+    }
+  )
+
+  if (!res.ok) {
+    console.error('Config GET error:', res.status, await res.text())
+    return NextResponse.json({ id: 1 })
+  }
+
+  const rows = await res.json()
+  return NextResponse.json(rows?.[0] ?? { id: 1 })
 }
 
 export async function PUT(request: NextRequest) {
