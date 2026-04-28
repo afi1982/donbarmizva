@@ -53,7 +53,7 @@ async function captureInvitation(token, shortUrl) {
   const browser = client.pupBrowser
   const page = await browser.newPage()
   try {
-    await page.setViewport({ width: 430, height: 900, deviceScaleFactor: 2 })
+    await page.setViewport({ width: 430, height: 1200, deviceScaleFactor: 2 })
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 })
     await new Promise(r => setTimeout(r, 1200))
     const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: true })
@@ -185,10 +185,12 @@ app.post('/send-all', async (req, res) => {
     for (const guest of guests) {
       try {
         const message = buildMessage(template, guest)
+        const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
         const chatId = await resolveChat(guest.phone)
         try {
-          const media = await captureInvitation(guest.token)
-          await client.sendMessage(chatId, media, { caption: message })
+          const media = await captureInvitation(guest.token, shortUrl)
+          const caption = mode === 'reminder' ? message : `שלום ${guest.name} 🎉`
+          await client.sendMessage(chatId, media, { caption })
         } catch {
           await client.sendMessage(chatId, message)
         }

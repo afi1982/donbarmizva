@@ -51,12 +51,14 @@ export default async function InvitePreviewPage({
         {config?.parents_names && (
           <p className="text-stone-500 text-xs mt-2">{config.parents_names}</p>
         )}
-        {rsvpUrl && (
+        {rsvpUrl && rsvpUrl !== 'undefined' && (
           <div className="mt-6 pt-5 border-t border-stone-100">
-            <p className="text-stone-500 text-xs mb-3">לאישור הגעה לחץ כאן:</p>
-            <div className="inline-block bg-emerald-500 text-white font-bold text-sm px-6 py-3 rounded-2xl">
-              {rsvpUrl}
-            </div>
+            <a
+              href={rsvpUrl}
+              className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-md"
+            >
+              ✉️ לאישור הגעה לחץ כאן
+            </a>
           </div>
         )}
       </div>
