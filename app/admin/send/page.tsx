@@ -63,7 +63,7 @@ export default function SendPage() {
 
       {!config?.whatsapp_message && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
-          ⚠️ לא הוגדר נוסח הודעה. לך ללשונית <strong>הזמנה</strong> ומלא את שדה "הודעת WhatsApp".
+          ⚠️ לא הוגדר נוסח הודעה. לך ללשונית <strong>הזמנה</strong> ומלא את שדה &quot;הודעת WhatsApp&quot;.
         </div>
       )}
 
