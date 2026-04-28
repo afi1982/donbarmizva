@@ -3,8 +3,8 @@ import { Guest, InvitationConfig } from '@/lib/types'
 import CountdownTimer from '@/components/admin/CountdownTimer'
 import StatusDonut from '@/components/admin/StatusDonut'
 import GuestTable from '@/components/admin/GuestTable'
-import AutoRefresh from '@/components/admin/AutoRefresh'
-import SendAllButton from '@/components/admin/SendAllButton'
+import LiveStats from '@/components/admin/LiveStats'
+import LiveGuestTable from '@/components/admin/LiveGuestTable'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,25 +55,8 @@ export default async function AdminDashboard() {
         <CountdownTimer eventDate={config.event_date} childName={config.child_name} />
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
-          <div className="text-4xl font-black text-emerald-600">{coming}</div>
-          <div className="text-xs font-semibold text-emerald-500 mt-1">מגיע בשמחה</div>
-        </div>
-        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-center">
-          <div className="text-4xl font-black text-amber-500">{maybe}</div>
-          <div className="text-xs font-semibold text-amber-400 mt-1">עדיין לא בטוח</div>
-        </div>
-        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-          <div className="text-4xl font-black text-red-500">{notComing}</div>
-          <div className="text-xs font-semibold text-red-400 mt-1">לא אוכל להגיע</div>
-        </div>
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
-          <div className="text-4xl font-black text-stone-400">{pending}</div>
-          <div className="text-xs font-semibold text-stone-400 mt-1">ממתין</div>
-        </div>
-      </div>
+      {/* Stats - live */}
+      <LiveStats />
 
       {/* Middle row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -116,17 +99,8 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* All guests */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <h2 className="font-bold text-stone-700 text-sm">כל המוזמנים ({total})</h2>
-            <AutoRefresh intervalMs={15000} />
-          </div>
-          <SendAllButton mode="invite" count={pending} />
-        </div>
-        <GuestTable guests={guests} config={config} />
-      </div>
+      {/* All guests - live */}
+      <LiveGuestTable config={config} />
     </div>
   )
 }

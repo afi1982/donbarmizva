@@ -57,7 +57,11 @@
       "Bash(mkdir -p \"C:/Users/TempAdmin/Desktop/BARMIZVA/app/maybe/[token]\")",
       "Bash(mkdir -p \"C:/Users/TempAdmin/Desktop/BARMIZVA/app/declined/[token]\")",
       "Bash(git commit *)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(node server.js)",
+      "Bash(kill %1)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //F //PID 15064)"
     ]
   }
 }

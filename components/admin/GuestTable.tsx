@@ -84,6 +84,11 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-stone-800 truncate text-sm">{guest.name}</div>
               <div className="text-xs text-stone-400" dir="ltr">{guest.phone}</div>
+              {guest.responded_at && (
+                <div className="text-xs text-stone-300 mt-0.5">
+                  אישר/ה {new Date(guest.responded_at).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              )}
               {s === 'error' && <div className="text-red-400 text-xs mt-0.5 truncate">{errorMap[guest.id]}</div>}
               {isConfirming && (
                 <div className="flex items-center gap-2 mt-1.5">

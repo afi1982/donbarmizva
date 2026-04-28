@@ -2,15 +2,24 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function AutoRefresh({ intervalMs = 15000 }: { intervalMs?: number }) {
+interface Props {
+  intervalMs?: number
+  onRefresh?: () => void
+}
+
+export default function AutoRefresh({ intervalMs = 15000, onRefresh }: Props) {
   const router = useRouter()
   const [spinning, setSpinning] = useState(false)
 
   const refresh = useCallback(() => {
     setSpinning(true)
-    router.refresh()
-    setTimeout(() => setSpinning(false), 800)
-  }, [router])
+    if (onRefresh) {
+      onRefresh()
+    } else {
+      router.refresh()
+    }
+    setTimeout(() => setSpinning(false), 600)
+  }, [router, onRefresh])
 
   useEffect(() => {
     const id = setInterval(refresh, intervalMs)
@@ -20,8 +29,8 @@ export default function AutoRefresh({ intervalMs = 15000 }: { intervalMs?: numbe
   return (
     <button
       onClick={refresh}
-      title="רענן נתונים"
-      className={`text-stone-400 hover:text-stone-600 transition-colors text-sm p-1 ${spinning ? 'animate-spin' : ''}`}
+      title="רענן"
+      className={`text-stone-400 hover:text-stone-600 transition-all text-base leading-none ${spinning ? 'animate-spin' : ''}`}
     >
       ↻
     </button>
