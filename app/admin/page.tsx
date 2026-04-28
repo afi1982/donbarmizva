@@ -4,6 +4,7 @@ import CountdownTimer from '@/components/admin/CountdownTimer'
 import StatusDonut from '@/components/admin/StatusDonut'
 import GuestTable from '@/components/admin/GuestTable'
 import AutoRefresh from '@/components/admin/AutoRefresh'
+import SendAllButton from '@/components/admin/SendAllButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +49,6 @@ export default async function AdminDashboard() {
 
   return (
     <div dir="rtl" className="space-y-5">
-      <AutoRefresh intervalMs={20000} />
 
       {/* Countdown */}
       {config?.event_date && (
@@ -118,7 +118,13 @@ export default async function AdminDashboard() {
 
       {/* All guests */}
       <div className="bg-white rounded-2xl border border-stone-200 p-4">
-        <h2 className="font-bold text-stone-700 mb-4 text-sm">כל המוזמנים ({total})</h2>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-stone-700 text-sm">כל המוזמנים ({total})</h2>
+            <AutoRefresh intervalMs={15000} />
+          </div>
+          <SendAllButton mode="invite" count={pending} />
+        </div>
         <GuestTable guests={guests} config={config} />
       </div>
     </div>
