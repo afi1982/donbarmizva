@@ -61,7 +61,11 @@
       "Bash(node server.js)",
       "Bash(kill %1)",
       "Bash(netstat -ano)",
-      "Bash(taskkill //F //PID 15064)"
+      "Bash(taskkill //F //PID 15064)",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__list_deployments",
+      "mcp__claude_ai_Vercel__get_runtime_logs"
     ]
   }
 }
