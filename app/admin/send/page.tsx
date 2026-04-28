@@ -35,8 +35,8 @@ export default function SendPage() {
     })
   }, [])
 
-  async function markSent(guestId: string) {
-    setSent(prev => new Set([...prev, guestId]))
+  function markSent(guestId: string) {
+    setSent(prev => { const s = new Set(Array.from(prev)); s.add(guestId); return s })
   }
 
   function sendWhatsApp(guest: Guest, mode: 'invite' | 'reminder') {
