@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isValidToken } from '@/lib/tokens'
-import BotanicalLeaves from '@/components/botanical/BotanicalLeaves'
-import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,51 +20,126 @@ export default async function InvitePreviewPage({
 
   if (!guest) notFound()
 
+  const rsvpUrl = searchParams.url && searchParams.url !== 'undefined' ? searchParams.url : ''
+
   const eventDateStr = config?.event_date
-    ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(config.event_date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : ''
 
-  const rsvpUrl = searchParams.url && searchParams.url !== 'undefined' ? searchParams.url : ''
+  const location = [config?.synagogue_name, config?.address, config?.city].filter(Boolean).join(' • ')
 
   return (
     <div
-      className="relative overflow-hidden w-full"
-      style={{ background: 'linear-gradient(160deg, #faf8f5 0%, #f5f0e8 100%)' }}
       dir="rtl"
+      style={{
+        background: 'linear-gradient(160deg, #faf8f5 0%, #f0ebe0 100%)',
+        fontFamily: "'Segoe UI', Arial, sans-serif",
+        width: '100%',
+        padding: '0',
+        margin: '0',
+      }}
     >
-      <BotanicalLeaves />
-      <div className="relative z-10 text-center px-8 pt-8 pb-8">
-        <p className="text-stone-400 text-xs tracking-widest mb-3">שלום, {guest.name} ❤</p>
-        <h1 className="font-serif text-5xl font-black text-stone-800 mb-1">
+      {/* Gold top bar */}
+      <div style={{ height: '6px', background: 'linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c)' }} />
+
+      <div style={{ padding: '28px 28px 24px', textAlign: 'center' }}>
+
+        {/* Greeting */}
+        <p style={{ color: '#9c8060', fontSize: '13px', letterSpacing: '2px', marginBottom: '16px', marginTop: '0' }}>
+          ♥ שלום, {guest.name}
+        </p>
+
+        {/* Child name */}
+        <h1 style={{
+          fontSize: '52px',
+          fontWeight: '900',
+          color: '#2c2416',
+          margin: '0 0 4px 0',
+          lineHeight: '1.1',
+          fontFamily: 'Georgia, serif',
+        }}>
           {config?.child_name || 'בר מצווה'}
         </h1>
-        <p className="text-stone-500 text-sm mb-1">חוגג בר מצווה</p>
-        <BotanicalDivider />
-        {config && (
-          <div className="text-stone-600 text-sm leading-7 mb-4">
-            {config.parasha && <p className="font-bold text-stone-800">{config.parasha}</p>}
-            {config.hebrew_date && <p>{config.hebrew_date}</p>}
-            {config.event_time && <p>שעה {config.event_time}</p>}
-            {eventDateStr && <p>{eventDateStr}</p>}
-            {config.synagogue_name && <p className="font-bold text-stone-800 mt-1">{config.synagogue_name}</p>}
-            {(config.address || config.city) && <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>}
-            {config.custom_message && <p className="mt-2 text-stone-500 italic text-xs">{config.custom_message}</p>}
-          </div>
+
+        <p style={{ color: '#7a6a50', fontSize: '14px', margin: '0 0 20px 0' }}>
+          חוגג בר מצווה
+        </p>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
+          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(90deg, transparent, #c9a84c)' }} />
+          <span style={{ color: '#c9a84c', fontSize: '16px' }}>✦</span>
+          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(90deg, #c9a84c, transparent)' }} />
+        </div>
+
+        {/* Event details */}
+        <div style={{ background: 'rgba(255,255,255,0.6)', borderRadius: '16px', padding: '16px 20px', marginBottom: '16px', textAlign: 'right' }}>
+          {config?.parasha && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '18px' }}>📖</span>
+              <span style={{ color: '#2c2416', fontWeight: '700', fontSize: '14px' }}>{config.parasha}</span>
+            </div>
+          )}
+          {(config?.hebrew_date || eventDateStr) && (
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '18px' }}>📅</span>
+              <div>
+                {config?.hebrew_date && <div style={{ color: '#2c2416', fontWeight: '600', fontSize: '13px' }}>{config.hebrew_date}</div>}
+                {eventDateStr && <div style={{ color: '#6b5a3e', fontSize: '12px' }}>{eventDateStr}</div>}
+              </div>
+            </div>
+          )}
+          {config?.event_time && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '18px' }}>🕐</span>
+              <span style={{ color: '#2c2416', fontSize: '13px' }}>שעה <strong>{config.event_time}</strong></span>
+            </div>
+          )}
+          {location && (
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: config?.parents_names ? '10px' : '0' }}>
+              <span style={{ fontSize: '18px' }}>📍</span>
+              <span style={{ color: '#2c2416', fontSize: '13px', lineHeight: '1.5' }}>{location}</span>
+            </div>
+          )}
+          {config?.parents_names && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(201,168,76,0.2)' }}>
+              <span style={{ fontSize: '18px' }}>👨‍👩‍👦</span>
+              <span style={{ color: '#6b5a3e', fontSize: '12px' }}>{config.parents_names}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Custom message */}
+        {config?.custom_message && (
+          <p style={{ color: '#7a6a50', fontSize: '12px', fontStyle: 'italic', margin: '0 0 16px 0', lineHeight: '1.6' }}>
+            {config.custom_message}
+          </p>
         )}
-        {config?.parents_names && (
-          <p className="text-stone-400 text-xs mb-4">{config.parents_names}</p>
-        )}
+
+        {/* RSVP Button */}
         {rsvpUrl && (
-          <div className="pt-4 border-t border-stone-200">
-            <a
-              href={rsvpUrl}
-              className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold text-sm px-7 py-3 rounded-2xl shadow"
-            >
-              ✉️ לאישור הגעה לחץ כאן
-            </a>
-          </div>
+          <a
+            href={rsvpUrl}
+            style={{
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, #2e7d52, #3da86e)',
+              color: '#ffffff',
+              fontWeight: '700',
+              fontSize: '15px',
+              padding: '14px 32px',
+              borderRadius: '50px',
+              textDecoration: 'none',
+              boxShadow: '0 4px 15px rgba(46,125,82,0.3)',
+              marginBottom: '4px',
+            }}
+          >
+            ✉️ לאישור הגעה לחץ כאן
+          </a>
         )}
       </div>
+
+      {/* Gold bottom bar */}
+      <div style={{ height: '6px', background: 'linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c)' }} />
     </div>
   )
 }
