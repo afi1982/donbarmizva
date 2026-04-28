@@ -22,7 +22,7 @@ export default function SendPage() {
   const [config, setConfig] = useState<Config | null>(null)
   const [sent, setSent] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+  const baseUrl = 'https://donbarmizva.vercel.app'
 
   useEffect(() => {
     Promise.all([
