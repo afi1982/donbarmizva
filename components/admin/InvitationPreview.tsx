@@ -2,15 +2,18 @@ import { InvitationConfig } from '@/lib/types'
 import FloralWreath from '@/components/botanical/FloralWreath'
 import CornerBranch from '@/components/botanical/CornerBranch'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
+import { parseCustomMessage } from '@/lib/config-helper'
 
 export default function InvitationPreview({ config }: { config: Partial<InvitationConfig> }) {
   const eventDateStr = config.event_date
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
 
+  const p = parseCustomMessage(config.custom_message)
+
   return (
     <div
-      className="min-h-[500px] relative flex flex-col items-center justify-center py-6 px-4"
+      className="min-h-[550px] relative flex flex-col items-center justify-center py-6 px-4"
       style={{ background: 'linear-gradient(180deg, #f7f5f0 0%, #eee9df 100%)', borderRadius: '16px' }}
       dir="rtl"
     >
@@ -35,10 +38,10 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
           </div>
 
           <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
-            הנכם מוזמנים לטקס העלייה לתורה
+            {p.title1}
           </p>
           <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
-            של בננו האהוב
+            {p.title2}
           </p>
 
           {/* Child name - large elegant gold */}
@@ -48,7 +51,7 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
           >
             {config.child_name || 'בר מצווה'}
           </h1>
-          <p className="text-sm mb-1" style={{ color: '#5a5347' }}>חוגג בר מצווה</p>
+          <p className="text-sm mb-1" style={{ color: '#5a5347' }}>{p.tagline}</p>
 
           <BotanicalDivider />
 
@@ -73,16 +76,16 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
             )}
             {config.event_time && (
               <p className="mt-2">
-                {config.event_time} - תפילת שחרית
+                {config.event_time} - {p.prayer_time_label}
                 <br />
-                <span className="text-xs" style={{ color: '#7a7a7a' }}>קידוש וארוחה לאחר התפילה</span>
+                <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
               </p>
             )}
           </div>
 
-          {config.custom_message && (
+          {p.custom_message && (
             <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
-              {config.custom_message}
+              {p.custom_message}
             </p>
           )}
 

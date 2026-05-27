@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { InvitationConfig } from '@/lib/types'
 import InvitationPreview from '@/components/admin/InvitationPreview'
+import { parseCustomMessage } from '@/lib/config-helper'
 
 const DEFAULT_WHATSAPP = ``
 const DEFAULT_REMINDER = ``
@@ -25,9 +26,46 @@ export default function InvitationPage() {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
+  // Layout text fields states
+  const [title1, setTitle1] = useState('')
+  const [title2, setTitle2] = useState('')
+  const [tagline, setTagline] = useState('')
+  const [prayerTimeLabel, setPrayerTimeLabel] = useState('')
+  const [mealLabel, setMealLabel] = useState('')
+  const [plainCustomMessage, setPlainCustomMessage] = useState('')
+
   useEffect(() => {
-    fetch('/api/config', { cache: 'no-store' }).then(r => r.json()).then(setConfig)
+    fetch('/api/config', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(data => {
+        setConfig(data)
+        const p = parseCustomMessage(data.custom_message)
+        setTitle1(p.title1)
+        setTitle2(p.title2)
+        setTagline(p.tagline)
+        setPrayerTimeLabel(p.prayer_time_label)
+        setMealLabel(p.meal_label)
+        setPlainCustomMessage(p.custom_message)
+      })
   }, [])
+
+  // Sync state changes to config.custom_message in real time so preview matches
+  useEffect(() => {
+    if (config.id) {
+      const serialized = JSON.stringify({
+        title1,
+        title2,
+        tagline,
+        prayer_time_label: prayerTimeLabel,
+        meal_label: mealLabel,
+        custom_message: plainCustomMessage,
+      })
+      setConfig(prev => {
+        if (prev.custom_message === serialized) return prev
+        return { ...prev, custom_message: serialized }
+      })
+    }
+  }, [title1, title2, tagline, prayerTimeLabel, mealLabel, plainCustomMessage, config.id])
 
   function handleChange(key: keyof InvitationConfig, value: string) {
     setConfig(prev => ({ ...prev, [key]: value }))
@@ -39,10 +77,24 @@ export default function InvitationPage() {
     setSaving(true)
     setSaveError(null)
     try {
+      const finalCustomMessage = JSON.stringify({
+        title1,
+        title2,
+        tagline,
+        prayer_time_label: prayerTimeLabel,
+        meal_label: mealLabel,
+        custom_message: plainCustomMessage,
+      })
+
+      const finalConfig = {
+        ...config,
+        custom_message: finalCustomMessage,
+      }
+
       const res = await fetch('/api/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
+        body: JSON.stringify(finalConfig),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`)
@@ -72,6 +124,52 @@ export default function InvitationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-4">
+          <div className="border-b border-stone-100 pb-3 mb-2">
+            <h3 className="font-bold text-stone-700 text-sm">✍️ עריכת מלל ההזמנה הדיגיטלית</h3>
+            <p className="text-xs text-stone-400">ניתן לשנות כל מילה המופיעה על גבי כרטיס ההזמנה</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-stone-700 block mb-1">כותרת עליונה שורה 1</label>
+              <input value={title1} onChange={e => { setTitle1(e.target.value); setSaved(false) }}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-stone-700 block mb-1">כותרת עליונה שורה 2</label>
+              <input value={title2} onChange={e => { setTitle2(e.target.value); setSaved(false) }}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-1">
+              <label className="text-sm font-medium text-stone-700 block mb-1">תת-כותרת לשם (לדוג' 'חוגג בר מצווה')</label>
+              <input value={tagline} onChange={e => { setTagline(e.target.value); setSaved(false) }}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            </div>
+            <div className="col-span-1">
+              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב תפילה (לדוג' 'תפילת שחרית')</label>
+              <input value={prayerTimeLabel} onChange={e => { setPrayerTimeLabel(e.target.value); setSaved(false) }}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            </div>
+            <div className="col-span-1">
+              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב ארוחה (לדוג' 'קידוש וארוחה לאחר התפילה')</label>
+              <input value={mealLabel} onChange={e => { setMealLabel(e.target.value); setSaved(false) }}
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-stone-700 block mb-1">נוסח ברכה / מלל חופשי בתחתית</label>
+            <textarea value={plainCustomMessage} onChange={e => { setPlainCustomMessage(e.target.value); setSaved(false) }} rows={2}
+              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" />
+          </div>
+
+          <div className="border-b border-stone-100 pb-3 my-4">
+            <h3 className="font-bold text-stone-700 text-sm">📅 פרטי אירוע וכתובות</h3>
+          </div>
+
           {/* Basic fields */}
           {BASIC_FIELDS.map(({ key, label, type }) => (
             <div key={key}>
@@ -86,21 +184,14 @@ export default function InvitationPage() {
             </div>
           ))}
 
-          {/* Custom message */}
-          <div>
-            <label className="text-sm font-medium text-stone-700 block mb-1">נוסח חופשי להזמנה</label>
-            <textarea
-              value={(config.custom_message as string) ?? ''}
-              onChange={e => handleChange('custom_message', e.target.value)}
-              rows={3} dir="rtl"
-              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
-            />
+          <div className="border-b border-stone-100 pb-3 my-4">
+            <h3 className="font-bold text-stone-700 text-sm">📱 הגדרות שליחה בוואטסאפ</h3>
           </div>
 
           {/* WhatsApp message */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-stone-700">הודעת WhatsApp</label>
+              <label className="text-sm font-medium text-stone-700">נוסח הודעת WhatsApp ראשונית</label>
               <button
                 onClick={() => handleChange('whatsapp_message', DEFAULT_WHATSAPP)}
                 className="text-xs text-amber-600 hover:text-amber-800 underline"
@@ -145,7 +236,7 @@ export default function InvitationPage() {
         </div>
 
         <div className="sticky top-24 self-start">
-          <p className="text-sm font-medium text-stone-600 mb-3">תצוגה מקדימה</p>
+          <p className="text-sm font-medium text-stone-600 mb-3">תצוגה מקדימה של ההזמנה</p>
           <InvitationPreview config={config} />
           <p className="text-xs text-stone-400 mt-2 text-center">הקישור האישי ייווצר אוטומטית לכל מוזמן</p>
         </div>

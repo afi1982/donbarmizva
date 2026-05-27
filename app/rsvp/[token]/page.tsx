@@ -4,6 +4,7 @@ import { isValidToken } from '@/lib/tokens'
 import BotanicalLayout from '@/components/botanical/BotanicalLayout'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import RSVPButtons from '@/components/rsvp/RSVPButtons'
+import { parseCustomMessage } from '@/lib/config-helper'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -23,6 +24,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
     : ''
 
   const alreadyResponded = guest.status !== 'pending'
+  const p = parseCustomMessage(config?.custom_message)
 
   return (
     <BotanicalLayout>
@@ -33,10 +35,10 @@ export default async function RSVPPage({ params }: { params: { token: string } }
 
       {/* Invitation text */}
       <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
-        הנכם מוזמנים לטקס העלייה לתורה
+        {p.title1}
       </p>
       <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
-        של בננו האהוב
+        {p.title2}
       </p>
 
       {/* Child name - large elegant */}
@@ -46,7 +48,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
       >
         {config?.child_name || 'בר מצווה'}
       </h1>
-      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>חוגג בר מצווה</p>
+      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>{p.tagline}</p>
 
       <BotanicalDivider />
 
@@ -72,17 +74,17 @@ export default async function RSVPPage({ params }: { params: { token: string } }
           )}
           {config.event_time && (
             <p className="mt-2">
-              {config.event_time} - תפילת שחרית
+              {config.event_time} - {p.prayer_time_label}
               <br />
-              <span className="text-xs" style={{ color: '#7a7a7a' }}>קידוש וארוחה לאחר התפילה</span>
+              <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
             </p>
           )}
         </div>
       )}
 
-      {config?.custom_message && (
+      {p.custom_message && (
         <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
-          {config.custom_message}
+          {p.custom_message}
         </p>
       )}
 
