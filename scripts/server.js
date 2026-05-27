@@ -47,8 +47,29 @@ function buildMessage(template, guest) {
     .trim()
 }
 
-function captureInvitation() {
+async function captureInvitation(token) {
   const { MessageMedia } = require('whatsapp-web.js')
+  try {
+    if (client && client.pupBrowser) {
+      console.log(`📸 מצלם צילום מסך דינמי להזמנה של ${token}...`)
+      const page = await client.pupBrowser.newPage()
+      await page.setViewport({ width: 380, height: 680, deviceScaleFactor: 2 })
+      
+      const previewUrl = `http://localhost:3000/invite-preview/${token}`
+      await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })
+      
+      await new Promise(r => setTimeout(r, 600))
+      
+      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 90 })
+      await page.close()
+      
+      const base64Data = screenshotBuffer.toString('base64')
+      return new MessageMedia('image/jpeg', base64Data, 'invitation.jpg')
+    }
+  } catch (err) {
+    console.warn('⚠️ צילום מסך דינמי נכשל, משתמש בתמונה סטטית:', err.message)
+  }
+
   const fs = require('fs')
   const path = require('path')
   const imagePath = path.join(__dirname, 'DON.jpg')
@@ -126,7 +147,7 @@ app.post('/send', async (req, res) => {
     const chatId = await resolveChat(cleanPhone)
 
     try {
-      const media = captureInvitation()
+      const media = await captureInvitation(guest.token)
       if (isInfoOnly) {
         await client.sendMessage(chatId, media)
       } else {
@@ -136,7 +157,10 @@ app.post('/send', async (req, res) => {
         await client.sendMessage(chatId, media, { caption })
       }
     } catch (screenshotErr) {
-      console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
+      console.warn(`Handling fallback because sending media failed: ${screenshotErr.message}`)
+      const caption = message
+        ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+        : `לאישור הגעה לחץ כאן:\n${shortUrl}`
       await client.sendMessage(chatId, caption)
     }
 
@@ -194,7 +218,7 @@ app.post('/send-all', async (req, res) => {
         const chatId = await resolveChat(cleanPhone)
         
         try {
-          const media = captureInvitation()
+          const media = await captureInvitation(guest.token)
           if (isInfoOnly) {
             await client.sendMessage(chatId, media)
           } else {
