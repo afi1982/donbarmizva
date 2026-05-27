@@ -42,7 +42,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
       {/* Child name - large elegant */}
       <h1
         className="font-black mb-2"
-        style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: '#1a1a1a' }}
+        style={{ fontFamily: 'serif', fontSize: '3.5rem', lineHeight: 1.1, color: '#b8963e', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
       >
         {config?.child_name || 'בר מצווה'}
       </h1>
@@ -54,11 +54,11 @@ export default async function RSVPPage({ params }: { params: { token: string } }
       {config && (
         <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
           {config.parasha && (
-            <p className="font-bold" style={{ color: '#1a1a1a' }}>שיערך אי&quot;ה בשבת {config.parasha}</p>
+            <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>שיערך אי&quot;ה בשבת {config.parasha}</p>
           )}
           {config.hebrew_date && <p>{config.hebrew_date}</p>}
           {eventDateStr && (
-            <p className="font-bold text-lg tracking-wide" style={{ color: '#1a1a1a' }}>
+            <p className="font-bold text-2xl tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif' }}>
               {eventDateStr}
             </p>
           )}

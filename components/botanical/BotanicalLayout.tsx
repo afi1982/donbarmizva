@@ -1,5 +1,5 @@
 import FloralWreath from './FloralWreath'
-import SideBranch from './SideBranch'
+import CornerBranch from './CornerBranch'
 
 interface BotanicalLayoutProps {
   children: React.ReactNode
@@ -14,16 +14,16 @@ export default function BotanicalLayout({ children, className = '', showWreath =
       style={{ background: 'linear-gradient(180deg, #f7f5f0 0%, #eee9df 100%)' }}
       dir="rtl"
     >
-      <div className="relative w-full max-w-sm mx-auto bg-white rounded-sm shadow-lg overflow-hidden">
+      <div className="relative w-full max-w-sm mx-auto bg-[#faf6f0] rounded-sm shadow-xl overflow-hidden border border-[#ebdcb9]/40">
         {/* Gold stripe top */}
         <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #b8963e, #e8c97a, #b8963e)' }} />
         
-        {/* Side branches */}
-        <div className="absolute top-16 left-3 pointer-events-none opacity-40">
-          <SideBranch side="left" />
+        {/* Corner branches */}
+        <div className="absolute top-2 left-2 pointer-events-none opacity-50">
+          <CornerBranch position="top-left" />
         </div>
-        <div className="absolute top-16 right-3 pointer-events-none opacity-40">
-          <SideBranch side="right" />
+        <div className="absolute bottom-2 right-2 pointer-events-none opacity-50">
+          <CornerBranch position="bottom-right" />
         </div>
         
         <div className="relative z-10 px-8 py-8 text-center">
