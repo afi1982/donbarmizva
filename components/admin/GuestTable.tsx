@@ -128,7 +128,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
                 ? 'bg-amber-100 text-amber-700'
                 : STATUS_BADGE[guest.status]
             }`}>
-              {isInfoOnly && guest.status === 'pending' ? 'הזמנה נשלחה' : STATUS_LABEL[guest.status]}
+              {isInfoOnly && guest.status === 'pending' ? 'הזמנה בלבד' : STATUS_LABEL[guest.status]}
             </span>
 
             {(showInvite || showReminder) && !isConfirming && (
