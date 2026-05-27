@@ -125,17 +125,16 @@ app.post('/send', async (req, res) => {
     const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
     const chatId = await resolveChat(cleanPhone)
 
-    const captionText = isInfoOnly
-      ? 'לצפייה בהזמנה לחץ כאן'
-      : 'לאישור הגעה לחץ כאן'
-
-    const caption = message
-      ? `${message}\n\n${captionText}:\n${shortUrl}`
-      : `${captionText}:\n${shortUrl}`
-
     try {
       const media = captureInvitation()
-      await client.sendMessage(chatId, media, { caption })
+      if (isInfoOnly) {
+        await client.sendMessage(chatId, media)
+      } else {
+        const caption = message
+          ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+          : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+        await client.sendMessage(chatId, media, { caption })
+      }
     } catch (screenshotErr) {
       console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
       await client.sendMessage(chatId, caption)
@@ -194,16 +193,16 @@ app.post('/send-all', async (req, res) => {
         const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
         const chatId = await resolveChat(cleanPhone)
         
-        const captionText = isInfoOnly
-          ? 'לצפייה בהזמנה לחץ כאן'
-          : 'לאישור הגעה לחץ כאן'
-
         try {
           const media = captureInvitation()
-          const cap = message
-            ? `${message}\n\n${captionText}:\n${shortUrl}`
-            : `${captionText}:\n${shortUrl}`
-          await client.sendMessage(chatId, media, { caption: cap })
+          if (isInfoOnly) {
+            await client.sendMessage(chatId, media)
+          } else {
+            const cap = message
+              ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
+              : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+            await client.sendMessage(chatId, media, { caption: cap })
+          }
         } catch {
           await client.sendMessage(chatId, message)
         }

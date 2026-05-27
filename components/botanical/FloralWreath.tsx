@@ -192,19 +192,19 @@ export default function FloralWreath() {
       <path d="M96 170 C98 174, 102 174, 104 170" stroke="#3a4f7a" strokeWidth="0.5" fill="none" opacity="0.25" />
       <path d="M76 170 C78 174, 82 174, 84 170" stroke="#3a4f7a" strokeWidth="0.5" fill="none" opacity="0.25" />
 
-      {/* ===== CENTER: י"ג text in gold ===== */}
+      {/* ===== CENTER: 13 text in gold ===== */}
       <text
         x="90"
         y="100"
         textAnchor="middle"
         dominantBaseline="central"
         fontFamily="serif"
-        fontSize="42"
+        fontSize="44"
         fontWeight="700"
         fill="#b8963e"
         opacity="0.9"
       >
-        י&quot;ג
+        13
       </text>
     </svg>
   )
