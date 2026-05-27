@@ -55,8 +55,8 @@ async function captureInvitation(token) {
       const page = await client.pupBrowser.newPage()
       // Disable cache to always get the freshest render
       await page.setCacheEnabled(false)
-      // Make viewport width exactly match the card width (390px) to maximize text readability
-      await page.setViewport({ width: 390, height: 900, deviceScaleFactor: 2 })
+      // Make viewport width exactly match the card width (460px) to maximize text readability and fit aspect ratio
+      await page.setViewport({ width: 460, height: 950, deviceScaleFactor: 2 })
       
       const previewUrl = `${BASE_URL}/invite-preview/${token}?screenshot=1`
       await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })

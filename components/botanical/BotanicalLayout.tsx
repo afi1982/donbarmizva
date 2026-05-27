@@ -21,7 +21,7 @@ export default function BotanicalLayout({ children, className = '', showWreath =
     >
       <div 
         id="invitation-card" 
-        className={`relative w-full max-w-sm mx-auto bg-[#faf6f0] rounded-sm overflow-hidden ${
+        className={`relative w-full ${isScreenshot ? 'max-w-[460px]' : 'max-w-sm'} mx-auto bg-[#faf6f0] rounded-sm overflow-hidden ${
           isScreenshot ? 'border border-[#ebdcb9]/20' : 'shadow-xl border border-[#ebdcb9]/40'
         }`}
       >
