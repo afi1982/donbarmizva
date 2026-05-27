@@ -4,7 +4,7 @@ import { isValidToken } from '@/lib/tokens'
 import BotanicalLayout from '@/components/botanical/BotanicalLayout'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import RSVPButtons from '@/components/rsvp/RSVPButtons'
-import { parseCustomMessage } from '@/lib/config-helper'
+import { parseCustomMessage } from '../../../lib/config-helper'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
