@@ -123,20 +123,22 @@ export default async function InvitePreviewPage({
         </p>
       )}
 
-      {/* Static Welcome Message for preview */}
-      <div className="mb-4">
-        <div
-          className="rounded-xl px-4 py-3 font-bold text-center"
-          style={{
-            background: '#fcfaf2',
-            color: '#b8963e',
-            border: '1px solid #ebdcb9',
-            fontSize: isScreenshot ? '15px' : '14px'
-          }}
-        >
-          ✨ תצוגה מקדימה של ההזמנה ✨
+      {/* Static Welcome Message for preview - hide during screenshot */}
+      {!isScreenshot && (
+        <div className="mb-4">
+          <div
+            className="rounded-xl px-4 py-3 font-bold text-center"
+            style={{
+              background: '#fcfaf2',
+              color: '#b8963e',
+              border: '1px solid #ebdcb9',
+              fontSize: isScreenshot ? '15px' : '14px'
+            }}
+          >
+            ✨ תצוגה מקדימה של ההזמנה ✨
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Parents */}
       {config?.parents_names && (
