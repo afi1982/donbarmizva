@@ -14,12 +14,25 @@ export default async function InvitePreviewPage({
 }) {
   if (!isValidToken(params.token)) notFound()
 
-  const [{ data: guest }, { data: config }] = await Promise.all([
+  const [guestResult, configResult] = await Promise.all([
     supabaseAdmin.from('guests').select('*').eq('token', params.token).single(),
     supabaseAdmin.from('invitation_config').select('*').eq('id', 1).single(),
   ])
 
-  if (!guest) notFound()
+  if (guestResult.error) {
+    console.error('❌ Supabase Guest Query Error:', guestResult.error.message, guestResult.error)
+  }
+  if (configResult.error) {
+    console.error('❌ Supabase Config Query Error:', configResult.error.message, configResult.error)
+  }
+
+  const guest = guestResult.data
+  const config = configResult.data
+
+  if (!guest) {
+    console.warn(`⚠️ Guest not found for token: ${params.token}`)
+    notFound()
+  }
 
   const eventDateStr = config?.event_date
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
