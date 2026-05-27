@@ -55,30 +55,22 @@ async function captureInvitation(token) {
       const page = await client.pupBrowser.newPage()
       // Disable cache to always get the freshest render
       await page.setCacheEnabled(false)
-      // Make viewport tall enough so scrollbars don't appear and rendering is correct
-      await page.setViewport({ width: 420, height: 1000, deviceScaleFactor: 2 })
+      // Make viewport wide and tall enough to center the card on a beautiful solid background
+      await page.setViewport({ width: 680, height: 1100, deviceScaleFactor: 2 })
       
       const previewUrl = `${BASE_URL}/invite-preview/${token}?screenshot=1`
       await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })
       
       await new Promise(r => setTimeout(r, 800))
       
-      // Select the invitation card element
-      const cardElement = await page.$('#invitation-card')
-      let screenshotBuffer
-      
-      if (cardElement) {
-        screenshotBuffer = await cardElement.screenshot({ type: 'png', omitBackground: true })
-        console.log('✅ צילום המסך בוצע בהצלחה לפי גבולות כרטיס ההזמנה בלבד (PNG)!')
-      } else {
-        console.warn('⚠️ לא נמצא אלמנט #invitation-card, מצלם את כל העמוד כגיבוי')
-        screenshotBuffer = await page.screenshot({ type: 'png', omitBackground: true })
-      }
+      // Capture the full viewport as JPEG (solid background, no black borders or transparency bugs)
+      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 95 })
+      console.log('✅ צילום המסך (עמוד מלא רחב) בוצע בהצלחה!')
       
       await page.close()
       
       const base64Data = screenshotBuffer.toString('base64')
-      return new MessageMedia('image/png', base64Data, 'invitation.png')
+      return new MessageMedia('image/jpeg', base64Data, 'invitation.jpg')
     }
   } catch (err) {
     console.warn('⚠️ צילום מסך דינמי נכשל, משתמש בתמונה סטטית:', err.message)

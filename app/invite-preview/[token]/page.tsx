@@ -6,6 +6,7 @@ import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '../../../lib/config-helper'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function InvitePreviewPage({
   params,
