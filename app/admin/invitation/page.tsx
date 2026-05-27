@@ -144,17 +144,17 @@ export default function InvitationPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-1">
-              <label className="text-sm font-medium text-stone-700 block mb-1">תת-כותרת לשם (לדוג' 'חוגג בר מצווה')</label>
+              <label className="text-sm font-medium text-stone-700 block mb-1">תת-כותרת לשם (לדוג&apos; &quot;חוגג בר מצווה&quot;)</label>
               <input value={tagline} onChange={e => { setTagline(e.target.value); setSaved(false) }}
                 className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </div>
             <div className="col-span-1">
-              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב תפילה (לדוג' 'תפילת שחרית')</label>
+              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב תפילה (לדוג&apos; &quot;תפילת שחרית&quot;)</label>
               <input value={prayerTimeLabel} onChange={e => { setPrayerTimeLabel(e.target.value); setSaved(false) }}
                 className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </div>
             <div className="col-span-1">
-              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב ארוחה (לדוג' 'קידוש וארוחה לאחר התפילה')</label>
+              <label className="text-sm font-medium text-stone-700 block mb-1">כיתוב ארוחה (לדוג&apos; &quot;קידוש וארוחה לאחר התפילה&quot;)</label>
               <input value={mealLabel} onChange={e => { setMealLabel(e.target.value); setSaved(false) }}
                 className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </div>
