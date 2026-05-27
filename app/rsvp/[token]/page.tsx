@@ -53,34 +53,52 @@ export default async function RSVPPage({ params }: { params: { token: string } }
       <BotanicalDivider />
 
       {/* Event details */}
-      {config && (
-        <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
-          {config.parasha && (
-            <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>{config.parasha}</p>
-          )}
-          {config.hebrew_date && <p>{config.hebrew_date}</p>}
-          {eventDateStr && (
-            <p className="font-bold text-2xl tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif' }}>
-              {eventDateStr}
-            </p>
-          )}
-          {config.synagogue_name && (
-            <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
-              {config.synagogue_name}
-            </p>
-          )}
-          {(config.address || config.city) && (
-            <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>
-          )}
-          {config.event_time && (
-            <p className="mt-2">
-              {config.event_time} - {p.prayer_time_label}
-              <br />
-              <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
-            </p>
-          )}
-        </div>
-      )}
+      {config && (() => {
+        const cleanParasha = config.parasha?.trim() || '';
+        const parashaText = cleanParasha 
+          ? (cleanParasha.startsWith('פרשת') || cleanParasha.startsWith('שבת') ? cleanParasha : `פרשת ${cleanParasha}`) 
+          : '';
+
+        const cleanSynagogue = config.synagogue_name?.trim() || '';
+        const synagogueText = cleanSynagogue 
+          ? (cleanSynagogue.startsWith('בבית') || cleanSynagogue.startsWith('בית') ? cleanSynagogue : `בבית הכנסת ${cleanSynagogue}`) 
+          : '';
+
+        const cleanAddress = config.address?.trim() || '';
+        const addressText = cleanAddress 
+          ? (cleanAddress.startsWith('בכתובת') ? cleanAddress : `בכתובת: ${cleanAddress}`) 
+          : '';
+        const fullAddress = [addressText, config.city?.trim()].filter(Boolean).join(', ');
+
+        return (
+          <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
+            {parashaText && (
+              <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>{parashaText}</p>
+            )}
+            {config.hebrew_date && <p>{config.hebrew_date}</p>}
+            {eventDateStr && (
+              <p className="font-bold text-2xl tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif' }}>
+                {eventDateStr}
+              </p>
+            )}
+            {synagogueText && (
+              <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
+                {synagogueText}
+              </p>
+            )}
+            {fullAddress && (
+              <p>{fullAddress}</p>
+            )}
+            {config.event_time && (
+              <p className="mt-2">
+                {config.event_time} - {p.prayer_time_label}
+                <br />
+                <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
+              </p>
+            )}
+          </div>
+        );
+      })()}
 
       {p.custom_message && (
         <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>

@@ -78,44 +78,62 @@ export default async function InvitePreviewPage({
       <BotanicalDivider />
 
       {/* Event details */}
-      {config && (
-        <div 
-          className="mb-6" 
-          style={{ 
-            color: '#4a4a4a', 
-            fontSize: isScreenshot ? '16px' : '14px',
-            lineHeight: '1.6',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: isScreenshot ? '8px' : '6px'
-          }}
-        >
-          {config.parasha && (
-            <p className="font-bold" style={{ color: '#2c3e6b', fontSize: isScreenshot ? '18px' : '14px' }}>{config.parasha}</p>
-          )}
-          {config.hebrew_date && <p>{config.hebrew_date}</p>}
-          {eventDateStr && (
-            <p className="font-bold tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif', fontSize: isScreenshot ? '28px' : '24px' }}>
-              {eventDateStr}
-            </p>
-          )}
-          {config.synagogue_name && (
-            <p className="font-bold mt-2" style={{ color: '#1a1a1a', fontSize: isScreenshot ? '18px' : '14px' }}>
-              {config.synagogue_name}
-            </p>
-          )}
-          {(config.address || config.city) && (
-            <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>
-          )}
-          {config.event_time && (
-            <p className="mt-2">
-              {config.event_time} - {p.prayer_time_label}
-              <br />
-              <span style={{ color: '#7a7a7a', fontSize: isScreenshot ? '13px' : '12px' }}>{p.meal_label}</span>
-            </p>
-          )}
-        </div>
-      )}
+      {config && (() => {
+        const cleanParasha = config.parasha?.trim() || '';
+        const parashaText = cleanParasha 
+          ? (cleanParasha.startsWith('פרשת') || cleanParasha.startsWith('שבת') ? cleanParasha : `פרשת ${cleanParasha}`) 
+          : '';
+
+        const cleanSynagogue = config.synagogue_name?.trim() || '';
+        const synagogueText = cleanSynagogue 
+          ? (cleanSynagogue.startsWith('בבית') || cleanSynagogue.startsWith('בית') ? cleanSynagogue : `בבית הכנסת ${cleanSynagogue}`) 
+          : '';
+
+        const cleanAddress = config.address?.trim() || '';
+        const addressText = cleanAddress 
+          ? (cleanAddress.startsWith('בכתובת') ? cleanAddress : `בכתובת: ${cleanAddress}`) 
+          : '';
+        const fullAddress = [addressText, config.city?.trim()].filter(Boolean).join(', ');
+
+        return (
+          <div 
+            className="mb-6" 
+            style={{ 
+              color: '#4a4a4a', 
+              fontSize: isScreenshot ? '16px' : '14px',
+              lineHeight: '1.6',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: isScreenshot ? '8px' : '6px'
+            }}
+          >
+            {parashaText && (
+              <p className="font-bold" style={{ color: '#2c3e6b', fontSize: isScreenshot ? '18px' : '14px' }}>{parashaText}</p>
+            )}
+            {config.hebrew_date && <p>{config.hebrew_date}</p>}
+            {eventDateStr && (
+              <p className="font-bold tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif', fontSize: isScreenshot ? '28px' : '24px' }}>
+                {eventDateStr}
+              </p>
+            )}
+            {synagogueText && (
+              <p className="font-bold mt-2" style={{ color: '#1a1a1a', fontSize: isScreenshot ? '18px' : '14px' }}>
+                {synagogueText}
+              </p>
+            )}
+            {fullAddress && (
+              <p>{fullAddress}</p>
+            )}
+            {config.event_time && (
+              <p className="mt-2">
+                {config.event_time} - {p.prayer_time_label}
+                <br />
+                <span style={{ color: '#7a7a7a', fontSize: isScreenshot ? '13px' : '12px' }}>{p.meal_label}</span>
+              </p>
+            )}
+          </div>
+        );
+      })()}
 
       {p.custom_message && (
         <p className="italic leading-relaxed mb-4" style={{ color: '#9a8e7a', fontSize: isScreenshot ? '14px' : '12px' }}>
