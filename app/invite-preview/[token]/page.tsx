@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isValidToken } from '@/lib/tokens'
+import BotanicalLayout from '@/components/botanical/BotanicalLayout'
+import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,12 +10,11 @@ export default async function InvitePreviewPage({
   params,
 }: {
   params: { token: string }
-  searchParams: { url?: string }
 }) {
   if (!isValidToken(params.token)) notFound()
 
   const [{ data: guest }, { data: config }] = await Promise.all([
-    supabaseAdmin.from('guests').select('name').eq('token', params.token).single(),
+    supabaseAdmin.from('guests').select('*').eq('token', params.token).single(),
     supabaseAdmin.from('invitation_config').select('*').eq('id', 1).single(),
   ])
 
@@ -24,82 +25,89 @@ export default async function InvitePreviewPage({
     : ''
 
   return (
-    <div dir="rtl" className="min-h-screen flex items-center justify-center bg-stone-50 p-0 m-0">
-      <div className="w-full bg-white" style={{ maxWidth: 380 }}>
+    <BotanicalLayout>
+      {/* Greeting */}
+      <p className="text-xs tracking-widest mb-6" style={{ color: '#9a8e7a' }}>
+        שלום, {guest.name} ♥
+      </p>
 
-        {/* Gold stripe */}
-        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#b8963e,#e8c97a,#b8963e)' }} />
+      {/* Invitation text */}
+      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
+        הנכם מוזמנים לטקס העלייה לתורה
+      </p>
+      <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
+        של בננו האהוב
+      </p>
 
-        <div className="px-8 py-8 text-center">
+      {/* Child name - large elegant */}
+      <h1
+        className="font-black mb-2"
+        style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: '#1a1a1a' }}
+      >
+        {config?.child_name || 'בר מצווה'}
+      </h1>
+      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>חוגג בר מצווה</p>
 
-          {/* Guest greeting */}
-          <p className="text-xs text-stone-400 tracking-widest mb-5">שלום, {guest.name} ♥</p>
+      <BotanicalDivider />
 
-          {/* Child name */}
-          <h1 className="font-serif font-black text-stone-900 mb-1" style={{ fontSize: 52, lineHeight: 1.1 }}>
-            {config?.child_name || 'בר מצווה'}
-          </h1>
-          <p className="text-stone-500 text-sm mb-5">חוגג בר מצווה</p>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-amber-200" />
-            <span className="text-amber-400 text-sm">✦</span>
-            <div className="flex-1 h-px bg-amber-200" />
-          </div>
-
-          {/* Details */}
-          <div className="space-y-2.5 text-sm text-right mb-6">
-            {config?.parasha && (
-              <div className="flex items-center gap-3">
-                <span>📖</span>
-                <span className="font-bold text-stone-800">{config.parasha}</span>
-              </div>
-            )}
-            {config?.hebrew_date && (
-              <div className="flex items-center gap-3">
-                <span>🗓</span>
-                <span className="text-stone-700">{config.hebrew_date}</span>
-              </div>
-            )}
-            {eventDateStr && (
-              <div className="flex items-center gap-3">
-                <span>📅</span>
-                <span className="text-stone-600">{eventDateStr}</span>
-              </div>
-            )}
-            {config?.event_time && (
-              <div className="flex items-center gap-3">
-                <span>🕐</span>
-                <span className="text-stone-700">שעה <strong>{config.event_time}</strong></span>
-              </div>
-            )}
-            {config?.synagogue_name && (
-              <div className="flex items-center gap-3">
-                <span>🕍</span>
-                <span className="font-bold text-stone-800">{config.synagogue_name}</span>
-              </div>
-            )}
-            {(config?.address || config?.city) && (
-              <div className="flex items-center gap-3">
-                <span>📍</span>
-                <span className="text-stone-600">{[config?.address, config?.city].filter(Boolean).join(', ')}</span>
-              </div>
-            )}
-          </div>
-
-          {config?.custom_message && (
-            <p className="text-stone-400 text-xs italic leading-relaxed mb-4">{config.custom_message}</p>
+      {/* Event details */}
+      {config && (
+        <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
+          {config.parasha && (
+            <p className="font-bold" style={{ color: '#1a1a1a' }}>שיערך אי&quot;ה בשבת {config.parasha}</p>
           )}
-
-          {config?.parents_names && (
-            <p className="text-stone-400 text-xs">{config.parents_names}</p>
+          {config.hebrew_date && <p>{config.hebrew_date}</p>}
+          {eventDateStr && (
+            <p className="font-bold text-lg tracking-wide" style={{ color: '#1a1a1a' }}>
+              {eventDateStr}
+            </p>
+          )}
+          {config.synagogue_name && (
+            <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
+              {config.synagogue_name}
+            </p>
+          )}
+          {(config.address || config.city) && (
+            <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>
+          )}
+          {config.event_time && (
+            <p className="mt-2">
+              {config.event_time} - תפילת שחרית
+              <br />
+              <span className="text-xs" style={{ color: '#7a7a7a' }}>קידוש וארוחה לאחר התפילה</span>
+            </p>
           )}
         </div>
+      )}
 
-        {/* Gold stripe */}
-        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#b8963e,#e8c97a,#b8963e)' }} />
+      {config?.custom_message && (
+        <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
+          {config.custom_message}
+        </p>
+      )}
+
+      {/* Static Welcome Message for preview */}
+      <div className="mb-4">
+        <div
+          className="rounded-xl px-4 py-3 text-sm font-bold text-center"
+          style={{
+            background: '#fcfaf2',
+            color: '#b8963e',
+            border: '1px solid #ebdcb9',
+          }}
+        >
+          ✨ תצוגה מקדימה של ההזמנה ✨
+        </div>
       </div>
-    </div>
+
+      {/* Parents */}
+      {config?.parents_names && (
+        <p className="text-xs mt-6" style={{ color: '#b8a88a', fontStyle: 'italic' }}>
+          נשמח לראותכם,
+          <br />
+          {config.parents_names}
+        </p>
+      )}
+    </BotanicalLayout>
   )
 }

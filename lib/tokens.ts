@@ -5,5 +5,5 @@ export function generateToken(): string {
 }
 
 export function isValidToken(token: string): boolean {
-  return /^[0-9a-f]{32}$/.test(token)
+  return /^[0-9a-fA-F]{32}$/.test(token)
 }

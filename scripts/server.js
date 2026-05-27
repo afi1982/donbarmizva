@@ -47,23 +47,13 @@ function buildMessage(template, guest) {
     .trim()
 }
 
-async function captureInvitation(token, shortUrl) {
+function captureInvitation() {
   const { MessageMedia } = require('whatsapp-web.js')
-  const url = `${BASE_URL}/invite-preview/${token}?url=${encodeURIComponent(shortUrl)}`
-  const browser = client.pupBrowser
-  const page = await browser.newPage()
-  try {
-    await page.setViewport({ width: 380, height: 780, deviceScaleFactor: 2 })
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 })
-    await new Promise(r => setTimeout(r, 1200))
-    // Crop to actual content height, max 780px
-    const bodyHeight = await page.evaluate(() => Math.min(document.body.scrollHeight, 780))
-    await page.setViewport({ width: 380, height: bodyHeight, deviceScaleFactor: 2 })
-    const screenshot = await page.screenshot({ encoding: 'base64', type: 'jpeg', quality: 92, fullPage: false })
-    return new MessageMedia('image/jpeg', screenshot, 'invitation.jpg')
-  } finally {
-    await page.close()
-  }
+  const fs = require('fs')
+  const path = require('path')
+  const imagePath = path.join(__dirname, 'DON.jpg')
+  const imageData = fs.readFileSync(imagePath).toString('base64')
+  return new MessageMedia('image/jpeg', imageData, 'invitation.jpg')
 }
 
 function initWhatsApp() {
@@ -128,16 +118,23 @@ app.post('/send', async (req, res) => {
     const template = mode === 'reminder' ? config.reminder_message : config.whatsapp_message
     if (!template) return res.status(400).json({ error: 'נוסח ההודעה ריק' })
 
+    const isInfoOnly = guest.phone.includes('#info')
+    const cleanPhone = guest.phone.split('#')[0]
+
     const message = buildMessage(template, guest)
     const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
-    const chatId = await resolveChat(guest.phone)
+    const chatId = await resolveChat(cleanPhone)
+
+    const captionText = isInfoOnly
+      ? 'לצפייה בהזמנה לחץ כאן'
+      : 'לאישור הגעה לחץ כאן'
 
     const caption = message
-      ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
-      : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+      ? `${message}\n\n${captionText}:\n${shortUrl}`
+      : `${captionText}:\n${shortUrl}`
 
     try {
-      const media = await captureInvitation(guest.token, shortUrl)
+      const media = captureInvitation()
       await client.sendMessage(chatId, media, { caption })
     } catch (screenshotErr) {
       console.warn(`⚠️  screenshot נכשל, שולח טקסט בלבד: ${screenshotErr.message}`)
@@ -190,14 +187,22 @@ app.post('/send-all', async (req, res) => {
 
     for (const guest of guests) {
       try {
+        const isInfoOnly = guest.phone.includes('#info')
+        const cleanPhone = guest.phone.split('#')[0]
+
         const message = buildMessage(template, guest)
         const shortUrl = `${BASE_URL}/r/${guest.token.slice(0, 8)}`
-        const chatId = await resolveChat(guest.phone)
+        const chatId = await resolveChat(cleanPhone)
+        
+        const captionText = isInfoOnly
+          ? 'לצפייה בהזמנה לחץ כאן'
+          : 'לאישור הגעה לחץ כאן'
+
         try {
-          const media = await captureInvitation(guest.token, shortUrl)
+          const media = captureInvitation()
           const cap = message
-            ? `${message}\n\nלאישור הגעה לחץ כאן:\n${shortUrl}`
-            : `לאישור הגעה לחץ כאן:\n${shortUrl}`
+            ? `${message}\n\n${captionText}:\n${shortUrl}`
+            : `${captionText}:\n${shortUrl}`
           await client.sendMessage(chatId, media, { caption: cap })
         } catch {
           await client.sendMessage(chatId, message)

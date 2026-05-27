@@ -30,10 +30,10 @@ export default function SendPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/guests').then(r => r.json()),
-      fetch('/api/config').then(r => r.json()),
+      fetch('/api/guests').then(r => { if (!r.ok) throw new Error(`guests: ${r.status}`); return r.json() }).catch(() => []),
+      fetch('/api/config').then(r => { if (!r.ok) throw new Error(`config: ${r.status}`); return r.json() }).catch(() => ({ id: 1 })),
     ]).then(([g, c]) => {
-      setGuests(g)
+      setGuests(Array.isArray(g) ? g : [])
       setConfig(c)
       setLoading(false)
     })
@@ -166,8 +166,15 @@ export default function SendPage() {
               return (
                 <div key={guest.id} className="flex items-center justify-between py-2 border-b border-stone-100 last:border-0">
                   <div>
-                    <p className="font-medium text-stone-800 text-sm">{guest.name}</p>
-                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone}</p>
+                    <p className="font-medium text-stone-800 text-sm flex items-center gap-1.5">
+                      {guest.name}
+                      {guest.phone.includes('#info') && (
+                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                          הזמנה בלבד
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
                     {s === 'error' && <p className="text-red-500 text-xs mt-0.5">{errorMap[guest.id]}</p>}
                   </div>
                   <button
@@ -215,8 +222,15 @@ export default function SendPage() {
               return (
                 <div key={guest.id} className="flex items-center justify-between py-2 border-b border-stone-100 last:border-0">
                   <div>
-                    <p className="font-medium text-stone-800 text-sm">{guest.name}</p>
-                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone}</p>
+                    <p className="font-medium text-stone-800 text-sm flex items-center gap-1.5">
+                      {guest.name}
+                      {guest.phone.includes('#info') && (
+                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                          הזמנה בלבד
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
                     {s === 'error' && <p className="text-red-500 text-xs mt-0.5">{errorMap[guest.id]}</p>}
                   </div>
                   <button

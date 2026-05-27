@@ -82,11 +82,21 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
         const isConfirmingResend = confirmResend === guest.id
         const alreadyInvited = !!guest.invited_at
 
+        const cleanPhone = guest.phone.split('#')[0]
+        const isInfoOnly = guest.phone.includes('#info')
+
         return (
           <div key={guest.id} className={`flex items-start gap-2 p-3 border rounded-xl transition-colors ${isConfirming ? 'bg-red-50 border-red-200' : 'bg-white border-stone-100 hover:border-stone-200'}`}>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-stone-800 truncate text-sm">{guest.name}</div>
-              <div className="text-xs text-stone-400" dir="ltr">{guest.phone}</div>
+              <div className="font-semibold text-stone-800 truncate text-sm flex items-center gap-1.5">
+                {guest.name}
+                {isInfoOnly && (
+                  <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                    הזמנה בלבד
+                  </span>
+                )}
+              </div>
+              <div className="text-xs text-stone-400" dir="ltr">{cleanPhone}</div>
               {guest.responded_at && (
                 <div className="text-xs text-stone-300 mt-0.5">
                   אישר/ה {new Date(guest.responded_at).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -113,8 +123,12 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
               )}
             </div>
 
-            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${STATUS_BADGE[guest.status]}`}>
-              {STATUS_LABEL[guest.status]}
+            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${
+              isInfoOnly && guest.status === 'pending'
+                ? 'bg-amber-100 text-amber-700'
+                : STATUS_BADGE[guest.status]
+            }`}>
+              {isInfoOnly && guest.status === 'pending' ? 'הזמנה נשלחה' : STATUS_LABEL[guest.status]}
             </span>
 
             {(showInvite || showReminder) && !isConfirming && (

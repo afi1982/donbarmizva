@@ -30,10 +30,15 @@ async function getConfig() {
 
 function buildMessage(template, guest, config) {
   const link = `${BASE_URL}/rsvp/${guest.token}`
-  return template
+  let msg = template
     .replace(/{name}/g, guest.name)
     .replace(/{link}/g, link)
     .replace(/{custom_message}/g, config.custom_message || '')
+
+  if (guest.phone.includes('#info')) {
+    msg = msg.replace(/לאישור הגעה/g, 'לצפייה בהזמנה')
+  }
+  return msg
 }
 
 function normalizePhone(phone) {

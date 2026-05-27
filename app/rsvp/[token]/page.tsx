@@ -19,32 +19,117 @@ export default async function RSVPPage({ params }: { params: { token: string } }
   if (!guest) notFound()
 
   const eventDateStr = config?.event_date
-    ? new Date(config.event_date).toLocaleDateString('he-IL')
+    ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
+
+  const alreadyResponded = guest.status !== 'pending'
 
   return (
     <BotanicalLayout>
-      <div className="text-center" dir="rtl">
-        <p className="text-stone-400 text-xs tracking-widest mb-4">שלום, {guest.name} ❤</p>
-        <h1 className="font-serif text-5xl font-black text-stone-800 mb-2">
-          {config?.child_name || 'בר מצווה'}
-        </h1>
-        <p className="text-stone-500 text-sm mb-1">חוגג בר מצווה</p>
-        <BotanicalDivider />
-        {config && (
-          <div className="text-stone-600 text-sm leading-8 mb-6">
-            {config.parasha && <p className="font-bold text-stone-800">{config.parasha}</p>}
-            {config.hebrew_date && <p>{config.hebrew_date}</p>}
-            {config.event_time && <p>שעה {config.event_time}</p>}
-            {eventDateStr && <p>{eventDateStr}</p>}
-            {config.synagogue_name && <p className="font-bold text-stone-800 mt-1">{config.synagogue_name}</p>}
-            {(config.address || config.city) && <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>}
+      {/* Greeting */}
+      <p className="text-xs tracking-widest mb-6" style={{ color: '#9a8e7a' }}>
+        שלום, {guest.name} ♥
+      </p>
+
+      {/* Invitation text */}
+      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
+        הנכם מוזמנים לטקס העלייה לתורה
+      </p>
+      <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
+        של בננו האהוב
+      </p>
+
+      {/* Child name - large elegant */}
+      <h1
+        className="font-black mb-2"
+        style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: '#1a1a1a' }}
+      >
+        {config?.child_name || 'בר מצווה'}
+      </h1>
+      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>חוגג בר מצווה</p>
+
+      <BotanicalDivider />
+
+      {/* Event details */}
+      {config && (
+        <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
+          {config.parasha && (
+            <p className="font-bold" style={{ color: '#1a1a1a' }}>שיערך אי&quot;ה בשבת {config.parasha}</p>
+          )}
+          {config.hebrew_date && <p>{config.hebrew_date}</p>}
+          {eventDateStr && (
+            <p className="font-bold text-lg tracking-wide" style={{ color: '#1a1a1a' }}>
+              {eventDateStr}
+            </p>
+          )}
+          {config.synagogue_name && (
+            <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
+              {config.synagogue_name}
+            </p>
+          )}
+          {(config.address || config.city) && (
+            <p>{[config.address, config.city].filter(Boolean).join(', ')}</p>
+          )}
+          {config.event_time && (
+            <p className="mt-2">
+              {config.event_time} - תפילת שחרית
+              <br />
+              <span className="text-xs" style={{ color: '#7a7a7a' }}>קידוש וארוחה לאחר התפילה</span>
+            </p>
+          )}
+        </div>
+      )}
+
+      {config?.custom_message && (
+        <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
+          {config.custom_message}
+        </p>
+      )}
+
+      {/* Already responded state */}
+      {guest.phone.includes('#info') ? (
+        <div className="mb-4">
+          <div
+            className="rounded-xl px-4 py-3 text-sm font-bold text-center"
+            style={{
+              background: '#fcfaf2',
+              color: '#b8963e',
+              border: '1px solid #ebdcb9',
+            }}
+          >
+            ✨ נשמח מאוד לראותכם בין אורחינו! ✨
           </div>
-        )}
-        <p className="font-bold text-stone-700 mb-5 text-sm">האם תוכלו להגיע?</p>
-        <RSVPButtons token={params.token} />
-        {config?.parents_names && <p className="text-stone-400 text-xs mt-8">{config.parents_names}</p>}
-      </div>
+        </div>
+      ) : alreadyResponded ? (
+        <div className="mb-4">
+          <div
+            className="rounded-xl px-4 py-3 mb-3 text-sm font-bold"
+            style={{
+              background: guest.status === 'coming' ? '#ecfdf5' : guest.status === 'not_coming' ? '#fef2f2' : '#fffbeb',
+              color: guest.status === 'coming' ? '#065f46' : guest.status === 'not_coming' ? '#991b1b' : '#92400e',
+            }}
+          >
+            {guest.status === 'coming' && '✓ אישרת הגעה — נשמח לראותכם!'}
+            {guest.status === 'not_coming' && 'עדכנת שלא תוכלו להגיע'}
+            {guest.status === 'maybe' && '🤔 עדיין לא בטוחים — נשמח לשמוע'}
+          </div>
+          <RSVPButtons token={params.token} label="שינוי תשובה" collapsed />
+        </div>
+      ) : (
+        <>
+          <p className="font-bold text-sm mb-4" style={{ color: '#3a3a3a' }}>האם תוכלו להגיע?</p>
+          <RSVPButtons token={params.token} />
+        </>
+      )}
+
+      {/* Parents */}
+      {config?.parents_names && (
+        <p className="text-xs mt-6" style={{ color: '#b8a88a', fontStyle: 'italic' }}>
+          נשמח לראותכם,
+          <br />
+          {config.parents_names}
+        </p>
+      )}
     </BotanicalLayout>
   )
 }
