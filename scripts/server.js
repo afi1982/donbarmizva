@@ -53,14 +53,26 @@ async function captureInvitation(token) {
     if (client && client.pupBrowser) {
       console.log(`📸 מצלם צילום מסך דינמי להזמנה של ${token}...`)
       const page = await client.pupBrowser.newPage()
-      await page.setViewport({ width: 380, height: 680, deviceScaleFactor: 2 })
+      // Make viewport tall enough so scrollbars don't appear and rendering is correct
+      await page.setViewport({ width: 420, height: 1000, deviceScaleFactor: 2 })
       
       const previewUrl = `http://localhost:3000/invite-preview/${token}`
       await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })
       
-      await new Promise(r => setTimeout(r, 600))
+      await new Promise(r => setTimeout(r, 800))
       
-      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 90 })
+      // Select the invitation card element
+      const cardElement = await page.$('#invitation-card')
+      let screenshotBuffer
+      
+      if (cardElement) {
+        screenshotBuffer = await cardElement.screenshot({ type: 'jpeg', quality: 95 })
+        console.log('✅ צילום המסך בוצע בהצלחה לפי גבולות כרטיס ההזמנה בלבד!')
+      } else {
+        console.warn('⚠️ לא נמצא אלמנט #invitation-card, מצלם את כל העמוד כגיבוי')
+        screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 90 })
+      }
+      
       await page.close()
       
       const base64Data = screenshotBuffer.toString('base64')
