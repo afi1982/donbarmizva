@@ -5,16 +5,26 @@ interface BotanicalLayoutProps {
   children: React.ReactNode
   className?: string
   showWreath?: boolean
+  isScreenshot?: boolean
 }
 
-export default function BotanicalLayout({ children, className = '', showWreath = true }: BotanicalLayoutProps) {
+export default function BotanicalLayout({ children, className = '', showWreath = true, isScreenshot = false }: BotanicalLayoutProps) {
+  const bgStyle = isScreenshot 
+    ? { background: '#faf6f0' } 
+    : { background: 'linear-gradient(180deg, #f7f5f0 0%, #eee9df 100%)' }
+
   return (
     <div
       className={`min-h-screen relative flex flex-col items-center justify-center py-8 px-4 ${className}`}
-      style={{ background: 'linear-gradient(180deg, #f7f5f0 0%, #eee9df 100%)' }}
+      style={bgStyle}
       dir="rtl"
     >
-      <div id="invitation-card" className="relative w-full max-w-sm mx-auto bg-[#faf6f0] rounded-sm shadow-xl overflow-hidden border border-[#ebdcb9]/40">
+      <div 
+        id="invitation-card" 
+        className={`relative w-full max-w-sm mx-auto bg-[#faf6f0] rounded-sm overflow-hidden ${
+          isScreenshot ? 'border border-[#ebdcb9]/20' : 'shadow-xl border border-[#ebdcb9]/40'
+        }`}
+      >
         {/* Gold stripe top */}
         <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #b8963e, #e8c97a, #b8963e)' }} />
         

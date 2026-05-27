@@ -58,7 +58,7 @@ async function captureInvitation(token) {
       // Make viewport tall enough so scrollbars don't appear and rendering is correct
       await page.setViewport({ width: 420, height: 1000, deviceScaleFactor: 2 })
       
-      const previewUrl = `${BASE_URL}/invite-preview/${token}`
+      const previewUrl = `${BASE_URL}/invite-preview/${token}?screenshot=1`
       await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })
       
       await new Promise(r => setTimeout(r, 800))

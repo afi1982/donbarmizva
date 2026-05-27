@@ -9,8 +9,10 @@ export const dynamic = 'force-dynamic'
 
 export default async function InvitePreviewPage({
   params,
+  searchParams,
 }: {
   params: { token: string }
+  searchParams?: { screenshot?: string }
 }) {
   if (!isValidToken(params.token)) notFound()
 
@@ -40,8 +42,10 @@ export default async function InvitePreviewPage({
 
   const p = parseCustomMessage(config?.custom_message)
 
+  const isScreenshot = searchParams?.screenshot === '1'
+
   return (
-    <BotanicalLayout>
+    <BotanicalLayout isScreenshot={isScreenshot}>
       {/* Greeting */}
       <p className="text-xs tracking-widest mb-6" style={{ color: '#9a8e7a' }}>
         שלום, {guest.name} ♥
