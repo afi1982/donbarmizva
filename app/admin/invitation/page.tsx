@@ -11,7 +11,7 @@ const BASIC_FIELDS: { key: keyof InvitationConfig; label: string; type?: string 
   { key: 'child_name',      label: 'שם הבר מצווה' },
   { key: 'event_date',      label: 'תאריך האירוע', type: 'date' },
   { key: 'event_time',      label: 'שעת האירוע' },
-  { key: 'parasha',         label: 'שם הפרשה' },
+  { key: 'parasha',         label: 'שורת כותרת האירוע (לדוגמה: שיערך אי״ה ביום שלישי פרשת מטות)' },
   { key: 'hebrew_date',     label: 'תאריך עברי (לדוגמה: כ״ה אייר תשפ״ה)' },
   { key: 'synagogue_name',  label: 'שם בית הכנסת' },
   { key: 'address',         label: 'כתובת' },

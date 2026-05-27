@@ -57,7 +57,7 @@ export default async function InvitePreviewPage({
       {config && (
         <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
           {config.parasha && (
-            <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>שיערך אי&quot;ה בשבת {config.parasha}</p>
+            <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>{config.parasha}</p>
           )}
           {config.hebrew_date && <p>{config.hebrew_date}</p>}
           {eventDateStr && (
