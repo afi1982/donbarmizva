@@ -55,17 +55,17 @@ async function captureInvitation(token) {
       const page = await client.pupBrowser.newPage()
       // Disable cache to always get the freshest render
       await page.setCacheEnabled(false)
-      // Make viewport wide and tall enough to center the card on a beautiful solid background
-      await page.setViewport({ width: 680, height: 1100, deviceScaleFactor: 2 })
+      // Make viewport width exactly match the card width (390px) to maximize text readability
+      await page.setViewport({ width: 390, height: 900, deviceScaleFactor: 2 })
       
       const previewUrl = `${BASE_URL}/invite-preview/${token}?screenshot=1`
       await page.goto(previewUrl, { waitUntil: 'networkidle0', timeout: 15000 })
       
       await new Promise(r => setTimeout(r, 800))
       
-      // Capture the full viewport as JPEG (solid background, no black borders or transparency bugs)
-      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 95 })
-      console.log('✅ צילום המסך (עמוד מלא רחב) בוצע בהצלחה!')
+      // Capture the full height of the page to ensure nothing is cut off (solid background, no black borders)
+      const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 95, fullPage: true })
+      console.log('✅ צילום המסך (בגודל מותאם לכרטיס) בוצע בהצלחה!')
       
       await page.close()
       
