@@ -68,17 +68,17 @@ async function captureInvitation(token) {
       let screenshotBuffer
       
       if (cardElement) {
-        screenshotBuffer = await cardElement.screenshot({ type: 'jpeg', quality: 95 })
-        console.log('✅ צילום המסך בוצע בהצלחה לפי גבולות כרטיס ההזמנה בלבד!')
+        screenshotBuffer = await cardElement.screenshot({ type: 'png', omitBackground: true })
+        console.log('✅ צילום המסך בוצע בהצלחה לפי גבולות כרטיס ההזמנה בלבד (PNG)!')
       } else {
         console.warn('⚠️ לא נמצא אלמנט #invitation-card, מצלם את כל העמוד כגיבוי')
-        screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 90 })
+        screenshotBuffer = await page.screenshot({ type: 'png', omitBackground: true })
       }
       
       await page.close()
       
       const base64Data = screenshotBuffer.toString('base64')
-      return new MessageMedia('image/jpeg', base64Data, 'invitation.jpg')
+      return new MessageMedia('image/png', base64Data, 'invitation.png')
     }
   } catch (err) {
     console.warn('⚠️ צילום מסך דינמי נכשל, משתמש בתמונה סטטית:', err.message)
