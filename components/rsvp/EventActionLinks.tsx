@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { getEventDef } from '@/lib/events'
 
 const pillStyle: CSSProperties = {
   border: '1px solid var(--inv-frame, #ebdcb9)',
@@ -13,6 +14,7 @@ type ConfigLike = {
   event_date?: string | null
   event_time?: string | null
   child_name?: string | null
+  event_type?: string | null
 } | null
 
 function pad(n: number) {
@@ -24,7 +26,8 @@ export function buildCalendarUrl(config: ConfigLike): string | null {
   const date = new Date(config.event_date)
   if (isNaN(date.getTime())) return null
 
-  const title = `בר מצווה של ${config.child_name?.trim() || 'דון'}`
+  const def = getEventDef(config.event_type)
+  const title = def.calendarTitle(config.child_name?.trim() || def.celebrantFallback)
   const location = [config.synagogue_name, config.address, config.city]
     .map(s => s?.trim())
     .filter(Boolean)

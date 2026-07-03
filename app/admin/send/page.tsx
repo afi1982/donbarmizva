@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Guest } from '@/lib/types'
 import SendAllButton from '@/components/admin/SendAllButton'
-import { LOCAL_SERVER, buildWaText, markSent, openWa, pickTemplate, shareInvitationImage } from '@/lib/wa'
+import { LOCAL_SERVER, buildWaText, markSent, openWa, pickTemplate, prefetchInvitationImage, shareInvitationImage } from '@/lib/wa'
 
 type Config = { whatsapp_message: string | null; reminder_message: string | null }
 type SendStatus = 'idle' | 'loading' | 'sent' | 'error'
@@ -51,6 +51,14 @@ export default function SendPage() {
   }, [checkServer])
 
   const serverConnected = serverStatus === 'connected'
+
+  // Warm the invitation image for info-only guests so tapping "send" shares instantly
+  useEffect(() => {
+    if (serverConnected || typeof window === 'undefined') return
+    guests
+      .filter(g => g.phone.includes('#info'))
+      .forEach(g => prefetchInvitationImage(g.token, window.location.origin))
+  }, [guests, serverConnected])
 
   function sendOne(guestId: string, mode: 'invite' | 'reminder') {
     setErrorMap(prev => { const e = { ...prev }; delete e[guestId]; return e })

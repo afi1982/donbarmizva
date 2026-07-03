@@ -67,17 +67,36 @@ export async function checkLocalServer(): Promise<boolean> {
   }
 }
 
+// The browser only allows navigator.share() within ~seconds of the user's tap.
+// Generating the invitation image can take longer on a cold server, so we prefetch
+// and cache it — by the time the user taps "send", sharing is instant.
+const imageCache = new Map<string, Promise<File | null>>()
+
+export function prefetchInvitationImage(token: string, origin: string): Promise<File | null> {
+  let cached = imageCache.get(token)
+  if (!cached) {
+    cached = fetch(`${origin}/api/invitation-image/${token}`)
+      .then(async res => {
+        if (!res.ok) return null
+        const blob = await res.blob()
+        return new File([blob], 'invitation.png', { type: blob.type || 'image/png' })
+      })
+      .catch(() => null)
+    imageCache.set(token, cached)
+    // Don't poison the cache with a failed attempt
+    cached.then(file => { if (!file) imageCache.delete(token) })
+  }
+  return cached
+}
+
 // Share the actual invitation IMAGE via the native share sheet (works from the phone —
 // the user picks the WhatsApp contact). Returns true when the share sheet handled it
 // (including user-cancel), false when unsupported/failed and a fallback should run.
 export async function shareInvitationImage(guest: Pick<Guest, 'token'>, origin: string): Promise<boolean> {
   try {
     if (typeof navigator === 'undefined' || typeof navigator.canShare !== 'function') return false
-    const res = await fetch(`${origin}/api/invitation-image/${guest.token}`)
-    if (!res.ok) return false
-    const blob = await res.blob()
-    const file = new File([blob], 'invitation.png', { type: blob.type || 'image/png' })
-    if (!navigator.canShare({ files: [file] })) return false
+    const file = await prefetchInvitationImage(guest.token, origin)
+    if (!file || !navigator.canShare({ files: [file] })) return false
     await navigator.share({ files: [file] })
     return true
   } catch (err) {

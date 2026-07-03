@@ -56,6 +56,8 @@ export default function DesignStudioPage() {
   const vars = useMemo(() => specToCssVars(draft) as CSSProperties, [draft])
   const isDirty = published ? !specsEqual(draft, published) : !specsEqual(draft, DEFAULT_SPEC)
   const activeTemplate = TEMPLATES.find(t => specsEqual(t.spec, draft))
+  const eventType = (config.event_type as string) || 'bar_mitzvah'
+  const visibleTemplates = TEMPLATES.filter(t => !t.eventTypes || t.eventTypes.includes(eventType))
 
   function update(patch: Partial<DesignSpec>) {
     setDraft(prev => ({ ...prev, ...patch }))
@@ -148,9 +150,9 @@ export default function DesignStudioPage() {
         <div className="space-y-6">
           {/* Template gallery */}
           <section aria-label="גלריית תבניות">
-            <h2 className="font-bold text-slate-200 text-sm mb-3">🎨 תבניות עיצוב</h2>
+            <h2 className="font-bold text-slate-200 text-sm mb-3">🎨 תבניות עיצוב מותאמות לאירוע שלך</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {TEMPLATES.map(t => {
+              {visibleTemplates.map(t => {
                 const isActive = activeTemplate?.slug === t.slug
                 return (
                   <button

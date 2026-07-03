@@ -5,6 +5,7 @@ import { isValidToken } from '@/lib/tokens'
 import EventActionLinks from '@/components/rsvp/EventActionLinks'
 import { getPublishedDesign } from '@/lib/design/server'
 import { DesignSpec } from '@/lib/design/spec'
+import { getEventDef } from '@/lib/events'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,7 +42,10 @@ export default async function ConfirmedPage({ params }: { params: { token: strin
       <p className="text-sm leading-7 whitespace-pre-line" style={{ color: 'var(--inv-ink, #5a5347)' }}>
         {customText
           ? customText.replace(/{name}/g, guestName)
-          : <>שמחים שתוכלו להגיע!<br />נשמח לראותכם בשמחת בר המצווה של {config?.child_name || 'דון'} 💛</>}
+          : (() => {
+              const def = getEventDef(config?.event_type)
+              return <>שמחים שתוכלו להגיע!<br />{def.thanksDefault(config?.child_name || def.celebrantFallback)} 💛</>
+            })()}
       </p>
       <EventActionLinks config={config} />
     </BotanicalLayout>

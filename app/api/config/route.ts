@@ -44,6 +44,7 @@ export async function PUT(request: NextRequest) {
   const body = await request.json()
 
   const allowed = [
+    'event_type',
     'child_name', 'event_date', 'event_time', 'parasha', 'hebrew_date',
     'synagogue_name', 'address', 'city', 'parents_names', 'siblings_names',
     'custom_message', 'whatsapp_message', 'reminder_message',

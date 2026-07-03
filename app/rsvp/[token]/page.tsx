@@ -7,6 +7,7 @@ import RSVPButtons from '@/components/rsvp/RSVPButtons'
 import EventActionLinks from '@/components/rsvp/EventActionLinks'
 import { parseCustomMessage } from '../../../lib/config-helper'
 import { getPublishedDesign } from '@/lib/design/server'
+import { formatParasha, formatVenue, getEventDef } from '@/lib/events'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -14,11 +15,18 @@ export const revalidate = 0
 const BASE_URL = 'https://donbarmizva.vercel.app'
 
 export async function generateMetadata({ params }: { params: { token: string } }) {
+  let title = 'הזמנה אישית עבורכם'
+  try {
+    const { data: c } = await supabaseAdmin
+      .from('invitation_config').select('child_name, event_type').eq('id', 1).maybeSingle()
+    const def = getEventDef(c?.event_type)
+    title = `הזמנה: ${def.calendarTitle(c?.child_name || def.celebrantFallback)}`
+  } catch { /* keep generic title */ }
   return {
-    title: 'הזמנה לבר המצווה של דון',
+    title,
     description: 'לחצו לצפייה בהזמנה ואישור הגעה',
     openGraph: {
-      title: 'הזמנה לבר המצווה של דון',
+      title,
       description: 'לחצו לצפייה בהזמנה ואישור הגעה',
       images: [{ url: `${BASE_URL}/api/invitation-image/${params.token}?format=og`, width: 1200, height: 630 }],
     },
@@ -42,6 +50,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
 
   const alreadyResponded = guest.status !== 'pending'
   const p = parseCustomMessage(config?.custom_message)
+  const eventDef = getEventDef(config?.event_type)
 
   return (
     <BotanicalLayout design={design}>
@@ -63,7 +72,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
         className="font-black mb-2"
         style={{ fontFamily: 'serif', fontSize: '3.5rem', lineHeight: 1.1, color: 'var(--inv-primary, #b8963e)', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
       >
-        {config?.child_name || 'בר מצווה'}
+        {config?.child_name || eventDef.celebrantFallback}
       </h1>
       <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>{p.tagline}</p>
 
@@ -71,15 +80,8 @@ export default async function RSVPPage({ params }: { params: { token: string } }
 
       {/* Event details */}
       {config && (() => {
-        const cleanParasha = config.parasha?.trim() || '';
-        const parashaText = cleanParasha 
-          ? (cleanParasha.startsWith('פרשת') || cleanParasha.startsWith('שבת') ? cleanParasha : `פרשת ${cleanParasha}`) 
-          : '';
-
-        const cleanSynagogue = config.synagogue_name?.trim() || '';
-        const synagogueText = cleanSynagogue 
-          ? (cleanSynagogue.startsWith('בבית') || cleanSynagogue.startsWith('בית') ? cleanSynagogue : `בבית הכנסת ${cleanSynagogue}`) 
-          : '';
+        const parashaText = formatParasha(config.parasha, eventDef);
+        const synagogueText = formatVenue(config.synagogue_name, eventDef);
 
         const cleanAddress = config.address?.trim() || '';
         const addressText = cleanAddress 

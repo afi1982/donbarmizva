@@ -30,8 +30,8 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl shadow-black/50 w-80 space-y-4">
         <div className="text-center">
           <div className="text-3xl mb-2" style={{ color: '#e8c97a' }}>✡</div>
-          <h1 className="text-xl font-bold text-slate-100">מערכת ניהול</h1>
-          <p className="text-slate-400 text-sm">בר המצווה של דון</p>
+          <h1 className="text-xl font-bold text-slate-100" dir="ltr">SendAI</h1>
+          <p className="text-slate-400 text-sm">מערכת הזמנות ואישורי הגעה</p>
         </div>
         <input
           type="password"

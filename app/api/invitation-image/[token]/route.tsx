@@ -6,6 +6,7 @@ import { getPublishedDesign } from '@/lib/design/server'
 import { DEFAULT_SPEC } from '@/lib/design/spec'
 import { parseCustomMessage } from '@/lib/config-helper'
 import { toVisual } from '@/lib/hebrew-visual'
+import { formatParasha, formatVenue, getEventDef } from '@/lib/events'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -48,16 +49,11 @@ export async function GET(
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' })
     : ''
 
-  const cleanParasha = config?.parasha?.trim() || ''
-  const parashaText = cleanParasha
-    ? (cleanParasha.startsWith('פרשת') || cleanParasha.startsWith('שבת') ? cleanParasha : `פרשת ${cleanParasha}`)
-    : ''
-  const cleanSynagogue = config?.synagogue_name?.trim() || ''
-  const synagogueText = cleanSynagogue
-    ? (cleanSynagogue.startsWith('בבית') || cleanSynagogue.startsWith('בית') ? cleanSynagogue : `בבית הכנסת ${cleanSynagogue}`)
-    : ''
+  const eventDef = getEventDef(config?.event_type)
+  const parashaText = formatParasha(config?.parasha, eventDef)
+  const synagogueText = formatVenue(config?.synagogue_name, eventDef)
   const fullAddress = [config?.address?.trim(), config?.city?.trim()].filter(Boolean).join(', ')
-  const childName = config?.child_name || 'בר מצווה'
+  const childName = config?.child_name || eventDef.celebrantFallback
 
   const goldStripe = `linear-gradient(90deg, ${d.primary}, ${d.primaryLight}, ${d.primary})`
 
@@ -82,9 +78,9 @@ export async function GET(
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 14, background: goldStripe, display: 'flex' }} />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 14, background: goldStripe, display: 'flex' }} />
-          <div style={{ display: 'flex', fontSize: 30, color: d.ink }}>{toVisual(p.title1 || 'הנכם מוזמנים לשמוח עימנו')}</div>
+          <div style={{ display: 'flex', fontSize: 30, color: d.ink }}>{toVisual(p.title1 || eventDef.defaults.title1)}</div>
           <div style={{ display: 'flex', fontSize: 120, fontFamily: 'Frank', fontWeight: 900, color: d.primary, marginTop: 8 }}>{toVisual(childName)}</div>
-          <div style={{ display: 'flex', fontSize: 34, color: d.ink, marginTop: 4 }}>{toVisual(p.tagline || 'עולה לתורה')}</div>
+          <div style={{ display: 'flex', fontSize: 34, color: d.ink, marginTop: 4 }}>{toVisual(p.tagline || eventDef.defaults.tagline)}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginTop: 24 }}>
             {eventDateStr && <div style={{ display: 'flex', fontSize: 44, fontWeight: 700, color: d.primary }}>{eventDateStr}</div>}
             {synagogueText && <div style={{ display: 'flex', fontSize: 30, color: d.ink }}>{toVisual(`· ${synagogueText}`)}</div>}
@@ -112,7 +108,7 @@ export async function GET(
           <div style={{ display: 'flex', height: 12, width: '100%', background: goldStripe }} />
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexGrow: 1, justifyContent: 'center', padding: '20px 48px', width: '100%' }}>
-            <div style={{ display: 'flex', fontSize: 24, color: d.muted, marginBottom: 26 }}>{toVisual('בס״ד')}</div>
+            {eventDef.showBsd && <div style={{ display: 'flex', fontSize: 24, color: d.muted, marginBottom: 26 }}>{toVisual('בס״ד')}</div>}
 
             {p.title1 && <div style={{ display: 'flex', fontSize: 32, color: d.ink, textAlign: 'center' }}>{toVisual(p.title1)}</div>}
             {p.title2 && <div style={{ display: 'flex', fontSize: 32, color: d.ink, marginTop: 6, textAlign: 'center' }}>{toVisual(p.title2)}</div>}
@@ -138,7 +134,7 @@ export async function GET(
             {fullAddress && <div style={{ display: 'flex', fontSize: 30, color: d.ink, marginTop: 8 }}>{toVisual(fullAddress)}</div>}
             {config?.event_time && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 18 }}>
-                <div style={{ display: 'flex', fontSize: 30, color: d.ink }}>{toVisual(`${p.prayer_time_label || 'תפילת שחרית'} - ${config.event_time}`)}</div>
+                <div style={{ display: 'flex', fontSize: 30, color: d.ink }}>{toVisual(`${p.prayer_time_label || eventDef.defaults.prayer_time_label} - ${config.event_time}`)}</div>
                 {p.meal_label && <div style={{ display: 'flex', fontSize: 25, color: d.muted, marginTop: 6 }}>{toVisual(p.meal_label)}</div>}
               </div>
             )}

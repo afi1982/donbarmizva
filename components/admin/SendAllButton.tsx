@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Guest } from '@/lib/types'
-import { LOCAL_SERVER, MessageTemplates, buildWaText, checkLocalServer, markSent, openWa, pickTemplate, shareInvitationImage } from '@/lib/wa'
+import { LOCAL_SERVER, MessageTemplates, buildWaText, checkLocalServer, markSent, openWa, pickTemplate, prefetchInvitationImage, shareInvitationImage } from '@/lib/wa'
 
 interface Props {
   mode: 'invite' | 'reminder'
@@ -29,6 +29,14 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
     const id = setInterval(check, 10000)
     return () => { active = false; clearInterval(id) }
   }, [])
+
+  // Warm the invitation image for info-only guests so the share sheet opens instantly
+  useEffect(() => {
+    if (serverOnline || typeof window === 'undefined') return
+    guests
+      .filter(g => g.phone.includes('#info'))
+      .forEach(g => prefetchInvitationImage(g.token, window.location.origin))
+  }, [guests, serverOnline])
 
   if (count === 0 && alreadyInvited === 0 && !queue) return null
 

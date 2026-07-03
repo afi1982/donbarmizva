@@ -3,6 +3,7 @@ import FloralWreath from '@/components/botanical/FloralWreath'
 import CornerBranch from '@/components/botanical/CornerBranch'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '@/lib/config-helper'
+import { getEventDef } from '@/lib/events'
 
 export default function InvitationPreview({ config, showWreath = true }: { config: Partial<InvitationConfig>; showWreath?: boolean }) {
   const eventDateStr = config.event_date
@@ -57,7 +58,7 @@ export default function InvitationPreview({ config, showWreath = true }: { confi
             className="font-black mb-2"
             style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: 'var(--inv-primary, #b8963e)', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
           >
-            {config.child_name || 'בר מצווה'}
+            {config.child_name || getEventDef(config.event_type).celebrantFallback}
           </h1>
           <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>{p.tagline}</p>
 

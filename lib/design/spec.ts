@@ -40,6 +40,8 @@ export interface DesignTemplate {
   name: string
   description: string
   spec: DesignSpec
+  // Event types this template is recommended for; undefined = shown for every event type
+  eventTypes?: string[]
 }
 
 export const TEMPLATES: DesignTemplate[] = [
@@ -99,6 +101,90 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#d1d5db', muted: '#9ca3af',
       accent: '#93b4e0', leaf: '#6b8ab8', divider: '#8a713a',
       wreath: true,
+    },
+  },
+  {
+    slug: 'blush-romance',
+    name: 'רומנטיקה ורודה',
+    description: 'ורוד עתיק וזהב ורדים — עדין ורומנטי',
+    eventTypes: ['wedding', 'bat_mitzvah', 'birthday'],
+    spec: {
+      version: 1,
+      bgFrom: '#fdf2f4', bgTo: '#fbe4e8', cardBg: '#fffafb', frame: '#f3d3da',
+      primary: '#c05f7c', primaryLight: '#eba9bc',
+      ink: '#5c4a4e', muted: '#a38b91',
+      accent: '#8a4a5e', leaf: '#b87a8c', divider: '#dbaab6',
+      wreath: true,
+    },
+  },
+  {
+    slug: 'champagne',
+    name: 'שמפניה',
+    description: 'שנהב חם וזהב עמום — אלגנטיות נצחית',
+    eventTypes: ['wedding', 'business', 'bar_mitzvah', 'bat_mitzvah'],
+    spec: {
+      version: 1,
+      bgFrom: '#faf7f2', bgTo: '#f0e9dd', cardBg: '#fffdf9', frame: '#e2d5bd',
+      primary: '#a58a4e', primaryLight: '#d9c08a',
+      ink: '#55503f', muted: '#96907c',
+      accent: '#6b5d3f', leaf: '#8a7a55', divider: '#cbbc98',
+      wreath: true,
+    },
+  },
+  {
+    slug: 'lilac-bloom',
+    name: 'לילך פורח',
+    description: 'סגול לילך רך עם נגיעות פודרה',
+    eventTypes: ['bat_mitzvah', 'birthday'],
+    spec: {
+      version: 1,
+      bgFrom: '#f7f3fb', bgTo: '#ece3f5', cardBg: '#fbf8fe', frame: '#ddcdec',
+      primary: '#8a5fb5', primaryLight: '#c3a4e3',
+      ink: '#4e4358', muted: '#90839c',
+      accent: '#5e4478', leaf: '#7d64a0', divider: '#b9a4d1',
+      wreath: true,
+    },
+  },
+  {
+    slug: 'soft-sky',
+    name: 'תכלת רכה',
+    description: 'תכלת תינוקית ענוגה — מושלם לברית',
+    eventTypes: ['brit', 'bar_mitzvah'],
+    spec: {
+      version: 1,
+      bgFrom: '#f2f8fc', bgTo: '#e2eef7', cardBg: '#f9fcfe', frame: '#cfe2ef',
+      primary: '#4a86b0', primaryLight: '#94c0dd',
+      ink: '#44505a', muted: '#85929e',
+      accent: '#2e5a7d', leaf: '#5a86ab', divider: '#a4c2d6',
+      wreath: true,
+    },
+  },
+  {
+    slug: 'festive-pop',
+    name: 'צבעי חגיגה',
+    description: 'אלמוג חם וטורקיז שמח — אנרגיה של מסיבה',
+    eventTypes: ['birthday', 'bat_mitzvah'],
+    spec: {
+      version: 1,
+      bgFrom: '#fff7ef', bgTo: '#ffe8d6', cardBg: '#fffcf7', frame: '#f5d5b8',
+      primary: '#e2704a', primaryLight: '#f5aa72',
+      ink: '#4f4a44', muted: '#9a8f85',
+      accent: '#1f8a80', leaf: '#3aa397', divider: '#e8b48c',
+      wreath: true,
+    },
+  },
+  {
+    slug: 'crisp-navy',
+    name: 'נייבי מוקפד',
+    description: 'כחול עמוק ואפור נקי — מקצועי ומדויק',
+    eventTypes: ['business', 'bar_mitzvah'],
+    spec: {
+      version: 1,
+      bgFrom: '#f4f6f8', bgTo: '#e6eaef', cardBg: '#fafbfc', frame: '#d3dae2',
+      primary: '#24425f', primaryLight: '#6d8aa8',
+      ink: '#3a4550', muted: '#7e8a96',
+      accent: '#16334c', leaf: '#46647f', divider: '#a8b8c6',
+      wreath: false,
     },
   },
 ]

@@ -5,6 +5,7 @@ import BotanicalLayout from '@/components/botanical/BotanicalLayout'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '../../../lib/config-helper'
 import { getPublishedDesign } from '@/lib/design/server'
+import { formatParasha, formatVenue, getEventDef } from '@/lib/events'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -12,11 +13,18 @@ export const revalidate = 0
 const BASE_URL = 'https://donbarmizva.vercel.app'
 
 export async function generateMetadata({ params }: { params: { token: string } }) {
+  let title = 'הזמנה אישית עבורכם'
+  try {
+    const { data: c } = await supabaseAdmin
+      .from('invitation_config').select('child_name, event_type').eq('id', 1).maybeSingle()
+    const def = getEventDef(c?.event_type)
+    title = `הזמנה: ${def.calendarTitle(c?.child_name || def.celebrantFallback)}`
+  } catch { /* keep generic title */ }
   return {
-    title: 'הזמנה לבר המצווה של דון',
+    title,
     description: 'לחצו לצפייה בהזמנה',
     openGraph: {
-      title: 'הזמנה לבר המצווה של דון',
+      title,
       description: 'לחצו לצפייה בהזמנה',
       images: [{ url: `${BASE_URL}/api/invitation-image/${params.token}?format=og`, width: 1200, height: 630 }],
     },
@@ -58,6 +66,7 @@ export default async function InvitePreviewPage({
     : ''
 
   const p = parseCustomMessage(config?.custom_message)
+  const eventDef = getEventDef(config?.event_type)
 
   const isScreenshot = searchParams?.screenshot === '1'
 
@@ -87,7 +96,7 @@ export default async function InvitePreviewPage({
           textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' 
         }}
       >
-        {config?.child_name || 'בר מצווה'}
+        {config?.child_name || eventDef.celebrantFallback}
       </h1>
       <p className="mb-1" style={{ color: 'var(--inv-ink, #5a5347)', fontSize: isScreenshot ? '16px' : '14px' }}>{p.tagline}</p>
 
@@ -95,15 +104,8 @@ export default async function InvitePreviewPage({
 
       {/* Event details */}
       {config && (() => {
-        const cleanParasha = config.parasha?.trim() || '';
-        const parashaText = cleanParasha 
-          ? (cleanParasha.startsWith('פרשת') || cleanParasha.startsWith('שבת') ? cleanParasha : `פרשת ${cleanParasha}`) 
-          : '';
-
-        const cleanSynagogue = config.synagogue_name?.trim() || '';
-        const synagogueText = cleanSynagogue 
-          ? (cleanSynagogue.startsWith('בבית') || cleanSynagogue.startsWith('בית') ? cleanSynagogue : `בבית הכנסת ${cleanSynagogue}`) 
-          : '';
+        const parashaText = formatParasha(config.parasha, eventDef);
+        const synagogueText = formatVenue(config.synagogue_name, eventDef);
 
         const cleanAddress = config.address?.trim() || '';
         const addressText = cleanAddress 

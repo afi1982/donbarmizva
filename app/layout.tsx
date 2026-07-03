@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'בר מצווה | דון בר אל',
-  description: 'הזמנה לבר המצווה של דון בר אל',
+  title: 'SendAI — הזמנות ואישורי הגעה חכמים',
+  description: 'מערכת חכמה ליצירת הזמנות דיגיטליות, שליחה בווטסאפ וניהול אישורי הגעה לכל סוגי האירועים',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

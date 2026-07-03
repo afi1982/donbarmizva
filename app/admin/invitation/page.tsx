@@ -3,22 +3,25 @@ import { useEffect, useState } from 'react'
 import { InvitationConfig } from '@/lib/types'
 import InvitationPreview from '@/components/admin/InvitationPreview'
 import { parseCustomMessage } from '@/lib/config-helper'
+import { EVENT_TYPES, EventTypeDef, getEventDef } from '@/lib/events'
 
 const DEFAULT_WHATSAPP = ``
 const DEFAULT_REMINDER = ``
 
-const BASIC_FIELDS: { key: keyof InvitationConfig; label: string; type?: string }[] = [
-  { key: 'child_name',      label: 'שם הבר מצווה' },
-  { key: 'event_date',      label: 'תאריך האירוע', type: 'date' },
-  { key: 'event_time',      label: 'שעת האירוע' },
-  { key: 'parasha',         label: 'שורת כותרת האירוע (לדוגמה: שיערך אי״ה ביום שלישי פרשת מטות)' },
-  { key: 'hebrew_date',     label: 'תאריך עברי (לדוגמה: כ״ה אייר תשפ״ה)' },
-  { key: 'synagogue_name',  label: 'שם בית הכנסת' },
-  { key: 'address',         label: 'כתובת' },
-  { key: 'city',            label: 'עיר' },
-  { key: 'parents_names',   label: 'שמות ההורים' },
-  { key: 'siblings_names',  label: 'שמות האחים' },
-]
+function basicFields(def: EventTypeDef): { key: keyof InvitationConfig; label: string; type?: string }[] {
+  return [
+    { key: 'child_name',      label: def.celebrantLabel },
+    { key: 'event_date',      label: 'תאריך האירוע', type: 'date' },
+    { key: 'event_time',      label: 'שעת האירוע' },
+    { key: 'parasha',         label: def.headlineLabel },
+    { key: 'hebrew_date',     label: 'תאריך עברי (לא חובה, לדוגמה: כ״ה אייר תשפ״ה)' },
+    { key: 'synagogue_name',  label: def.venueLabel },
+    { key: 'address',         label: 'כתובת' },
+    { key: 'city',            label: 'עיר' },
+    { key: 'parents_names',   label: def.parentsLabel },
+    { key: 'siblings_names',  label: 'שמות האחים (לא חובה)' },
+  ]
+}
 
 export default function InvitationPage() {
   const [config, setConfig] = useState<Partial<InvitationConfig>>({})
@@ -73,6 +76,23 @@ export default function InvitationPage() {
     setSaveError(null)
   }
 
+  const eventDef = getEventDef(config.event_type)
+
+  function selectEventType(key: string) {
+    if (key === config.event_type) return
+    handleChange('event_type', key)
+    const def = getEventDef(key)
+    if (confirm(`להחליף את נוסחי הטקסט לנוסחים מוכנים של ${def.name}? (הפרטים — שמות, תאריך, כתובת — נשמרים)`)) {
+      setTitle1(def.defaults.title1)
+      setTitle2(def.defaults.title2)
+      setTagline(def.defaults.tagline)
+      setPrayerTimeLabel(def.defaults.prayer_time_label)
+      setMealLabel(def.defaults.meal_label)
+      setPlainCustomMessage(def.defaults.custom_message)
+      setSaved(false)
+    }
+  }
+
   async function handleSave() {
     setSaving(true)
     setSaveError(null)
@@ -125,6 +145,32 @@ export default function InvitationPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div className="border-b border-slate-800 pb-3 mb-2">
+            <h3 className="font-bold text-slate-200 text-sm">🎉 סוג האירוע</h3>
+            <p className="text-xs text-slate-400">בחירת סוג האירוע מתאימה את השדות, הנוסחים והתבניות</p>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2" role="radiogroup" aria-label="סוג האירוע">
+            {EVENT_TYPES.map(t => {
+              const active = eventDef.key === t.key
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => selectEventType(t.key)}
+                  role="radio"
+                  aria-checked={active}
+                  className={`flex flex-col items-center gap-1 rounded-xl border-2 px-2 py-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
+                    active
+                      ? 'border-amber-500 bg-amber-500/10 shadow-[0_0_14px_rgba(232,201,122,0.12)]'
+                      : 'border-slate-800 bg-slate-900 hover:border-slate-600'
+                  }`}
+                >
+                  <span className="text-2xl">{t.emoji}</span>
+                  <span className={`text-xs font-bold ${active ? 'text-amber-300' : 'text-slate-300'}`}>{t.name}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="border-b border-slate-800 pb-3 mb-2 mt-6">
             <h3 className="font-bold text-slate-200 text-sm">✍️ עריכת מלל ההזמנה הדיגיטלית</h3>
             <p className="text-xs text-slate-400">ניתן לשנות כל מילה המופיעה על גבי כרטיס ההזמנה</p>
           </div>
@@ -171,7 +217,7 @@ export default function InvitationPage() {
           </div>
 
           {/* Basic fields */}
-          {BASIC_FIELDS.map(({ key, label, type }) => (
+          {basicFields(eventDef).map(({ key, label, type }) => (
             <div key={key}>
               <label className="text-sm font-medium text-slate-200 block mb-1">{label}</label>
               <input

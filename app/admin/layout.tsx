@@ -15,9 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="h-0.5 w-full" style={{ background: 'linear-gradient(90deg, transparent, #b8963e, #e8c97a, #b8963e, transparent)' }} />
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
           <div className="font-bold text-sm whitespace-nowrap flex items-center gap-1.5">
-            <span style={{ color: '#e8c97a' }}>✡</span>
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(90deg, #e8c97a, #f5e3b3, #e8c97a)' }}>
-              בר מצווה | דון
+            <span style={{ color: '#e8c97a' }}>✨</span>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(90deg, #e8c97a, #f5e3b3, #e8c97a)' }} dir="ltr">
+              SendAI
             </span>
           </div>
           <AdminNav />

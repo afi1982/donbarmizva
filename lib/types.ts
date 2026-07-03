@@ -16,6 +16,7 @@ export interface Guest {
 
 export interface InvitationConfig {
   id: number
+  event_type: string
   child_name: string
   event_date: string | null
   event_time: string

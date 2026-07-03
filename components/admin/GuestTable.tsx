@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Guest, GuestStatus, InvitationConfig } from '@/lib/types'
-import { LOCAL_SERVER, buildWaText, checkLocalServer, markSent, openWa, pickTemplate, shareInvitationImage } from '@/lib/wa'
+import { LOCAL_SERVER, buildWaText, checkLocalServer, markSent, openWa, pickTemplate, prefetchInvitationImage, shareInvitationImage } from '@/lib/wa'
 
 const STATUS_BADGE: Record<GuestStatus, string> = {
   coming:     'bg-emerald-500/15 text-emerald-300',
@@ -40,6 +40,14 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
     const id = setInterval(check, 10000)
     return () => { active = false; clearInterval(id) }
   }, [])
+
+  // Warm the invitation image for info-only guests so tapping "send" shares instantly
+  useEffect(() => {
+    if (serverOnline || typeof window === 'undefined') return
+    guests
+      .filter(g => g.phone.includes('#info') && g.status === 'pending')
+      .forEach(g => prefetchInvitationImage(g.token, window.location.origin))
+  }, [guests, serverOnline])
 
   function send(guestId: string, mode: 'invite' | 'reminder') {
     setErrorMap(prev => { const e = { ...prev }; delete e[guestId]; return e })
@@ -214,7 +222,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
                     showInvite ? 'bg-green-500 hover:bg-green-600' : 'bg-amber-500 hover:bg-amber-600'
                   }`}
                 >
-                  {s === 'loading' ? '⏳' : s === 'error' ? '↻' : showInvite ? '📱 שלח' : '🔔 תזכורת'}
+                  {s === 'loading' ? '⏳' : s === 'error' ? '↻' : showInvite ? (isInfoOnly && !serverOnline ? '🖼️ שלח הזמנה' : '📱 שלח') : '🔔 תזכורת'}
                 </button>
               )
             )}
