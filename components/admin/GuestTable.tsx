@@ -133,6 +133,12 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
                   אישר/ה {new Date(guest.responded_at).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
               )}
+              {guest.status === 'coming' && (guest.party_size ?? 1) > 1 && (
+                <div className="text-xs text-emerald-600 font-bold mt-0.5">👥 {guest.party_size} מגיעים</div>
+              )}
+              {guest.rsvp_note && (
+                <div className="text-xs text-stone-400 mt-0.5 truncate" title={guest.rsvp_note}>💬 {guest.rsvp_note}</div>
+              )}
               {s === 'error' && <div className="text-red-400 text-xs mt-0.5 truncate">{errorMap[guest.id]}</div>}
               {isConfirming && (
                 <div className="flex items-center gap-2 mt-1.5">

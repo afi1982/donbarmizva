@@ -22,13 +22,15 @@ export default function LiveStats() {
     return () => clearInterval(id)
   }, [])
 
-  const coming = guests.filter(g => g.status === 'coming').length
+  const comingGuests = guests.filter(g => g.status === 'coming')
+  const coming = comingGuests.length
+  const headcount = comingGuests.reduce((sum, g) => sum + Math.max(g.party_size ?? 1, 1), 0)
   const maybe = guests.filter(g => g.status === 'maybe').length
   const notComing = guests.filter(g => g.status === 'not_coming').length
   const pending = guests.filter(g => g.status === 'pending').length
 
   const cards = [
-    { count: coming,    label: 'מגיע בשמחה',     bg: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-600', sub: 'text-emerald-500' },
+    { count: coming,    label: headcount > coming ? `מגיע בשמחה · ${headcount} אנשים סה״כ` : 'מגיע בשמחה', bg: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-600', sub: 'text-emerald-500' },
     { count: maybe,     label: 'עדיין לא בטוח',   bg: 'bg-amber-50 border-amber-100',    text: 'text-amber-500',   sub: 'text-amber-400' },
     { count: notComing, label: 'לא אוכל להגיע',   bg: 'bg-red-50 border-red-100',        text: 'text-red-500',     sub: 'text-red-400' },
     { count: pending,   label: 'ממתין',            bg: 'bg-stone-50 border-stone-200',    text: 'text-stone-400',   sub: 'text-stone-400' },

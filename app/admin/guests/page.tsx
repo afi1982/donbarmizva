@@ -1,14 +1,51 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
-import { Guest } from '@/lib/types'
+import { Guest, GuestStatus } from '@/lib/types'
 import GuestForm from '@/components/admin/GuestForm'
 import GuestTable from '@/components/admin/GuestTable'
+
+const FILTERS: { key: GuestStatus | 'all'; label: string }[] = [
+  { key: 'all',        label: 'הכל' },
+  { key: 'coming',     label: 'מגיעים' },
+  { key: 'maybe',      label: 'לא בטוחים' },
+  { key: 'not_coming', label: 'לא מגיעים' },
+  { key: 'pending',    label: 'ממתינים' },
+]
+
+const STATUS_HEB: Record<string, string> = {
+  coming: 'מגיע', not_coming: 'לא מגיע', maybe: 'לא בטוח', pending: 'ממתין',
+}
+
+function exportCsv(guests: Guest[]) {
+  const header = ['שם', 'טלפון', 'סטטוס', 'מספר מגיעים', 'הערה', 'הוזמן בתאריך', 'הגיב בתאריך']
+  const rows = guests.map(g => [
+    g.name,
+    g.phone.split('#')[0],
+    STATUS_HEB[g.status] ?? g.status,
+    g.status === 'coming' ? String(g.party_size ?? 1) : '',
+    g.rsvp_note ?? '',
+    g.invited_at ? new Date(g.invited_at).toLocaleDateString('he-IL') : '',
+    g.responded_at ? new Date(g.responded_at).toLocaleDateString('he-IL') : '',
+  ])
+  const escape = (v: string) => `"${v.replace(/"/g, '""')}"`
+  const csv = [header, ...rows].map(r => r.map(escape).join(',')).join('\r\n')
+  // BOM so Excel opens Hebrew correctly
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'guests.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 export default function GuestsPage() {
   const [guests, setGuests] = useState<Guest[]>([])
   const [showForm, setShowForm] = useState(false)
   const [editGuest, setEditGuest] = useState<Guest | undefined>()
   const [loadError, setLoadError] = useState('')
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<GuestStatus | 'all'>('all')
 
   const load = useCallback(async () => {
     try {
@@ -62,6 +99,12 @@ export default function GuestsPage() {
     }
   }
 
+  const q = search.trim().toLowerCase()
+  const filtered = guests.filter(g =>
+    (filter === 'all' || g.status === filter) &&
+    (!q || g.name.toLowerCase().includes(q) || g.phone.includes(q))
+  )
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -95,8 +138,31 @@ export default function GuestsPage() {
       )}
 
       <div className="bg-white rounded-2xl border border-stone-200 p-4">
-        <h2 className="font-bold text-stone-700 mb-4">רשימת מוזמנים ({guests.length})</h2>
-        <GuestTable guests={guests} onEdit={g => { setEditGuest(g); setShowForm(true) }} onDelete={handleDelete} />
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <h2 className="font-bold text-stone-700 ml-auto">רשימת מוזמנים ({filtered.length}{filtered.length !== guests.length ? ` מתוך ${guests.length}` : ''})</h2>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="🔍 חיפוש שם או טלפון..."
+            className="border border-stone-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 w-48"
+            dir="rtl"
+          />
+          <button onClick={() => exportCsv(filtered)}
+            className="bg-stone-100 hover:bg-stone-200 text-stone-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+            ⬇️ ייצוא CSV
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {FILTERS.map(f => (
+            <button key={f.key} onClick={() => setFilter(f.key)}
+              className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+                filter === f.key ? 'bg-amber-500 text-white' : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+              }`}>
+              {f.label}{f.key !== 'all' ? ` (${guests.filter(g => g.status === f.key).length})` : ''}
+            </button>
+          ))}
+        </div>
+        <GuestTable guests={filtered} onEdit={g => { setEditGuest(g); setShowForm(true) }} onDelete={handleDelete} />
       </div>
     </div>
   )

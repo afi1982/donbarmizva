@@ -47,6 +47,7 @@ export async function PUT(request: NextRequest) {
     'child_name', 'event_date', 'event_time', 'parasha', 'hebrew_date',
     'synagogue_name', 'address', 'city', 'parents_names', 'siblings_names',
     'custom_message', 'whatsapp_message', 'reminder_message',
+    'thanks_confirmed', 'thanks_declined', 'thanks_maybe',
   ]
   const update = Object.fromEntries(
     Object.entries(body)

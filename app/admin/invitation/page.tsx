@@ -185,6 +185,27 @@ export default function InvitationPage() {
           ))}
 
           <div className="border-b border-stone-100 pb-3 my-4">
+            <h3 className="font-bold text-stone-700 text-sm">💌 עמודי תודה (מוצגים לאורח אחרי התשובה)</h3>
+            <p className="text-xs text-stone-400">השאר ריק לנוסח ברירת המחדל. אפשר להשתמש ב-<code className="bg-stone-100 px-1 rounded">{'{name}'}</code> לשם המוזמן</p>
+          </div>
+
+          {([
+            { key: 'thanks_confirmed', label: 'תודה למי שאישר הגעה 🎉' },
+            { key: 'thanks_maybe',     label: 'תודה למי שעדיין לא בטוח 🤔' },
+            { key: 'thanks_declined',  label: 'תודה למי שלא מגיע 💙' },
+          ] as { key: keyof InvitationConfig; label: string }[]).map(({ key, label }) => (
+            <div key={key}>
+              <label className="text-sm font-medium text-stone-700 block mb-1">{label}</label>
+              <textarea
+                value={(config[key] as string) ?? ''}
+                onChange={e => handleChange(key, e.target.value)}
+                rows={2} dir="rtl"
+                className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              />
+            </div>
+          ))}
+
+          <div className="border-b border-stone-100 pb-3 my-4">
             <h3 className="font-bold text-stone-700 text-sm">📱 הגדרות שליחה בוואטסאפ</h3>
           </div>
 
