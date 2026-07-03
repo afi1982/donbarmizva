@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Guest, GuestStatus, InvitationConfig } from '@/lib/types'
+import { LOCAL_SERVER, buildWaText, checkLocalServer, markSent, openWa, pickTemplate } from '@/lib/wa'
 
 const STATUS_BADGE: Record<GuestStatus, string> = {
   coming:     'bg-emerald-100 text-emerald-700',
@@ -15,7 +16,6 @@ const STATUS_LABEL: Record<GuestStatus, string> = {
   pending:    'ממתין',
 }
 
-const LOCAL_SERVER = 'http://localhost:3333'
 type SendStatus = 'idle' | 'loading' | 'sent' | 'error'
 
 interface Props {
@@ -31,10 +31,39 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [confirmResend, setConfirmResend] = useState<string | null>(null)
+  const [serverOnline, setServerOnline] = useState(false)
 
-  async function send(guestId: string, mode: 'invite' | 'reminder') {
-    setStatusMap(prev => ({ ...prev, [guestId]: 'loading' }))
+  useEffect(() => {
+    let active = true
+    const check = () => checkLocalServer().then(ok => { if (active) setServerOnline(ok) })
+    check()
+    const id = setInterval(check, 10000)
+    return () => { active = false; clearInterval(id) }
+  }, [])
+
+  function send(guestId: string, mode: 'invite' | 'reminder') {
     setErrorMap(prev => { const e = { ...prev }; delete e[guestId]; return e })
+
+    if (!serverOnline) {
+      // No local server — open WhatsApp directly with the prepared message (works from the phone)
+      const guest = guests.find(g => g.id === guestId)
+      const template = pickTemplate(config, mode)
+      if (!guest || !template) {
+        setStatusMap(prev => ({ ...prev, [guestId]: 'error' }))
+        setErrorMap(prev => ({ ...prev, [guestId]: 'לא הוגדר נוסח הודעה — מלא בלשונית "הזמנה"' }))
+        return
+      }
+      openWa(guest.phone, buildWaText(template, guest, window.location.origin))
+      markSent(guestId, mode)
+      setStatusMap(prev => ({ ...prev, [guestId]: 'sent' }))
+      return
+    }
+
+    sendViaServer(guestId, mode)
+  }
+
+  async function sendViaServer(guestId: string, mode: 'invite' | 'reminder') {
+    setStatusMap(prev => ({ ...prev, [guestId]: 'loading' }))
     try {
       const res = await fetch(`${LOCAL_SERVER}/send`, {
         method: 'POST',
@@ -48,10 +77,12 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
     } catch (err: unknown) {
       setStatusMap(prev => ({ ...prev, [guestId]: 'error' }))
       const msg = (err as Error).message
-      setErrorMap(prev => ({
-        ...prev,
-        [guestId]: msg.includes('fetch') ? 'השרת לא פועל — הפעל שרת-ווצאפ.bat' : msg,
-      }))
+      if (msg.includes('fetch')) {
+        setServerOnline(false)
+        setErrorMap(prev => ({ ...prev, [guestId]: 'השרת נותק — לחץ שוב לשליחה דרך ווטסאפ' }))
+      } else {
+        setErrorMap(prev => ({ ...prev, [guestId]: msg }))
+      }
     }
   }
 

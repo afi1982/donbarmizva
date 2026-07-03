@@ -24,6 +24,31 @@ export async function PUT(
   return NextResponse.json(data)
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { mark } = await request.json()
+
+  if (mark !== 'invited' && mark !== 'reminded') {
+    return NextResponse.json({ error: 'mark חייב להיות invited או reminded' }, { status: 400 })
+  }
+
+  const update = mark === 'reminded'
+    ? { reminder_sent: true }
+    : { invited_at: new Date().toISOString() }
+
+  const { data, error } = await supabaseAdmin
+    .from('guests')
+    .update(update)
+    .eq('id', params.id)
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data)
+}
+
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: { id: string } }

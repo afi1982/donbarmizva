@@ -1,19 +1,74 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Guest } from '@/lib/types'
+import { LOCAL_SERVER, MessageTemplates, buildWaText, checkLocalServer, markSent, openWa, pickTemplate } from '@/lib/wa'
 
-const LOCAL_SERVER = 'http://localhost:3333'
+interface Props {
+  mode: 'invite' | 'reminder'
+  guests: Guest[]
+  alreadyInvited?: number
+  config?: MessageTemplates | null
+  onSent?: () => void
+}
 
-export default function SendAllButton({ mode, count, alreadyInvited = 0 }: { mode: 'invite' | 'reminder'; count: number; alreadyInvited?: number }) {
+export default function SendAllButton({ mode, guests, alreadyInvited = 0, config, onSent }: Props) {
   const [state, setState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [result, setResult] = useState<string>('')
   const [confirming, setConfirming] = useState(false)
+  const [serverOnline, setServerOnline] = useState(false)
+  // Snapshot of the guests being sent one-by-one via wa.me, and the next index in it
+  const [queue, setQueue] = useState<Guest[] | null>(null)
+  const [queueIdx, setQueueIdx] = useState(0)
 
-  if (count === 0 && alreadyInvited === 0) return null
+  const count = guests.length
 
-  async function sendAll() {
+  useEffect(() => {
+    let active = true
+    const check = () => checkLocalServer().then(ok => { if (active) setServerOnline(ok) })
+    check()
+    const id = setInterval(check, 10000)
+    return () => { active = false; clearInterval(id) }
+  }, [])
+
+  if (count === 0 && alreadyInvited === 0 && !queue) return null
+
+  function openForGuest(list: Guest[], idx: number) {
+    const template = pickTemplate(config, mode)
+    if (!template) {
+      setResult('לא הוגדר נוסח הודעה — מלא בלשונית "הזמנה"')
+      setState('error')
+      setQueue(null)
+      return
+    }
+    const guest = list[idx]
+    openWa(guest.phone, buildWaText(template, guest, window.location.origin))
+    markSent(guest.id, mode)
+    onSent?.()
+    if (idx + 1 >= list.length) {
+      setQueue(null)
+      setResult(`✅ נפתחו ${list.length} הודעות בווטסאפ`)
+      setState('done')
+    } else {
+      setQueueIdx(idx + 1)
+    }
+  }
+
+  function sendAll() {
     setConfirming(false)
-    setState('loading')
     setResult('')
+    if (!serverOnline) {
+      const snapshot = [...guests]
+      setQueue(snapshot)
+      setQueueIdx(0)
+      setState('idle')
+      openForGuest(snapshot, 0)
+      return
+    }
+    sendAllViaServer()
+  }
+
+  async function sendAllViaServer() {
+    setState('loading')
     try {
       const res = await fetch(`${LOCAL_SERVER}/send-all`, {
         method: 'POST',
@@ -25,11 +80,36 @@ export default function SendAllButton({ mode, count, alreadyInvited = 0 }: { mod
       if (!res.ok) throw new Error(data.error || 'שגיאה')
       setResult(`✅ נשלחו ${data.sent}${data.failed > 0 ? `, ${data.failed} נכשלו` : ''}`)
       setState('done')
+      onSent?.()
     } catch (err: unknown) {
       const msg = (err as Error).message
-      setResult(msg.includes('fetch') ? 'השרת לא פועל — הפעל שרת-ווצאפ.bat' : msg)
+      if (msg.includes('fetch')) {
+        setServerOnline(false)
+        setResult('השרת נותק — לחץ שוב לשליחה דרך ווטסאפ')
+      } else {
+        setResult(msg)
+      }
       setState('error')
     }
+  }
+
+  if (queue) {
+    const next = queue[queueIdx]
+    return (
+      <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+        <span className="text-xs text-green-700 font-medium">
+          {queueIdx}/{queue.length} נפתחו — הבא: {next.name}
+        </span>
+        <button
+          onClick={() => openForGuest(queue, queueIdx)}
+          className="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg"
+        >📱 פתח בווטסאפ</button>
+        <button
+          onClick={() => { setQueue(null); setResult(`נשלחו ${queueIdx} מתוך ${queue.length}`); setState('done') }}
+          className="text-stone-400 hover:text-stone-600 text-xs px-1.5 py-1"
+        >עצור</button>
+      </div>
+    )
   }
 
   if (confirming && alreadyInvited > 0) {
