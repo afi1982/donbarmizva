@@ -98,7 +98,7 @@ export default function SendPage() {
   function ServerBanner() {
     if (serverConnected) {
       return (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 text-sm text-emerald-800 flex items-center gap-2">
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 mb-6 text-sm text-emerald-300 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
           שרת WhatsApp פעיל ומחובר — ההודעות יישלחו אוטומטית עם תמונת ההזמנה
         </div>
@@ -106,80 +106,80 @@ export default function SendPage() {
     }
     if (serverStatus === 'qr' || serverStatus === 'initializing') {
       return (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-sm text-amber-800 flex items-center gap-2">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-6 text-sm text-amber-300 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
           ממתין לחיבור WhatsApp — סרוק את ה-QR בטרמינל
         </div>
       )
     }
     return (
-      <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-6 text-sm" dir="rtl">
-        <p className="font-bold text-sky-800 mb-1">📱 מצב שליחה מהטלפון</p>
-        <p className="text-sky-700">
+      <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 mb-6 text-sm" dir="rtl">
+        <p className="font-bold text-sky-300 mb-1">📱 מצב שליחה מהטלפון</p>
+        <p className="text-sky-300">
           לחיצה על &quot;שלח&quot; תפתח את ווטסאפ עם ההודעה והקישור האישי מוכנים — נשאר רק ללחוץ על חץ השליחה.
         </p>
-        <p className="text-sky-600 text-xs mt-2">
+        <p className="text-sky-400 text-xs mt-2">
           טיפ: לשליחה אוטומטית לכולם בבת אחת (כולל תמונת ההזמנה) אפשר להפעיל במחשב את <strong>שרת-ווצאפ.bat</strong>.
         </p>
       </div>
     )
   }
 
-  if (loading) return <div className="text-stone-400 text-sm">טוען...</div>
+  if (loading) return <div className="text-slate-400 text-sm">טוען...</div>
 
   return (
     <div dir="rtl">
-      <h1 className="text-2xl font-bold text-stone-800 mb-1">שליחת הזמנות</h1>
-      <p className="text-stone-400 text-sm mb-6">
+      <h1 className="text-2xl font-bold text-slate-100 mb-1">שליחת הזמנות</h1>
+      <p className="text-slate-400 text-sm mb-6">
         {serverConnected ? 'ההודעות נשלחות ישירות מהמחשב ברקע' : 'ההודעות נפתחות בווטסאפ — מוכנות לשליחה'}
       </p>
 
       <ServerBanner />
 
       {!config?.whatsapp_message && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-300">
           ⚠️ לא הוגדר נוסח הודעה. לך ללשונית <strong>הזמנה</strong> ומלא את שדה &quot;הודעת WhatsApp&quot;.
         </div>
       )}
 
       {/* Invitations */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-5 mb-6">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5 mb-6">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="font-bold text-stone-800">📤 הזמנות ראשוניות</h2>
+          <h2 className="font-bold text-slate-100">📤 הזמנות ראשוניות</h2>
           <SendAllButton mode="invite" guests={pendingNotInvited} alreadyInvited={alreadyInvited} config={config} onSent={loadGuests} />
         </div>
-        <p className="text-stone-400 text-xs mb-4">{pending.length} מוזמנים ממתינים</p>
+        <p className="text-slate-400 text-xs mb-4">{pending.length} מוזמנים ממתינים</p>
 
         {pending.length === 0 ? (
-          <p className="text-stone-300 text-sm text-center py-4">אין מוזמנים ממתינים</p>
+          <p className="text-slate-500 text-sm text-center py-4">אין מוזמנים ממתינים</p>
         ) : (
           <div className="space-y-2">
             {pending.map(guest => {
               const s = statusMap[guest.id] ?? 'idle'
               const hasTemplate = !!config?.whatsapp_message
               return (
-                <div key={guest.id} className="flex items-center justify-between py-2 border-b border-stone-100 last:border-0">
+                <div key={guest.id} className="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
                   <div>
-                    <p className="font-medium text-stone-800 text-sm flex items-center gap-1.5">
+                    <p className="font-medium text-slate-100 text-sm flex items-center gap-1.5">
                       {guest.name}
                       {guest.phone.includes('#info') && (
-                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                        <span className="text-[10px] bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-normal">
                           הזמנה בלבד
                         </span>
                       )}
                     </p>
-                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
-                    {s === 'error' && <p className="text-red-500 text-xs mt-0.5">{errorMap[guest.id]}</p>}
+                    <p className="text-slate-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
+                    {s === 'error' && <p className="text-red-400 text-xs mt-0.5">{errorMap[guest.id]}</p>}
                   </div>
                   <button
                     onClick={() => sendOne(guest.id, 'invite')}
                     disabled={!hasTemplate || s === 'loading' || s === 'sent'}
                     className={`text-xs font-bold px-4 py-2 rounded-lg transition-colors ${
-                      s === 'sent' ? 'bg-emerald-100 text-emerald-700 cursor-default' :
-                      s === 'error' ? 'bg-red-100 text-red-600 hover:bg-red-200' :
+                      s === 'sent' ? 'bg-emerald-500/15 text-emerald-300 cursor-default' :
+                      s === 'error' ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25' :
                       s === 'loading' ? 'bg-green-300 text-white' :
                       hasTemplate ? 'bg-green-500 hover:bg-green-600 text-white' :
-                      'bg-stone-100 text-stone-400 cursor-not-allowed'
+                      'bg-slate-800 text-slate-400 cursor-not-allowed'
                     }`}
                   >
                     {s === 'loading' ? '⏳' : s === 'sent' ? '✓ נשלח' : s === 'error' ? '↻ שוב' : '📱 שלח'}
@@ -192,43 +192,43 @@ export default function SendPage() {
       </div>
 
       {/* Reminders */}
-      <div className="bg-white rounded-2xl border border-amber-100 p-5">
+      <div className="bg-slate-900 rounded-2xl border border-amber-500/20 p-5">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="font-bold text-stone-800">🔔 תזכורות ל&quot;לא בטוח&quot;</h2>
+          <h2 className="font-bold text-slate-100">🔔 תזכורות ל&quot;לא בטוח&quot;</h2>
           <SendAllButton mode="reminder" guests={maybe} config={config} onSent={loadGuests} />
         </div>
-        <p className="text-stone-400 text-xs mb-4">{maybe.length} מוזמנים שטרם אישרו</p>
+        <p className="text-slate-400 text-xs mb-4">{maybe.length} מוזמנים שטרם אישרו</p>
 
         {maybe.length === 0 ? (
-          <p className="text-stone-300 text-sm text-center py-4">אין מוזמנים לתזכורת</p>
+          <p className="text-slate-500 text-sm text-center py-4">אין מוזמנים לתזכורת</p>
         ) : (
           <div className="space-y-2">
             {maybe.map(guest => {
               const s = statusMap[guest.id] ?? 'idle'
               const hasTemplate = !!config?.reminder_message
               return (
-                <div key={guest.id} className="flex items-center justify-between py-2 border-b border-stone-100 last:border-0">
+                <div key={guest.id} className="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
                   <div>
-                    <p className="font-medium text-stone-800 text-sm flex items-center gap-1.5">
+                    <p className="font-medium text-slate-100 text-sm flex items-center gap-1.5">
                       {guest.name}
                       {guest.phone.includes('#info') && (
-                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                        <span className="text-[10px] bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-normal">
                           הזמנה בלבד
                         </span>
                       )}
                     </p>
-                    <p className="text-stone-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
-                    {s === 'error' && <p className="text-red-500 text-xs mt-0.5">{errorMap[guest.id]}</p>}
+                    <p className="text-slate-400 text-xs" dir="ltr">{guest.phone.split('#')[0]}</p>
+                    {s === 'error' && <p className="text-red-400 text-xs mt-0.5">{errorMap[guest.id]}</p>}
                   </div>
                   <button
                     onClick={() => sendOne(guest.id, 'reminder')}
                     disabled={!hasTemplate || s === 'loading' || s === 'sent'}
                     className={`text-xs font-bold px-4 py-2 rounded-lg transition-colors ${
-                      s === 'sent' ? 'bg-emerald-100 text-emerald-700 cursor-default' :
-                      s === 'error' ? 'bg-red-100 text-red-600 hover:bg-red-200' :
+                      s === 'sent' ? 'bg-emerald-500/15 text-emerald-300 cursor-default' :
+                      s === 'error' ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25' :
                       s === 'loading' ? 'bg-amber-300 text-white' :
                       hasTemplate ? 'bg-amber-500 hover:bg-amber-600 text-white' :
-                      'bg-stone-100 text-stone-400 cursor-not-allowed'
+                      'bg-slate-800 text-slate-400 cursor-not-allowed'
                     }`}
                   >
                     {s === 'loading' ? '⏳' : s === 'sent' ? '✓ נשלח' : s === 'error' ? '↻ שוב' : '🔔 תזכורת'}

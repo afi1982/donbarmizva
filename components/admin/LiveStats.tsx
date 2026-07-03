@@ -30,10 +30,10 @@ export default function LiveStats() {
   const pending = guests.filter(g => g.status === 'pending').length
 
   const cards = [
-    { count: coming,    label: headcount > coming ? `מגיע בשמחה · ${headcount} אנשים סה״כ` : 'מגיע בשמחה', bg: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-600', sub: 'text-emerald-500' },
-    { count: maybe,     label: 'עדיין לא בטוח',   bg: 'bg-amber-50 border-amber-100',    text: 'text-amber-500',   sub: 'text-amber-400' },
-    { count: notComing, label: 'לא אוכל להגיע',   bg: 'bg-red-50 border-red-100',        text: 'text-red-500',     sub: 'text-red-400' },
-    { count: pending,   label: 'ממתין',            bg: 'bg-stone-50 border-stone-200',    text: 'text-stone-400',   sub: 'text-stone-400' },
+    { count: coming,    label: headcount > coming ? `מגיע בשמחה · ${headcount} אנשים סה״כ` : 'מגיע בשמחה', bg: 'bg-emerald-500/10 border-emerald-500/20', text: 'text-emerald-400', sub: 'text-emerald-400' },
+    { count: maybe,     label: 'עדיין לא בטוח',   bg: 'bg-amber-500/10 border-amber-500/20',    text: 'text-amber-400',   sub: 'text-amber-400' },
+    { count: notComing, label: 'לא אוכל להגיע',   bg: 'bg-red-500/10 border-red-500/20',        text: 'text-red-400',     sub: 'text-red-400' },
+    { count: pending,   label: 'ממתין',            bg: 'bg-slate-800/40 border-slate-800',    text: 'text-slate-400',   sub: 'text-slate-400' },
   ]
 
   return (
@@ -47,7 +47,7 @@ export default function LiveStats() {
         ))}
       </div>
       {lastUpdated && (
-        <p className="text-xs text-stone-300 text-left">
+        <p className="text-xs text-slate-500 text-left">
           עודכן {lastUpdated.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </p>
       )}

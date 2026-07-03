@@ -108,11 +108,11 @@ export default function GuestsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-stone-800">ניהול מוזמנים</h1>
+        <h1 className="text-2xl font-bold text-slate-100">ניהול מוזמנים</h1>
         <div className="flex gap-2">
           {guests.some(g => !g.phone.includes('#info')) && (
             <button onClick={handleBulkToInfo} disabled={bulkUpdating}
-              className="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-2 rounded-xl font-bold text-sm transition-colors disabled:opacity-50">
+              className="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 px-4 py-2 rounded-xl font-bold text-sm transition-colors disabled:opacity-50">
               {bulkUpdating ? 'מעדכן...' : 'הפוך את כולם להזמנה בלבד 📱'}
             </button>
           )}
@@ -124,31 +124,31 @@ export default function GuestsPage() {
       </div>
 
       {loadError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-red-800" dir="rtl">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 text-sm text-red-300" dir="rtl">
           ⚠️ שגיאה: {loadError}
         </div>
       )}
 
       {showForm && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6">
-          <h2 className="font-bold text-stone-700 mb-4">{editGuest ? 'עריכת מוזמן' : 'מוזמן חדש'}</h2>
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+          <h2 className="font-bold text-slate-200 mb-4">{editGuest ? 'עריכת מוזמן' : 'מוזמן חדש'}</h2>
           <GuestForm guest={editGuest} onSave={handleSave}
             onCancel={() => { setShowForm(false); setEditGuest(undefined) }} />
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-stone-200 p-4">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4">
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <h2 className="font-bold text-stone-700 ml-auto">רשימת מוזמנים ({filtered.length}{filtered.length !== guests.length ? ` מתוך ${guests.length}` : ''})</h2>
+          <h2 className="font-bold text-slate-200 ml-auto">רשימת מוזמנים ({filtered.length}{filtered.length !== guests.length ? ` מתוך ${guests.length}` : ''})</h2>
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="🔍 חיפוש שם או טלפון..."
-            className="border border-stone-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 w-48"
+            className="border border-slate-700 bg-slate-950 text-slate-100 placeholder:text-slate-500 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 w-48"
             dir="rtl"
           />
           <button onClick={() => exportCsv(filtered)}
-            className="bg-stone-100 hover:bg-stone-200 text-stone-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+            className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
             ⬇️ ייצוא CSV
           </button>
         </div>
@@ -156,7 +156,7 @@ export default function GuestsPage() {
           {FILTERS.map(f => (
             <button key={f.key} onClick={() => setFilter(f.key)}
               className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
-                filter === f.key ? 'bg-amber-500 text-white' : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                filter === f.key ? 'bg-amber-500 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
               }`}>
               {f.label}{f.key !== 'all' ? ` (${guests.filter(g => g.status === f.key).length})` : ''}
             </button>

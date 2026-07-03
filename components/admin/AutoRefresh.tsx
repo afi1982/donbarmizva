@@ -30,7 +30,7 @@ export default function AutoRefresh({ intervalMs = 15000, onRefresh }: Props) {
     <button
       onClick={refresh}
       title="רענן"
-      className={`text-stone-400 hover:text-stone-600 transition-all text-base leading-none ${spinning ? 'animate-spin' : ''}`}
+      className={`text-slate-400 hover:text-slate-200 transition-all text-base leading-none ${spinning ? 'animate-spin' : ''}`}
     >
       ↻
     </button>

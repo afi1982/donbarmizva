@@ -26,10 +26,10 @@ export default function LiveGuestTable({ config }: { config?: Partial<Invitation
   const alreadyInvited = pendingGuests.filter(g => !!g.invited_at).length
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-4">
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="font-bold text-stone-700 text-sm">כל המוזמנים ({guests.length})</h2>
+          <h2 className="font-bold text-slate-200 text-sm">כל המוזמנים ({guests.length})</h2>
           <AutoRefresh intervalMs={10000} onRefresh={load} />
         </div>
         <SendAllButton mode="invite" guests={notYetInvited} alreadyInvited={alreadyInvited} config={config} onSent={load} />

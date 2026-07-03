@@ -4,10 +4,10 @@ import { Guest, GuestStatus, InvitationConfig } from '@/lib/types'
 import { LOCAL_SERVER, buildWaText, checkLocalServer, markSent, openWa, pickTemplate } from '@/lib/wa'
 
 const STATUS_BADGE: Record<GuestStatus, string> = {
-  coming:     'bg-emerald-100 text-emerald-700',
-  not_coming: 'bg-red-100 text-red-600',
-  maybe:      'bg-amber-100 text-amber-700',
-  pending:    'bg-slate-100 text-slate-500',
+  coming:     'bg-emerald-500/15 text-emerald-300',
+  not_coming: 'bg-red-500/15 text-red-400',
+  maybe:      'bg-amber-500/15 text-amber-300',
+  pending:    'bg-slate-700/60 text-slate-300',
 }
 const STATUS_LABEL: Record<GuestStatus, string> = {
   coming:     'מגיע ✓',
@@ -95,7 +95,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
 
   if (guests.length === 0) {
     return (
-      <div className="text-center py-12 text-stone-400">
+      <div className="text-center py-12 text-slate-400">
         <div className="text-4xl mb-2">👥</div>
         <p>אין מוזמנים עדיין. הוסף את הראשון!</p>
       </div>
@@ -117,32 +117,32 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
         const isInfoOnly = guest.phone.includes('#info')
 
         return (
-          <div key={guest.id} className={`flex items-start gap-2 p-3 border rounded-xl transition-colors ${isConfirming ? 'bg-red-50 border-red-200' : 'bg-white border-stone-100 hover:border-stone-200'}`}>
+          <div key={guest.id} className={`flex items-start gap-2 p-3 border rounded-xl transition-colors ${isConfirming ? 'bg-red-500/10 border-red-500/30' : 'bg-slate-900 border-slate-800 hover:border-slate-600'}`}>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-stone-800 truncate text-sm flex items-center gap-1.5">
+              <div className="font-semibold text-slate-100 truncate text-sm flex items-center gap-1.5">
                 {guest.name}
                 {isInfoOnly && (
-                  <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-normal">
+                  <span className="text-[10px] bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-normal">
                     הזמנה בלבד
                   </span>
                 )}
               </div>
-              <div className="text-xs text-stone-400" dir="ltr">{cleanPhone}</div>
+              <div className="text-xs text-slate-400" dir="ltr">{cleanPhone}</div>
               {guest.responded_at && (
-                <div className="text-xs text-stone-300 mt-0.5">
+                <div className="text-xs text-slate-500 mt-0.5">
                   אישר/ה {new Date(guest.responded_at).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
               )}
               {guest.status === 'coming' && (guest.party_size ?? 1) > 1 && (
-                <div className="text-xs text-emerald-600 font-bold mt-0.5">👥 {guest.party_size} מגיעים</div>
+                <div className="text-xs text-emerald-400 font-bold mt-0.5">👥 {guest.party_size} מגיעים</div>
               )}
               {guest.rsvp_note && (
-                <div className="text-xs text-stone-400 mt-0.5 truncate" title={guest.rsvp_note}>💬 {guest.rsvp_note}</div>
+                <div className="text-xs text-slate-400 mt-0.5 truncate" title={guest.rsvp_note}>💬 {guest.rsvp_note}</div>
               )}
               {s === 'error' && <div className="text-red-400 text-xs mt-0.5 truncate">{errorMap[guest.id]}</div>}
               {isConfirming && (
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-red-600 text-xs font-medium">למחוק את {guest.name}?</span>
+                  <span className="text-red-400 text-xs font-medium">למחוק את {guest.name}?</span>
                   <button
                     onClick={() => handleDelete(guest.id)}
                     disabled={isDeleting}
@@ -152,7 +152,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
                   </button>
                   <button
                     onClick={() => setConfirmDelete(null)}
-                    className="text-stone-500 hover:text-stone-700 text-xs px-2 py-1"
+                    className="text-slate-400 hover:text-slate-200 text-xs px-2 py-1"
                   >
                     ביטול
                   </button>
@@ -162,7 +162,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
 
             <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${
               isInfoOnly && guest.status === 'pending'
-                ? 'bg-amber-100 text-amber-700'
+                ? 'bg-amber-500/15 text-amber-300'
                 : STATUS_BADGE[guest.status]
             }`}>
               {isInfoOnly && guest.status === 'pending' ? 'הזמנה בלבד' : STATUS_LABEL[guest.status]}
@@ -170,17 +170,17 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
 
             {(showInvite || showReminder) && !isConfirming && (
               s === 'sent' ? (
-                <span className="text-xs text-emerald-600 font-bold px-2 py-1.5 flex-shrink-0">✓ נשלח</span>
+                <span className="text-xs text-emerald-400 font-bold px-2 py-1.5 flex-shrink-0">✓ נשלח</span>
               ) : isConfirmingResend ? (
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <span className="text-amber-600 text-xs font-medium whitespace-nowrap">נשלח כבר — שלח שוב?</span>
+                  <span className="text-amber-400 text-xs font-medium whitespace-nowrap">נשלח כבר — שלח שוב?</span>
                   <button
                     onClick={() => { setConfirmResend(null); send(guest.id, 'invite') }}
                     className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-lg"
                   >כן</button>
                   <button
                     onClick={() => setConfirmResend(null)}
-                    className="text-stone-400 hover:text-stone-600 text-xs px-1.5 py-1"
+                    className="text-slate-400 hover:text-slate-200 text-xs px-1.5 py-1"
                   >ביטול</button>
                 </div>
               ) : (
@@ -206,7 +206,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
             {onEdit && !isConfirming && (
               <button
                 onClick={() => onEdit(guest)}
-                className="text-stone-400 hover:text-stone-600 transition-colors text-sm p-1 flex-shrink-0"
+                className="text-slate-400 hover:text-slate-200 transition-colors text-sm p-1 flex-shrink-0"
               >
                 ✏️
               </button>
@@ -215,7 +215,7 @@ export default function GuestTable({ guests, config, onEdit, onDelete }: Props) 
             {onDelete && !isConfirming && (
               <button
                 onClick={() => setConfirmDelete(guest.id)}
-                className="text-stone-300 hover:text-red-400 transition-colors text-sm p-1 flex-shrink-0"
+                className="text-slate-500 hover:text-red-400 transition-colors text-sm p-1 flex-shrink-0"
               >
                 🗑️
               </button>

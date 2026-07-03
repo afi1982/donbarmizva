@@ -1,9 +1,9 @@
 import { Guest, GuestStatus } from '@/lib/types'
 
 const STATUS_CONFIG: Record<GuestStatus, { label: string; color: string }> = {
-  coming:     { label: 'מגיעים',     color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-  not_coming: { label: 'לא מגיעים', color: 'text-red-500 bg-red-50 border-red-200' },
-  maybe:      { label: 'לא בטוח',   color: 'text-amber-600 bg-amber-50 border-amber-200' },
+  coming:     { label: 'מגיעים',     color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' },
+  not_coming: { label: 'לא מגיעים', color: 'text-red-400 bg-red-500/10 border-red-500/30' },
+  maybe:      { label: 'לא בטוח',   color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
   pending:    { label: 'ממתינים',   color: 'text-slate-500 bg-slate-50 border-slate-200' },
 }
 

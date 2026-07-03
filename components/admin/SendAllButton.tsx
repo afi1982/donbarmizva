@@ -96,8 +96,8 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
   if (queue) {
     const next = queue[queueIdx]
     return (
-      <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-        <span className="text-xs text-green-700 font-medium">
+      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-xl px-3 py-2">
+        <span className="text-xs text-green-300 font-medium">
           {queueIdx}/{queue.length} נפתחו — הבא: {next.name}
         </span>
         <button
@@ -106,7 +106,7 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
         >📱 פתח בווטסאפ</button>
         <button
           onClick={() => { setQueue(null); setResult(`נשלחו ${queueIdx} מתוך ${queue.length}`); setState('done') }}
-          className="text-stone-400 hover:text-stone-600 text-xs px-1.5 py-1"
+          className="text-slate-400 hover:text-slate-200 text-xs px-1.5 py-1"
         >עצור</button>
       </div>
     )
@@ -114,12 +114,12 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
 
   if (confirming && alreadyInvited > 0) {
     return (
-      <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-        <span className="text-xs text-amber-700 font-medium">
+      <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
+        <span className="text-xs text-amber-300 font-medium">
           {alreadyInvited} מוזמנים כבר קיבלו הזמנה. לשלוח רק ל-{count} הנותרים?
         </span>
         <button onClick={sendAll} className="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">כן</button>
-        <button onClick={() => setConfirming(false)} className="text-stone-400 hover:text-stone-600 text-xs px-1.5 py-1">ביטול</button>
+        <button onClick={() => setConfirming(false)} className="text-slate-400 hover:text-slate-200 text-xs px-1.5 py-1">ביטול</button>
       </div>
     )
   }
@@ -127,7 +127,7 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
   return (
     <div className="flex items-center gap-2">
       {result && (
-        <span className={`text-xs ${state === 'error' ? 'text-red-500' : 'text-emerald-600'}`}>
+        <span className={`text-xs ${state === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
           {result}
         </span>
       )}

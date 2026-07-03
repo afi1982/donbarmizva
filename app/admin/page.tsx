@@ -11,10 +11,10 @@ const STATUS_LABEL: Record<string, string> = {
   coming: 'מגיע בשמחה ✓', not_coming: 'לא אוכל להגיע', maybe: 'עדיין לא בטוח', pending: 'ממתין',
 }
 const STATUS_BADGE: Record<string, string> = {
-  coming: 'bg-emerald-100 text-emerald-700',
-  not_coming: 'bg-red-100 text-red-600',
-  maybe: 'bg-amber-100 text-amber-700',
-  pending: 'bg-slate-100 text-slate-500',
+  coming: 'bg-emerald-500/15 text-emerald-300',
+  not_coming: 'bg-red-500/15 text-red-400',
+  maybe: 'bg-amber-500/15 text-amber-300',
+  pending: 'bg-slate-700/60 text-slate-300',
 }
 
 export default async function AdminDashboard() {
@@ -30,9 +30,9 @@ export default async function AdminDashboard() {
     config = c as InvitationConfig | null
   } catch {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center" dir="rtl">
-        <p className="text-red-700 font-bold mb-1">❌ שגיאת חיבור ל-Supabase</p>
-        <p className="text-red-500 text-sm">בדוק שמשתני הסביבה מוגדרים נכון ב-Vercel</p>
+      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center" dir="rtl">
+        <p className="text-red-300 font-bold mb-1">❌ שגיאת חיבור ל-Supabase</p>
+        <p className="text-red-400 text-sm">בדוק שמשתני הסביבה מוגדרים נכון ב-Vercel</p>
       </div>
     )
   }
@@ -60,21 +60,21 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Recent responses */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-5">
-          <h2 className="font-bold text-stone-700 mb-4 text-sm">הגיבו לאחרונה</h2>
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5">
+          <h2 className="font-bold text-slate-200 mb-4 text-sm">הגיבו לאחרונה</h2>
           {responded.length === 0 ? (
-            <p className="text-stone-300 text-sm text-center py-6">טרם התקבלו תגובות</p>
+            <p className="text-slate-500 text-sm text-center py-6">טרם התקבלו תגובות</p>
           ) : (
             <div className="space-y-2">
               {responded.map(g => (
                 <div key={g.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-500">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400">
                       {g.name[0]}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-stone-800">{g.name}</p>
-                      <p className="text-xs text-stone-400">
+                      <p className="text-sm font-medium text-slate-100">{g.name}</p>
+                      <p className="text-xs text-slate-400">
                         {g.responded_at ? new Date(g.responded_at).toLocaleDateString('he-IL') : ''}
                       </p>
                     </div>
@@ -89,8 +89,8 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Donut chart */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-5">
-          <h2 className="font-bold text-stone-700 mb-4 text-sm">תמונת מצב</h2>
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5">
+          <h2 className="font-bold text-slate-200 mb-4 text-sm">תמונת מצב</h2>
           <div className="flex justify-center">
             <StatusDonut coming={coming} notComing={notComing} maybe={maybe} total={total} />
           </div>

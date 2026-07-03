@@ -99,26 +99,26 @@ export default function DesignStudioPage() {
     }
   }
 
-  if (loading) return <div className="text-stone-400 text-sm">טוען סטודיו...</div>
+  if (loading) return <div className="text-slate-400 text-sm">טוען סטודיו...</div>
 
   return (
     <div dir="rtl">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-stone-800">סטודיו עיצוב</h1>
-          <p className="text-stone-400 text-sm">בחר תבנית, כוונן צבעים — ופרסם כשמוכן. האורחים רואים רק עיצוב שפורסם.</p>
+          <h1 className="text-2xl font-bold text-slate-100">סטודיו עיצוב</h1>
+          <p className="text-slate-400 text-sm">בחר תבנית, כוונן צבעים — ופרסם כשמוכן. האורחים רואים רק עיצוב שפורסם.</p>
         </div>
         <div className="flex items-center gap-2">
           {actionError && (
-            <span className="text-red-600 text-xs font-bold bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">❌ {actionError}</span>
+            <span className="text-red-400 text-xs font-bold bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-lg">❌ {actionError}</span>
           )}
           {savedAt && !actionError && (
-            <span className="text-emerald-600 text-xs">✓ טיוטה נשמרה</span>
+            <span className="text-emerald-400 text-xs">✓ טיוטה נשמרה</span>
           )}
           <button
             onClick={saveDraft}
             disabled={saving || publishing}
-            className="bg-stone-100 hover:bg-stone-200 disabled:opacity-50 text-stone-700 px-4 py-2 rounded-xl font-bold text-sm transition-colors"
+            className="bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 px-4 py-2 rounded-xl font-bold text-sm transition-colors"
           >
             {saving ? 'שומר...' : 'שמור טיוטה'}
           </button>
@@ -133,13 +133,13 @@ export default function DesignStudioPage() {
       </div>
 
       {loadError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-800">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-4 text-sm text-red-300">
           ⚠️ {loadError} — ייתכן שטבלת העיצובים טרם נוצרה ב-Supabase.
         </div>
       )}
 
       {isDirty && !loadError && (
-        <div className="bg-sky-50 border border-sky-200 rounded-xl px-4 py-2.5 mb-4 text-xs text-sky-800">
+        <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl px-4 py-2.5 mb-4 text-xs text-sky-300">
           ✏️ יש שינויים שטרם פורסמו — האורחים עדיין רואים את {published ? 'העיצוב המפורסם הקודם' : 'עיצוב ברירת המחדל'}.
         </div>
       )}
@@ -148,7 +148,7 @@ export default function DesignStudioPage() {
         <div className="space-y-6">
           {/* Template gallery */}
           <section aria-label="גלריית תבניות">
-            <h2 className="font-bold text-stone-700 text-sm mb-3">🎨 תבניות עיצוב</h2>
+            <h2 className="font-bold text-slate-200 text-sm mb-3">🎨 תבניות עיצוב</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {TEMPLATES.map(t => {
                 const isActive = activeTemplate?.slug === t.slug
@@ -158,7 +158,7 @@ export default function DesignStudioPage() {
                     onClick={() => update({ ...t.spec })}
                     aria-pressed={isActive}
                     className={`text-right rounded-xl border-2 overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 ${
-                      isActive ? 'border-amber-500 shadow-md' : 'border-stone-200 hover:border-stone-300'
+                      isActive ? 'border-amber-500 shadow-md' : 'border-slate-800 hover:border-slate-600'
                     }`}
                   >
                     <div
@@ -174,9 +174,9 @@ export default function DesignStudioPage() {
                         <div className="h-1" style={{ background: `linear-gradient(90deg, ${t.spec.primary}, ${t.spec.primaryLight}, ${t.spec.primary})` }} />
                       </div>
                     </div>
-                    <div className="px-2.5 py-2 bg-white">
-                      <p className="text-xs font-bold text-stone-700">{isActive ? '✓ ' : ''}{t.name}</p>
-                      <p className="text-[10px] text-stone-400 leading-tight">{t.description}</p>
+                    <div className="px-2.5 py-2 bg-slate-900">
+                      <p className="text-xs font-bold text-slate-200">{isActive ? '✓ ' : ''}{t.name}</p>
+                      <p className="text-[10px] text-slate-400 leading-tight">{t.description}</p>
                     </div>
                   </button>
                 )
@@ -186,8 +186,8 @@ export default function DesignStudioPage() {
 
           {/* Wreath toggle */}
           <section aria-label="אלמנטים">
-            <h2 className="font-bold text-stone-700 text-sm mb-3">🌿 אלמנטים בוטניים</h2>
-            <label className="flex items-center gap-2 text-sm text-stone-600 cursor-pointer">
+            <h2 className="font-bold text-slate-200 text-sm mb-3">🌿 אלמנטים בוטניים</h2>
+            <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
               <input
                 type="checkbox"
                 checked={draft.wreath}
@@ -203,15 +203,15 @@ export default function DesignStudioPage() {
             <button
               onClick={() => setShowAdvanced(v => !v)}
               aria-expanded={showAdvanced}
-              className="font-bold text-stone-700 text-sm mb-3 flex items-center gap-1.5"
+              className="font-bold text-slate-200 text-sm mb-3 flex items-center gap-1.5"
             >
               <span className={`transition-transform inline-block ${showAdvanced ? 'rotate-90' : ''}`}>◀</span>
               🎛️ כוונון צבעים מדויק
             </button>
             {showAdvanced && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-stone-200 rounded-xl p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-900 border border-slate-800 rounded-xl p-4">
                 {COLOR_FIELDS.map(({ key, label }) => (
-                  <label key={key} className="flex items-center justify-between gap-2 text-xs text-stone-600">
+                  <label key={key} className="flex items-center justify-between gap-2 text-xs text-slate-300">
                     <span>{label}</span>
                     <span className="flex items-center gap-1.5" dir="ltr">
                       <input
@@ -219,9 +219,9 @@ export default function DesignStudioPage() {
                         value={(draft[key] as string).slice(0, 7)}
                         onChange={e => update({ [key]: e.target.value } as Partial<DesignSpec>)}
                         aria-label={label}
-                        className="w-8 h-8 rounded cursor-pointer border border-stone-200 p-0.5 bg-white"
+                        className="w-8 h-8 rounded cursor-pointer border border-slate-800 p-0.5 bg-slate-900"
                       />
-                      <code className="text-[10px] text-stone-400 w-14">{draft[key] as string}</code>
+                      <code className="text-[10px] text-slate-400 w-14">{draft[key] as string}</code>
                     </span>
                   </label>
                 ))}
@@ -231,7 +231,7 @@ export default function DesignStudioPage() {
 
           <button
             onClick={() => update({ ...DEFAULT_SPEC })}
-            className="text-xs text-amber-600 hover:text-amber-800 underline"
+            className="text-xs text-amber-400 hover:text-amber-300 underline"
           >
             ↺ שחזר לעיצוב המקורי
           </button>
@@ -239,13 +239,13 @@ export default function DesignStudioPage() {
 
         {/* Live preview — CSS vars from the draft wrap the same preview component */}
         <div className="sticky top-24 self-start">
-          <p className="text-sm font-medium text-stone-600 mb-3">
+          <p className="text-sm font-medium text-slate-300 mb-3">
             תצוגה חיה {activeTemplate ? `— ${activeTemplate.name}` : '— עיצוב מותאם אישית'}
           </p>
           <div style={vars}>
             <InvitationPreview config={config} showWreath={draft.wreath} />
           </div>
-          <p className="text-xs text-stone-400 mt-2 text-center">כך תיראה ההזמנה אצל האורחים אחרי פרסום</p>
+          <p className="text-xs text-slate-400 mt-2 text-center">כך תיראה ההזמנה אצל האורחים אחרי פרסום</p>
         </div>
       </div>
     </div>

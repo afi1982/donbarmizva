@@ -19,7 +19,11 @@ export default function CountdownTimer({ eventDate, childName }: { eventDate: st
   }, [eventDate])
   if (!t) return null
   return (
-    <div className="bg-gradient-to-l from-amber-500 to-amber-600 rounded-2xl p-4 text-white flex items-center justify-between" dir="rtl">
+    <div
+      className="rounded-2xl p-4 text-white flex items-center justify-between border border-amber-500/30 shadow-lg shadow-amber-950/40"
+      style={{ background: 'linear-gradient(270deg, #92600d, #b8963e 55%, #8a5a10)' }}
+      dir="rtl"
+    >
       <p className="text-sm font-bold opacity-90">הבר מצווה של {childName || 'דון'}</p>
       <div className="flex items-baseline gap-3 font-black text-2xl">
         <span>{t.days}<span className="text-xs font-normal mr-0.5">ימים</span></span>
