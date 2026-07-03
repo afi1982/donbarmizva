@@ -122,10 +122,10 @@ export async function GET(
             </div>
             {p.tagline && <div style={{ display: 'flex', fontSize: 32, color: d.ink }}>{toVisual(p.tagline)}</div>}
 
-            {/* Divider */}
+            {/* Divider — the diamond is drawn (rotated square) since ✦ is missing from the font */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, margin: '28px 0', width: 340 }}>
               <div style={{ display: 'flex', flexGrow: 1, height: 2, background: d.divider }} />
-              <div style={{ display: 'flex', fontSize: 22, color: d.primary }}>✦</div>
+              <div style={{ display: 'flex', width: 12, height: 12, background: d.primary, transform: 'rotate(45deg)' }} />
               <div style={{ display: 'flex', flexGrow: 1, height: 2, background: d.divider }} />
             </div>
 
