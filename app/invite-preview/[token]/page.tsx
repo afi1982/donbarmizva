@@ -9,6 +9,20 @@ import { getPublishedDesign } from '@/lib/design/server'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+const BASE_URL = 'https://donbarmizva.vercel.app'
+
+export async function generateMetadata({ params }: { params: { token: string } }) {
+  return {
+    title: 'הזמנה לבר המצווה של דון',
+    description: 'לחצו לצפייה בהזמנה',
+    openGraph: {
+      title: 'הזמנה לבר המצווה של דון',
+      description: 'לחצו לצפייה בהזמנה',
+      images: [{ url: `${BASE_URL}/api/invitation-image/${params.token}?format=og`, width: 1200, height: 630 }],
+    },
+  }
+}
+
 export default async function InvitePreviewPage({
   params,
   searchParams,

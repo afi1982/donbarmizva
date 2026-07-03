@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Guest } from '@/lib/types'
-import { LOCAL_SERVER, MessageTemplates, buildWaText, checkLocalServer, markSent, openWa, pickTemplate } from '@/lib/wa'
+import { LOCAL_SERVER, MessageTemplates, buildWaText, checkLocalServer, markSent, openWa, pickTemplate, shareInvitationImage } from '@/lib/wa'
 
 interface Props {
   mode: 'invite' | 'reminder'
@@ -32,18 +32,7 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
 
   if (count === 0 && alreadyInvited === 0 && !queue) return null
 
-  function openForGuest(list: Guest[], idx: number) {
-    const template = pickTemplate(config, mode)
-    if (!template) {
-      setResult('לא הוגדר נוסח הודעה — מלא בלשונית "הזמנה"')
-      setState('error')
-      setQueue(null)
-      return
-    }
-    const guest = list[idx]
-    openWa(guest.phone, buildWaText(template, guest, window.location.origin))
-    markSent(guest.id, mode)
-    onSent?.()
+  function advanceQueue(list: Guest[], idx: number) {
     if (idx + 1 >= list.length) {
       setQueue(null)
       setResult(`✅ נפתחו ${list.length} הודעות בווטסאפ`)
@@ -51,6 +40,36 @@ export default function SendAllButton({ mode, guests, alreadyInvited = 0, config
     } else {
       setQueueIdx(idx + 1)
     }
+  }
+
+  function openForGuest(list: Guest[], idx: number) {
+    const guest = list[idx]
+    const origin = window.location.origin
+    const template = pickTemplate(config, mode)
+    const isInfoOnly = guest.phone.includes('#info')
+
+    if (!isInfoOnly && !template) {
+      setResult('לא הוגדר נוסח הודעה — מלא בלשונית "הזמנה"')
+      setState('error')
+      setQueue(null)
+      return
+    }
+
+    if (isInfoOnly) {
+      // Info-only: share the invitation IMAGE itself; fall back to the preview link
+      shareInvitationImage(guest, origin).then(shared => {
+        if (!shared) openWa(guest.phone, buildWaText(template, guest, origin))
+        markSent(guest.id, mode)
+        onSent?.()
+        advanceQueue(list, idx)
+      })
+      return
+    }
+
+    openWa(guest.phone, buildWaText(template, guest, origin))
+    markSent(guest.id, mode)
+    onSent?.()
+    advanceQueue(list, idx)
   }
 
   function sendAll() {

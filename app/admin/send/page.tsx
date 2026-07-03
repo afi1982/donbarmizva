@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Guest } from '@/lib/types'
 import SendAllButton from '@/components/admin/SendAllButton'
-import { LOCAL_SERVER, buildWaText, markSent, openWa, pickTemplate } from '@/lib/wa'
+import { LOCAL_SERVER, buildWaText, markSent, openWa, pickTemplate, shareInvitationImage } from '@/lib/wa'
 
 type Config = { whatsapp_message: string | null; reminder_message: string | null }
 type SendStatus = 'idle' | 'loading' | 'sent' | 'error'
@@ -56,15 +56,31 @@ export default function SendPage() {
     setErrorMap(prev => { const e = { ...prev }; delete e[guestId]; return e })
 
     if (!serverConnected) {
-      // Phone mode — open WhatsApp with the prepared message, no local server needed
+      // Phone mode — no local server needed
       const guest = guests.find(g => g.id === guestId)
+      if (!guest) return
+      const origin = window.location.origin
+      const isInfoOnly = guest.phone.includes('#info')
       const template = pickTemplate(config, mode)
-      if (!guest || !template) {
+
+      if (!isInfoOnly && !template) {
         setStatusMap(prev => ({ ...prev, [guestId]: 'error' }))
         setErrorMap(prev => ({ ...prev, [guestId]: 'לא הוגדר נוסח הודעה — מלא בלשונית "הזמנה"' }))
         return
       }
-      openWa(guest.phone, buildWaText(template, guest, window.location.origin))
+
+      if (isInfoOnly) {
+        // Info-only: share the invitation IMAGE itself; fall back to the preview link
+        setStatusMap(prev => ({ ...prev, [guestId]: 'loading' }))
+        shareInvitationImage(guest, origin).then(shared => {
+          if (!shared) openWa(guest.phone, buildWaText(template, guest, origin))
+          markSent(guestId, mode)
+          setStatusMap(prev => ({ ...prev, [guestId]: 'sent' }))
+        })
+        return
+      }
+
+      openWa(guest.phone, buildWaText(template, guest, origin))
       markSent(guestId, mode)
       setStatusMap(prev => ({ ...prev, [guestId]: 'sent' }))
       return

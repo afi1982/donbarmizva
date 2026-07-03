@@ -67,6 +67,25 @@ export async function checkLocalServer(): Promise<boolean> {
   }
 }
 
+// Share the actual invitation IMAGE via the native share sheet (works from the phone —
+// the user picks the WhatsApp contact). Returns true when the share sheet handled it
+// (including user-cancel), false when unsupported/failed and a fallback should run.
+export async function shareInvitationImage(guest: Pick<Guest, 'token'>, origin: string): Promise<boolean> {
+  try {
+    if (typeof navigator === 'undefined' || typeof navigator.canShare !== 'function') return false
+    const res = await fetch(`${origin}/api/invitation-image/${guest.token}`)
+    if (!res.ok) return false
+    const blob = await res.blob()
+    const file = new File([blob], 'invitation.png', { type: blob.type || 'image/png' })
+    if (!navigator.canShare({ files: [file] })) return false
+    await navigator.share({ files: [file] })
+    return true
+  } catch (err) {
+    // AbortError = the user closed the share sheet — don't fall back to a second send
+    return (err as Error)?.name === 'AbortError'
+  }
+}
+
 export async function markSent(guestId: string, mode: 'invite' | 'reminder'): Promise<void> {
   try {
     await fetch(`/api/guests/${guestId}`, {
