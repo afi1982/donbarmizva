@@ -4,6 +4,7 @@ import { isValidToken } from '@/lib/tokens'
 import BotanicalLayout from '@/components/botanical/BotanicalLayout'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '../../../lib/config-helper'
+import { getPublishedDesign } from '@/lib/design/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -17,9 +18,10 @@ export default async function InvitePreviewPage({
 }) {
   if (!isValidToken(params.token)) notFound()
 
-  const [guestResult, configResult] = await Promise.all([
+  const [guestResult, configResult, design] = await Promise.all([
     supabaseAdmin.from('guests').select('*').eq('token', params.token).single(),
     supabaseAdmin.from('invitation_config').select('*').eq('id', 1).single(),
+    getPublishedDesign(),
   ])
 
   if (guestResult.error) {
@@ -46,17 +48,17 @@ export default async function InvitePreviewPage({
   const isScreenshot = searchParams?.screenshot === '1'
 
   return (
-    <BotanicalLayout isScreenshot={isScreenshot}>
+    <BotanicalLayout isScreenshot={isScreenshot} design={design}>
       {/* Greeting */}
-      <p className="mb-6" style={{ color: '#9a8e7a', fontSize: isScreenshot ? '14px' : '12px', letterSpacing: '0.05em' }}>
+      <p className="mb-6" style={{ color: 'var(--inv-muted, #9a8e7a)', fontSize: isScreenshot ? '14px' : '12px', letterSpacing: '0.05em' }}>
         שלום, {guest.name} ♥
       </p>
 
       {/* Invitation text */}
-      <p className="mb-1" style={{ color: '#5a5347', fontSize: isScreenshot ? '16px' : '14px' }}>
+      <p className="mb-1" style={{ color: 'var(--inv-ink, #5a5347)', fontSize: isScreenshot ? '16px' : '14px' }}>
         {p.title1}
       </p>
-      <p className="mb-3" style={{ color: '#5a5347', fontSize: isScreenshot ? '16px' : '14px' }}>
+      <p className="mb-3" style={{ color: 'var(--inv-ink, #5a5347)', fontSize: isScreenshot ? '16px' : '14px' }}>
         {p.title2}
       </p>
 
@@ -67,13 +69,13 @@ export default async function InvitePreviewPage({
           fontFamily: 'serif', 
           fontSize: isScreenshot ? '4.2rem' : '3.5rem', 
           lineHeight: 1.1, 
-          color: '#b8963e', 
+          color: 'var(--inv-primary, #b8963e)', 
           textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' 
         }}
       >
         {config?.child_name || 'בר מצווה'}
       </h1>
-      <p className="mb-1" style={{ color: '#5a5347', fontSize: isScreenshot ? '16px' : '14px' }}>{p.tagline}</p>
+      <p className="mb-1" style={{ color: 'var(--inv-ink, #5a5347)', fontSize: isScreenshot ? '16px' : '14px' }}>{p.tagline}</p>
 
       <BotanicalDivider />
 
@@ -99,7 +101,7 @@ export default async function InvitePreviewPage({
           <div 
             className="mb-6" 
             style={{ 
-              color: '#4a4a4a', 
+              color: 'var(--inv-ink, #4a4a4a)', 
               fontSize: isScreenshot ? '16px' : '14px',
               lineHeight: '1.6',
               display: 'flex',
@@ -108,16 +110,16 @@ export default async function InvitePreviewPage({
             }}
           >
             {parashaText && (
-              <p className="font-bold" style={{ color: '#2c3e6b', fontSize: isScreenshot ? '18px' : '14px' }}>{parashaText}</p>
+              <p className="font-bold" style={{ color: 'var(--inv-accent, #2c3e6b)', fontSize: isScreenshot ? '18px' : '14px' }}>{parashaText}</p>
             )}
             {config.hebrew_date && <p>{config.hebrew_date}</p>}
             {eventDateStr && (
-              <p className="font-bold tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif', fontSize: isScreenshot ? '28px' : '24px' }}>
+              <p className="font-bold tracking-wide my-1" style={{ color: 'var(--inv-primary, #b8963e)', fontFamily: 'serif', fontSize: isScreenshot ? '28px' : '24px' }}>
                 {eventDateStr}
               </p>
             )}
             {synagogueText && (
-              <p className="font-bold mt-2" style={{ color: '#1a1a1a', fontSize: isScreenshot ? '18px' : '14px' }}>
+              <p className="font-bold mt-2" style={{ color: 'var(--inv-ink, #1a1a1a)', fontSize: isScreenshot ? '18px' : '14px' }}>
                 {synagogueText}
               </p>
             )}
@@ -128,7 +130,7 @@ export default async function InvitePreviewPage({
               <p className="mt-2">
                 {config.event_time} - {p.prayer_time_label}
                 <br />
-                <span style={{ color: '#7a7a7a', fontSize: isScreenshot ? '13px' : '12px' }}>{p.meal_label}</span>
+                <span style={{ color: 'var(--inv-muted, #7a7a7a)', fontSize: isScreenshot ? '13px' : '12px' }}>{p.meal_label}</span>
               </p>
             )}
           </div>
@@ -136,7 +138,7 @@ export default async function InvitePreviewPage({
       })()}
 
       {p.custom_message && (
-        <p className="italic leading-relaxed mb-4" style={{ color: '#9a8e7a', fontSize: isScreenshot ? '14px' : '12px' }}>
+        <p className="italic leading-relaxed mb-4" style={{ color: 'var(--inv-muted, #9a8e7a)', fontSize: isScreenshot ? '14px' : '12px' }}>
           {p.custom_message}
         </p>
       )}
@@ -147,9 +149,9 @@ export default async function InvitePreviewPage({
           <div
             className="rounded-xl px-4 py-3 font-bold text-center"
             style={{
-              background: '#fcfaf2',
-              color: '#b8963e',
-              border: '1px solid #ebdcb9',
+              background: 'color-mix(in srgb, var(--inv-primary, #b8963e) 7%, transparent)',
+              color: 'var(--inv-primary, #b8963e)',
+              border: '1px solid var(--inv-frame, #ebdcb9)',
               fontSize: isScreenshot ? '15px' : '14px'
             }}
           >
@@ -160,7 +162,7 @@ export default async function InvitePreviewPage({
 
       {/* Parents */}
       {config?.parents_names && (
-        <p className="mt-6" style={{ color: '#b8a88a', fontStyle: 'italic', fontSize: isScreenshot ? '14px' : '12px' }}>
+        <p className="mt-6" style={{ color: 'var(--inv-muted, #b8a88a)', fontStyle: 'italic', fontSize: isScreenshot ? '14px' : '12px' }}>
           נשמח לראותכם,
           <br />
           {config.parents_names}

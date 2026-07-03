@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react'
 
 const pillStyle: CSSProperties = {
-  border: '1px solid #ebdcb9',
-  background: '#fcfaf2',
-  color: '#8a713a',
+  border: '1px solid var(--inv-frame, #ebdcb9)',
+  background: 'color-mix(in srgb, var(--inv-primary, #b8963e) 7%, transparent)',
+  color: 'var(--inv-primary, #8a713a)',
 }
 
 type ConfigLike = {

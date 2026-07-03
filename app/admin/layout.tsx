@@ -3,7 +3,8 @@ import Link from 'next/link'
 const NAV = [
   { href: '/admin', label: '📊 דשבורד' },
   { href: '/admin/guests', label: '👥 מוזמנים' },
-  { href: '/admin/invitation', label: '🎨 הזמנה' },
+  { href: '/admin/invitation', label: '📝 הזמנה' },
+  { href: '/admin/design', label: '🎨 סטודיו עיצוב' },
   { href: '/admin/send', label: '📤 שליחה' },
 ]
 

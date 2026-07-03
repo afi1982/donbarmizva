@@ -9,3 +9,15 @@
 .font-serif {
   font-family: 'Frank Ruhl Libre', 'Times New Roman', serif !important;
 }
+
+/* Design-studio theming for the botanical SVG ornaments: the SVGs keep their
+   original colors as presentation attributes (= the fallback), and these rules
+   remap them to the active palette's CSS variables. */
+.inv-ornaments [stroke="#2c3e6b"] { stroke: var(--inv-accent, #2c3e6b); }
+.inv-ornaments [fill="#2c3e6b"]   { fill: var(--inv-accent, #2c3e6b); }
+.inv-ornaments [stroke="#3a4f7a"] { stroke: var(--inv-leaf, #3a4f7a); }
+.inv-ornaments [fill="#3a4f7a"]   { fill: var(--inv-leaf, #3a4f7a); }
+.inv-ornaments [stroke="#b8963e"] { stroke: var(--inv-primary, #b8963e); }
+.inv-ornaments [fill="#b8963e"]   { fill: var(--inv-primary, #b8963e); }
+.inv-ornaments [stroke="#c9a961"] { stroke: var(--inv-primary-light, #c9a961); }
+.inv-ornaments [fill="#c9a961"]   { fill: var(--inv-primary-light, #c9a961); }

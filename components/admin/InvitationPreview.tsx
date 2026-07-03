@@ -4,7 +4,7 @@ import CornerBranch from '@/components/botanical/CornerBranch'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '@/lib/config-helper'
 
-export default function InvitationPreview({ config }: { config: Partial<InvitationConfig> }) {
+export default function InvitationPreview({ config, showWreath = true }: { config: Partial<InvitationConfig>; showWreath?: boolean }) {
   const eventDateStr = config.event_date
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
@@ -14,60 +14,68 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
   return (
     <div
       className="min-h-[550px] relative flex flex-col items-center justify-center py-6 px-4"
-      style={{ background: 'linear-gradient(180deg, #f7f5f0 0%, #eee9df 100%)', borderRadius: '16px' }}
+      style={{ background: 'linear-gradient(180deg, var(--inv-bg-from, #f7f5f0) 0%, var(--inv-bg-to, #eee9df) 100%)', borderRadius: '16px' }}
       dir="rtl"
     >
-      <div className="relative w-full max-w-sm mx-auto bg-[#faf6f0] rounded-sm shadow-xl overflow-hidden border border-[#ebdcb9]/40">
+      <div
+        className="relative w-full max-w-sm mx-auto rounded-sm shadow-xl overflow-hidden border"
+        style={{
+          background: 'var(--inv-card-bg, #faf6f0)',
+          borderColor: 'color-mix(in srgb, var(--inv-frame, #ebdcb9) 40%, transparent)',
+        }}
+      >
         {/* Gold stripe top */}
-        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #b8963e, #e8c97a, #b8963e)' }} />
-        
+        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, var(--inv-primary, #b8963e), var(--inv-primary-light, #e8c97a), var(--inv-primary, #b8963e))' }} />
+
         {/* Corner branches */}
-        <div className="absolute top-2 left-2 pointer-events-none opacity-50">
+        <div className="absolute top-2 left-2 pointer-events-none opacity-50 inv-ornaments">
           <CornerBranch position="top-left" />
         </div>
-        <div className="absolute bottom-2 right-2 pointer-events-none opacity-50">
+        <div className="absolute bottom-2 right-2 pointer-events-none opacity-50 inv-ornaments">
           <CornerBranch position="bottom-right" />
         </div>
-        
+
         <div className="relative z-10 px-8 py-8 text-center">
           {/* בס"ד */}
-          <p className="text-xs text-stone-400 mb-4" style={{ fontFamily: 'serif' }}>בס&quot;ד</p>
-          
-          <div className="flex justify-center mb-5">
-            <FloralWreath />
-          </div>
+          <p className="text-xs mb-4" style={{ fontFamily: 'serif', color: 'var(--inv-muted, #a8a29e)' }}>בס&quot;ד</p>
 
-          <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
+          {showWreath && (
+            <div className="flex justify-center mb-5 inv-ornaments">
+              <FloralWreath />
+            </div>
+          )}
+
+          <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>
             {p.title1}
           </p>
-          <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
+          <p className="text-sm mb-3" style={{ color: 'var(--inv-ink, #5a5347)' }}>
             {p.title2}
           </p>
 
           {/* Child name - large elegant gold */}
           <h1
             className="font-black mb-2"
-            style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: '#b8963e', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
+            style={{ fontFamily: 'serif', fontSize: '3rem', lineHeight: 1.1, color: 'var(--inv-primary, #b8963e)', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
           >
             {config.child_name || 'בר מצווה'}
           </h1>
-          <p className="text-sm mb-1" style={{ color: '#5a5347' }}>{p.tagline}</p>
+          <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>{p.tagline}</p>
 
           <BotanicalDivider />
 
           {/* Event details */}
-          <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
+          <div className="space-y-2 text-sm mb-6" style={{ color: 'var(--inv-ink, #4a4a4a)' }}>
             {config.parasha && (
-              <p className="font-bold" style={{ color: '#2c3e6b' }}>{config.parasha}</p>
+              <p className="font-bold" style={{ color: 'var(--inv-accent, #2c3e6b)' }}>{config.parasha}</p>
             )}
             {config.hebrew_date && <p>{config.hebrew_date}</p>}
             {eventDateStr && (
-              <p className="font-bold text-2xl tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif' }}>
+              <p className="font-bold text-2xl tracking-wide my-1" style={{ color: 'var(--inv-primary, #b8963e)', fontFamily: 'serif' }}>
                 {eventDateStr}
               </p>
             )}
             {config.synagogue_name && (
-              <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
+              <p className="font-bold mt-2" style={{ color: 'var(--inv-ink, #1a1a1a)' }}>
                 {config.synagogue_name}
               </p>
             )}
@@ -78,19 +86,19 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
               <p className="mt-2">
                 {config.event_time} - {p.prayer_time_label}
                 <br />
-                <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
+                <span className="text-xs" style={{ color: 'var(--inv-muted, #7a7a7a)' }}>{p.meal_label}</span>
               </p>
             )}
           </div>
 
           {p.custom_message && (
-            <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
+            <p className="text-xs italic leading-relaxed mb-4" style={{ color: 'var(--inv-muted, #9a8e7a)' }}>
               {p.custom_message}
             </p>
           )}
 
           {config.parents_names && (
-            <p className="text-xs mt-6" style={{ color: '#b8a88a', fontStyle: 'italic' }}>
+            <p className="text-xs mt-6" style={{ color: 'var(--inv-muted, #b8a88a)', fontStyle: 'italic' }}>
               נשמח לראותכם,
               <br />
               {config.parents_names}
@@ -99,7 +107,7 @@ export default function InvitationPreview({ config }: { config: Partial<Invitati
         </div>
         
         {/* Gold stripe bottom */}
-        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #b8963e, #e8c97a, #b8963e)' }} />
+        <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, var(--inv-primary, #b8963e), var(--inv-primary-light, #e8c97a), var(--inv-primary, #b8963e))' }} />
       </div>
     </div>
   )

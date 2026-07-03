@@ -6,6 +6,7 @@ import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import RSVPButtons from '@/components/rsvp/RSVPButtons'
 import EventActionLinks from '@/components/rsvp/EventActionLinks'
 import { parseCustomMessage } from '../../../lib/config-helper'
+import { getPublishedDesign } from '@/lib/design/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -13,9 +14,10 @@ export const revalidate = 0
 export default async function RSVPPage({ params }: { params: { token: string } }) {
   if (!isValidToken(params.token)) notFound()
 
-  const [{ data: guest }, { data: config }] = await Promise.all([
+  const [{ data: guest }, { data: config }, design] = await Promise.all([
     supabaseAdmin.from('guests').select('*').eq('token', params.token).single(),
     supabaseAdmin.from('invitation_config').select('*').eq('id', 1).single(),
+    getPublishedDesign(),
   ])
 
   if (!guest) notFound()
@@ -28,28 +30,28 @@ export default async function RSVPPage({ params }: { params: { token: string } }
   const p = parseCustomMessage(config?.custom_message)
 
   return (
-    <BotanicalLayout>
+    <BotanicalLayout design={design}>
       {/* Greeting */}
-      <p className="text-xs tracking-widest mb-6" style={{ color: '#9a8e7a' }}>
+      <p className="text-xs tracking-widest mb-6" style={{ color: 'var(--inv-muted, #9a8e7a)' }}>
         שלום, {guest.name} ♥
       </p>
 
       {/* Invitation text */}
-      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>
+      <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>
         {p.title1}
       </p>
-      <p className="text-sm mb-3" style={{ color: '#5a5347' }}>
+      <p className="text-sm mb-3" style={{ color: 'var(--inv-ink, #5a5347)' }}>
         {p.title2}
       </p>
 
       {/* Child name - large elegant */}
       <h1
         className="font-black mb-2"
-        style={{ fontFamily: 'serif', fontSize: '3.5rem', lineHeight: 1.1, color: '#b8963e', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
+        style={{ fontFamily: 'serif', fontSize: '3.5rem', lineHeight: 1.1, color: 'var(--inv-primary, #b8963e)', textShadow: '0.5px 0.5px 0px rgba(0,0,0,0.05)' }}
       >
         {config?.child_name || 'בר מצווה'}
       </h1>
-      <p className="text-sm mb-1" style={{ color: '#5a5347' }}>{p.tagline}</p>
+      <p className="text-sm mb-1" style={{ color: 'var(--inv-ink, #5a5347)' }}>{p.tagline}</p>
 
       <BotanicalDivider />
 
@@ -72,18 +74,18 @@ export default async function RSVPPage({ params }: { params: { token: string } }
         const fullAddress = [addressText, config.city?.trim()].filter(Boolean).join(', ');
 
         return (
-          <div className="space-y-2 text-sm mb-6" style={{ color: '#4a4a4a' }}>
+          <div className="space-y-2 text-sm mb-6" style={{ color: 'var(--inv-ink, #4a4a4a)' }}>
             {parashaText && (
-              <p className="font-bold text-stone-850" style={{ color: '#2c3e6b' }}>{parashaText}</p>
+              <p className="font-bold text-stone-850" style={{ color: 'var(--inv-accent, #2c3e6b)' }}>{parashaText}</p>
             )}
             {config.hebrew_date && <p>{config.hebrew_date}</p>}
             {eventDateStr && (
-              <p className="font-bold text-2xl tracking-wide my-1" style={{ color: '#b8963e', fontFamily: 'serif' }}>
+              <p className="font-bold text-2xl tracking-wide my-1" style={{ color: 'var(--inv-primary, #b8963e)', fontFamily: 'serif' }}>
                 {eventDateStr}
               </p>
             )}
             {synagogueText && (
-              <p className="font-bold mt-2" style={{ color: '#1a1a1a' }}>
+              <p className="font-bold mt-2" style={{ color: 'var(--inv-ink, #1a1a1a)' }}>
                 {synagogueText}
               </p>
             )}
@@ -94,7 +96,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
               <p className="mt-2">
                 {config.event_time} - {p.prayer_time_label}
                 <br />
-                <span className="text-xs" style={{ color: '#7a7a7a' }}>{p.meal_label}</span>
+                <span className="text-xs" style={{ color: 'var(--inv-muted, #7a7a7a)' }}>{p.meal_label}</span>
               </p>
             )}
           </div>
@@ -102,7 +104,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
       })()}
 
       {p.custom_message && (
-        <p className="text-xs italic leading-relaxed mb-4" style={{ color: '#9a8e7a' }}>
+        <p className="text-xs italic leading-relaxed mb-4" style={{ color: 'var(--inv-muted, #9a8e7a)' }}>
           {p.custom_message}
         </p>
       )}
@@ -113,9 +115,9 @@ export default async function RSVPPage({ params }: { params: { token: string } }
           <div
             className="rounded-xl px-4 py-3 text-sm font-bold text-center"
             style={{
-              background: '#fcfaf2',
-              color: '#b8963e',
-              border: '1px solid #ebdcb9',
+              background: 'color-mix(in srgb, var(--inv-primary, #b8963e) 7%, transparent)',
+              color: 'var(--inv-primary, #b8963e)',
+              border: '1px solid var(--inv-frame, #ebdcb9)',
             }}
           >
             ✨ נשמח מאוד לראותכם בין אורחינו! ✨
@@ -138,7 +140,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
         </div>
       ) : (
         <>
-          <p className="font-bold text-sm mb-4" style={{ color: '#3a3a3a' }}>האם תוכלו להגיע?</p>
+          <p className="font-bold text-sm mb-4" style={{ color: 'var(--inv-ink, #3a3a3a)' }}>האם תוכלו להגיע?</p>
           <RSVPButtons token={params.token} />
         </>
       )}
@@ -147,7 +149,7 @@ export default async function RSVPPage({ params }: { params: { token: string } }
 
       {/* Parents */}
       {config?.parents_names && (
-        <p className="text-xs mt-6" style={{ color: '#b8a88a', fontStyle: 'italic' }}>
+        <p className="text-xs mt-6" style={{ color: 'var(--inv-muted, #b8a88a)', fontStyle: 'italic' }}>
           נשמח לראותכם,
           <br />
           {config.parents_names}
