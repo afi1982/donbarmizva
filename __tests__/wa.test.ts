@@ -39,10 +39,11 @@ describe('buildWaText', () => {
     expect(text).toBe(`לאישור הגעה לחץ כאן:\n${ORIGIN}/r/a1b2c3d4`)
   })
 
-  it('uses the invitation preview link for #info guests', () => {
+  it('sends ONLY the invitation preview link for #info guests — no intro text', () => {
     const infoGuest = { ...guest, phone: '0543366012#info' }
     const text = buildWaText('שלום {name}', infoGuest, ORIGIN)
-    expect(text).toContain(`${ORIGIN}/invite-preview/${guest.token}`)
+    expect(text).toBe(`${ORIGIN}/invite-preview/${guest.token}`)
+    expect(text).not.toContain('שלום')
     expect(text).not.toContain('/r/')
     expect(text).not.toContain('לאישור הגעה')
   })

@@ -26,10 +26,9 @@ export function buildWaText(
     .replace(/{custom_message}/g, '')
     .trim()
 
-  // Info-only guests get the invitation itself, without an RSVP link
+  // Info-only guests get ONLY the invitation itself — no intro text, no RSVP link
   if (guest.phone.includes('#info')) {
-    const previewUrl = `${origin}/invite-preview/${guest.token}`
-    return message ? `${message}\n\n${previewUrl}` : previewUrl
+    return `${origin}/invite-preview/${guest.token}`
   }
 
   const shortUrl = `${origin}/r/${guest.token.slice(0, 8)}`
