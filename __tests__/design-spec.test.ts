@@ -36,6 +36,13 @@ describe('sanitizeSpec', () => {
     expect(sanitizeSpec({ wreath: false }).wreath).toBe(false)
     expect(sanitizeSpec({ wreath: 'yes' }).wreath).toBe(true)
   })
+
+  it('accepts only known ornament kinds', () => {
+    expect(sanitizeSpec({ ornament: 'rings' }).ornament).toBe('rings')
+    expect(sanitizeSpec({ ornament: 'balloons' }).ornament).toBe('balloons')
+    expect(sanitizeSpec({ ornament: '<script>' }).ornament).toBe('botanical')
+    expect(sanitizeSpec({}).ornament).toBe('botanical')
+  })
 })
 
 describe('specToCssVars', () => {

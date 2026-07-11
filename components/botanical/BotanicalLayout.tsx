@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import FloralWreath from './FloralWreath'
 import CornerBranch from './CornerBranch'
+import EventOrnament from './EventOrnament'
 import { DesignSpec, specToCssVars } from '@/lib/design/spec'
 
 interface BotanicalLayoutProps {
@@ -54,7 +54,7 @@ export default function BotanicalLayout({ children, className = '', showWreath =
 
           {wreathVisible && (
             <div className="flex justify-center mb-5 inv-ornaments">
-              <FloralWreath />
+              <EventOrnament kind={design?.ornament ?? 'botanical'} />
             </div>
           )}
 

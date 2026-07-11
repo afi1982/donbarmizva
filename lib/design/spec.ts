@@ -16,7 +16,8 @@ export interface DesignSpec {
   accent: string        // parasha line + primary leaf color
   leaf: string          // secondary leaf color
   divider: string       // divider lines
-  wreath: boolean       // show the floral wreath
+  wreath: boolean       // show the central ornament
+  ornament: string      // botanical | rings | hearts | balloons | none
 }
 
 export const DEFAULT_SPEC: DesignSpec = {
@@ -33,6 +34,7 @@ export const DEFAULT_SPEC: DesignSpec = {
   leaf: '#3a4f7a',
   divider: '#c4b48a',
   wreath: true,
+  ornament: 'botanical',
 }
 
 export interface DesignTemplate {
@@ -62,6 +64,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#4a4a3f', muted: '#8a8a75',
       accent: '#3f513f', leaf: '#5a6e4a', divider: '#a8b088',
       wreath: true,
+      ornament: 'botanical',
     },
   },
   {
@@ -75,6 +78,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#3f4a55', muted: '#7d8a99',
       accent: '#1e3a5f', leaf: '#3a6ea5', divider: '#9db8cc',
       wreath: true,
+      ornament: 'botanical',
     },
   },
   {
@@ -88,6 +92,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#4a3f42', muted: '#99808a',
       accent: '#5f1e2e', leaf: '#a54a5f', divider: '#c49aa5',
       wreath: true,
+      ornament: 'botanical',
     },
   },
   {
@@ -101,6 +106,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#d1d5db', muted: '#9ca3af',
       accent: '#93b4e0', leaf: '#6b8ab8', divider: '#8a713a',
       wreath: true,
+      ornament: 'botanical',
     },
   },
   {
@@ -115,6 +121,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#5c4a4e', muted: '#a38b91',
       accent: '#8a4a5e', leaf: '#b87a8c', divider: '#dbaab6',
       wreath: true,
+      ornament: 'rings',
     },
   },
   {
@@ -129,6 +136,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#55503f', muted: '#96907c',
       accent: '#6b5d3f', leaf: '#8a7a55', divider: '#cbbc98',
       wreath: true,
+      ornament: 'rings',
     },
   },
   {
@@ -143,6 +151,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#4e4358', muted: '#90839c',
       accent: '#5e4478', leaf: '#7d64a0', divider: '#b9a4d1',
       wreath: true,
+      ornament: 'hearts',
     },
   },
   {
@@ -157,6 +166,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#44505a', muted: '#85929e',
       accent: '#2e5a7d', leaf: '#5a86ab', divider: '#a4c2d6',
       wreath: true,
+      ornament: 'botanical',
     },
   },
   {
@@ -171,6 +181,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#4f4a44', muted: '#9a8f85',
       accent: '#1f8a80', leaf: '#3aa397', divider: '#e8b48c',
       wreath: true,
+      ornament: 'balloons',
     },
   },
   {
@@ -185,6 +196,7 @@ export const TEMPLATES: DesignTemplate[] = [
       ink: '#3a4550', muted: '#7e8a96',
       accent: '#16334c', leaf: '#46647f', divider: '#a8b8c6',
       wreath: false,
+      ornament: 'none',
     },
   },
 ]
@@ -206,6 +218,10 @@ export function sanitizeSpec(input: unknown): DesignSpec {
     if (typeof v === 'string' && HEX_RE.test(v)) out[key] = v
   }
   out.wreath = typeof src.wreath === 'boolean' ? src.wreath : DEFAULT_SPEC.wreath
+  const ORNAMENT_KINDS = ['botanical', 'rings', 'hearts', 'balloons', 'none']
+  out.ornament = typeof src.ornament === 'string' && ORNAMENT_KINDS.includes(src.ornament)
+    ? src.ornament
+    : DEFAULT_SPEC.ornament
   return out
 }
 

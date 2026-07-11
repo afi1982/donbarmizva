@@ -1,11 +1,11 @@
 import { InvitationConfig } from '@/lib/types'
-import FloralWreath from '@/components/botanical/FloralWreath'
+import EventOrnament from '@/components/botanical/EventOrnament'
 import CornerBranch from '@/components/botanical/CornerBranch'
 import BotanicalDivider from '@/components/botanical/BotanicalDivider'
 import { parseCustomMessage } from '@/lib/config-helper'
 import { getEventDef } from '@/lib/events'
 
-export default function InvitationPreview({ config, showWreath = true }: { config: Partial<InvitationConfig>; showWreath?: boolean }) {
+export default function InvitationPreview({ config, showWreath = true, ornament = 'botanical' }: { config: Partial<InvitationConfig>; showWreath?: boolean; ornament?: string }) {
   const eventDateStr = config.event_date
     ? new Date(config.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
@@ -42,7 +42,7 @@ export default function InvitationPreview({ config, showWreath = true }: { confi
 
           {showWreath && (
             <div className="flex justify-center mb-5 inv-ornaments">
-              <FloralWreath />
+              <EventOrnament kind={ornament} />
             </div>
           )}
 

@@ -66,6 +66,43 @@ export async function GET(
     headers: { 'Cache-Control': 'public, max-age=300, s-maxage=600' },
   }
 
+
+  // Central ornament drawn with satori-safe primitives (circles, rotated squares)
+  const ornamentArt = (() => {
+    if (!d.wreath) return null
+    if (d.ornament === 'rings') {
+      return (
+        <div style={{ display: 'flex', position: 'relative', width: 190, height: 112, marginBottom: 14 }}>
+          <div style={{ position: 'absolute', left: 18, top: 18, width: 86, height: 86, borderRadius: 86, border: `4px solid ${d.primary}`, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 86, top: 18, width: 86, height: 86, borderRadius: 86, border: `4px solid ${d.primaryLight}`, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 53, top: 2, width: 15, height: 15, background: d.primaryLight, transform: 'rotate(45deg)', display: 'flex' }} />
+        </div>
+      )
+    }
+    if (d.ornament === 'hearts') {
+      return (
+        <div style={{ display: 'flex', position: 'relative', width: 112, height: 104, marginBottom: 14 }}>
+          <div style={{ position: 'absolute', left: 24, top: 30, width: 64, height: 64, background: d.primaryLight, transform: 'rotate(45deg)', display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 11, top: 16, width: 46, height: 46, borderRadius: 46, background: d.primaryLight, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 55, top: 16, width: 46, height: 46, borderRadius: 46, background: d.primaryLight, display: 'flex' }} />
+        </div>
+      )
+    }
+    if (d.ornament === 'balloons') {
+      return (
+        <div style={{ display: 'flex', position: 'relative', width: 200, height: 132, marginBottom: 10 }}>
+          <div style={{ position: 'absolute', left: 99, top: 70, width: 2, height: 58, background: d.divider, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 55, top: 78, width: 2, height: 48, background: d.divider, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 145, top: 76, width: 2, height: 48, background: d.divider, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 72, top: 0, width: 56, height: 72, borderRadius: 56, background: d.primary, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 30, top: 16, width: 48, height: 62, borderRadius: 48, background: d.accent, opacity: 0.8, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 122, top: 14, width: 48, height: 62, borderRadius: 48, background: d.leaf, opacity: 0.8, display: 'flex' }} />
+        </div>
+      )
+    }
+    return null
+  })()
+
   // Landscape banner for WhatsApp link previews (og:image)
   if (isOg) {
     return new ImageResponse(
@@ -109,6 +146,7 @@ export async function GET(
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexGrow: 1, justifyContent: 'center', padding: '20px 48px', width: '100%' }}>
             {eventDef.showBsd && <div style={{ display: 'flex', fontSize: 24, color: d.muted, marginBottom: 26 }}>{toVisual('בס״ד')}</div>}
+            {ornamentArt}
 
             {p.title1 && <div style={{ display: 'flex', fontSize: 32, color: d.ink, textAlign: 'center' }}>{toVisual(p.title1)}</div>}
             {p.title2 && <div style={{ display: 'flex', fontSize: 32, color: d.ink, marginTop: 6, textAlign: 'center' }}>{toVisual(p.title2)}</div>}

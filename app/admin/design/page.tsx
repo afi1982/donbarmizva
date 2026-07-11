@@ -5,6 +5,7 @@ import InvitationPreview from '@/components/admin/InvitationPreview'
 import {
   DesignSpec, DEFAULT_SPEC, TEMPLATES, sanitizeSpec, specToCssVars,
 } from '@/lib/design/spec'
+import { ORNAMENTS } from '@/components/botanical/EventOrnament'
 
 const COLOR_FIELDS: { key: keyof DesignSpec; label: string }[] = [
   { key: 'primary',      label: 'צבע ראשי (שם, תאריך, פסים)' },
@@ -57,7 +58,10 @@ export default function DesignStudioPage() {
   const isDirty = published ? !specsEqual(draft, published) : !specsEqual(draft, DEFAULT_SPEC)
   const activeTemplate = TEMPLATES.find(t => specsEqual(t.spec, draft))
   const eventType = (config.event_type as string) || 'bar_mitzvah'
-  const visibleTemplates = TEMPLATES.filter(t => !t.eventTypes || t.eventTypes.includes(eventType))
+  // Event-matched templates first, marked as recommended
+  const visibleTemplates = TEMPLATES
+    .filter(t => !t.eventTypes || t.eventTypes.includes(eventType))
+    .sort((a, b) => Number(!!b.eventTypes?.includes(eventType)) - Number(!!a.eventTypes?.includes(eventType)))
 
   function update(patch: Partial<DesignSpec>) {
     setDraft(prev => ({ ...prev, ...patch }))
@@ -154,6 +158,7 @@ export default function DesignStudioPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {visibleTemplates.map(t => {
                 const isActive = activeTemplate?.slug === t.slug
+                const recommended = !!t.eventTypes?.includes(eventType)
                 return (
                   <button
                     key={t.slug}
@@ -177,7 +182,12 @@ export default function DesignStudioPage() {
                       </div>
                     </div>
                     <div className="px-2.5 py-2 bg-slate-900">
-                      <p className="text-xs font-bold text-slate-200">{isActive ? '✓ ' : ''}{t.name}</p>
+                      <p className="text-xs font-bold text-slate-200 flex items-center gap-1">
+                        {isActive ? '✓ ' : ''}{t.name}
+                        {recommended && (
+                          <span className="text-[9px] bg-amber-500/15 text-amber-300 border border-amber-500/25 px-1 py-0.5 rounded-full font-bold">✨ מומלץ</span>
+                        )}
+                      </p>
                       <p className="text-[10px] text-slate-400 leading-tight">{t.description}</p>
                     </div>
                   </button>
@@ -186,18 +196,29 @@ export default function DesignStudioPage() {
             </div>
           </section>
 
-          {/* Wreath toggle */}
-          <section aria-label="אלמנטים">
-            <h2 className="font-bold text-slate-200 text-sm mb-3">🌿 אלמנטים בוטניים</h2>
-            <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={draft.wreath}
-                onChange={e => update({ wreath: e.target.checked })}
-                className="w-4 h-4 accent-amber-600"
-              />
-              הצג זר פרחים מעל השם
-            </label>
+          {/* Central ornament picker */}
+          <section aria-label="עיטור מרכזי">
+            <h2 className="font-bold text-slate-200 text-sm mb-3">🎀 עיטור מרכזי מעל השם</h2>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="עיטור מרכזי">
+              {ORNAMENTS.map(o => {
+                const active = (draft.ornament ?? 'botanical') === o.kind
+                return (
+                  <button
+                    key={o.kind}
+                    onClick={() => update({ ornament: o.kind, wreath: o.kind !== 'none' })}
+                    role="radio"
+                    aria-checked={active}
+                    className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border-2 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
+                      active
+                        ? 'border-amber-500 bg-amber-500/10 text-amber-300'
+                        : 'border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-600'
+                    }`}
+                  >
+                    <span>{o.emoji}</span>{o.label}
+                  </button>
+                )
+              })}
+            </div>
           </section>
 
           {/* Advanced colors */}
@@ -245,7 +266,7 @@ export default function DesignStudioPage() {
             תצוגה חיה {activeTemplate ? `— ${activeTemplate.name}` : '— עיצוב מותאם אישית'}
           </p>
           <div style={vars}>
-            <InvitationPreview config={config} showWreath={draft.wreath} />
+            <InvitationPreview config={config} showWreath={draft.wreath} ornament={draft.ornament} />
           </div>
           <p className="text-xs text-slate-400 mt-2 text-center">כך תיראה ההזמנה אצל האורחים אחרי פרסום</p>
         </div>
